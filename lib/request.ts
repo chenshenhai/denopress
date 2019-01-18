@@ -70,7 +70,7 @@ export class Request implements Req {
         if (typeof item === "string") {
           // example "GET /index/html?a=1 HTTP/1.1";
           const regMatch = /([A-Z]{1,}){1,}\s(.*)\s(.*)/;
-          const strList : object = item.match(regMatch);
+          const strList : object = item.match(regMatch) || [];
           const method : string = strList[1] || "";
           const href : string = strList[2] || "";
           const protocol : string = strList[3] || "";

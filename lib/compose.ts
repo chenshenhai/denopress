@@ -23,6 +23,7 @@ function compose(middleware: Function[]) {
       }
 
       if (!fn) {
+        ctx.res.end();
         return Promise.resolve();
       }
 
