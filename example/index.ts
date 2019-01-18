@@ -7,6 +7,8 @@ app.use(async function(ctx) {
   const {req, res} = ctx;
   const headerData = req.getHeaders();
   res.setBody(`${JSON.stringify(headerData)}`);
+  res.setStatus(200);
+  throw new Error('test!');
 });
 
 app.listen(addr, function(){

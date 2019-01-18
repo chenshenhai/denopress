@@ -1,15 +1,16 @@
-import { listen, Conn } from "deno";
+import { listen, Conn, exit } from "deno";
 import { Request, Req } from "./request.ts";
 import { Response, Res } from "./response.ts";
 import { Ctx, Context } from "./context.ts";
+import compose from "./compose.ts";
 
 export class Server {
   private middlewares: Function[];
-  private context: {};
+  private context?: Ctx;
 
   constructor() {
     this.middlewares = [];
-    this.context = {};
+    // this.context = {};
   }
 
   private pushMiddleware(fn: Function): void{
@@ -34,45 +35,26 @@ export class Server {
       await req.init();
       const ctx = that.createCtx(req, res);
       const middlewares = that.middlewares;
-      if (res.getEndStatus() !== true) {
-        if (Array.isArray(middlewares) === true && middlewares.length > 0) {
-          for (let idx = 0; idx < middlewares.length; idx++) {
-            const cb = middlewares[idx];
-            if (res.getEndStatus() === true) {
-              break;
-            }
-            try {
-              if (typeof cb === "function") {
-                cb(ctx);
-              }
-            } catch (err) {
-              that.onError(err);
-            }
-            if (idx + 1 >= middlewares.length) {
-              res.end();
-              break;
-            }   
-          }
-        } else {
-          res.end();
-        }
-      }
+      compose(middlewares)(ctx).catch(err => that.onError(err));
     };
     return handleRequest;
   }
 
   private onError(err: Error) {
     console.log(err);
+    const ctx = this.context;
+    if (ctx instanceof Context) {
+      ctx.res.setBody(err.stack);
+      ctx.res.setStatus(500);
+      ctx.res.end();
+    } else {
+      exit(1);
+    }
   }
 
   private async loop(conn: Conn): Promise<void> {
-    try {
-      const handleRequest = this.callback();
-      await handleRequest(conn);
-    } catch(err) {
-      this.onError(err);
-      conn.close();
-    }
+    const handleRequest = this.callback();
+    await handleRequest(conn);
   }
 
   public async listen(addr: string, fn?: Function) {

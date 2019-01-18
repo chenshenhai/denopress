@@ -48,12 +48,12 @@ export class Request implements Req {
   }
 
   public getCookie() {
-    const reqData = this.reqData;
+    const reqData = this.reqData || {};
     return reqData["cookie"];
   }
 
   public getQuery() {
-    const reqData = this.reqData;
+    const reqData = this.reqData || {};
     return reqData["search"];
   }
 

@@ -5,10 +5,14 @@ import { getMIME } from "./mime.ts";
 const encoder = new TextEncoder();
 const decoder = new TextDecoder();
 const CRLF = "\r\n";
-const defaultBody = "404 Not Found!";
+const default404Body = "404 Not Found!";
 
 export interface Res {
-  getEndStatus: Function;
+  judgeEnd: Function;
+  setStatus: Function;
+  getStatus: Function;
+  setProtocol: Function;
+  getProtocol: Function;
   setHeader: Function;
   getHeaders: Function;
   setBody: Function;
@@ -18,6 +22,7 @@ export interface Res {
 
 export class Response implements Res {
   private conn: Conn;
+  private general: {};
   private headers: {};
   private body : string;
   private isEnd: boolean;
@@ -27,15 +32,44 @@ export class Response implements Res {
     this.conn = conn;
     this.req = req;
     this.isEnd = false;
+    this.general = {
+      status: 404,
+      protocol: "HTTP/1.1",
+    };
+    this.headers = {};
   }
 
-  public getEndStatus(): boolean {
+  public getProtocol() {
+    return this.general['protocol'] || "HTTP/1.1";
+  }
+
+  public setProtocol() {
+    // TODO
+  }
+
+  public getStatus() {
+    return this.general['status'];
+  }
+
+  public setStatus(status: number) {
+    this.general['status'] = status;
+  }
+
+  public judgeEnd(): boolean {
     const isEnd = this.isEnd;
     return isEnd;
   }
 
-  public setHeader(data: object): void {
-    this.headers = {...{}, ...this.headers, ...data};
+  public setHeader(key:string, val:string): void {
+    const headerKey = key.toLocaleLowerCase();
+    const headerVal = val.toLocaleLowerCase();
+    const headerItem = {};
+    headerItem[headerKey] = `${headerVal}`;
+    this.headers = {...{}, ...this.headers, ...headerItem};
+  }
+
+  public getHeader(key:string) {
+    return this.headers[key];
   }
 
   public getHeaders(): {} {
@@ -44,11 +78,11 @@ export class Response implements Res {
   }
 
   public setBody(body: string) {
-    this.body = body || defaultBody;
+    this.body = body;
   }
 
   public getBody(): string {
-    const body = this.body || defaultBody;
+    const body = this.body;
     return body;
   }
   
@@ -57,10 +91,10 @@ export class Response implements Res {
     const req = this.req;
     const headers = req.getHeaders();
     const { pathname } = headers;
-    const mime = getMIME(pathname);
-    this.setHeader({
-      "Content-Type": mime
-    });
+    if ( !headers["content-type"] ) {
+      const mime = getMIME(pathname);
+      this.setHeader("content-type", mime);
+    }
     if (this.isEnd !== true) {
       if (conn && conn.close && typeof conn.close === "function") {
         const result = this.getResult();
@@ -92,12 +126,15 @@ export class Response implements Res {
     const lines = [];
     const body = this.getBody();
     const headers = this.getHeaders();
-    const protocol = headers["headers"] || "HTTP/1.1 ";
-    const contentLength = headers["Content-Length"] || `Content-Length: ${body.length}`;
-    lines.push(protocol);
+    const protocol = this.getProtocol();
+    const status = this.getStatus();
+    const contentLength = headers["content-length"] || `content-length: ${body.length}`;
+  
+    // lines.push(`HTTP/1.1 200`);
+    lines.push(`${protocol} ${status}`);
     lines.push(contentLength);
 
-    const keywords = ["protocol", "content-length"];
+    const keywords = ["content-length"];
     for (const key in headers) {
       const val = headers[key];
       if (key && typeof key === "string" && val && typeof val === "string") {
