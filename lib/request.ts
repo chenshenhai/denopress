@@ -1,5 +1,7 @@
 import { Conn } from "deno";
 
+const BUFFER_LENGTH = 1024;
+const MB_LIMIT_COUNT = 8;
 const decoder = new TextDecoder();
 const CRLF = "\r\n";
 
@@ -58,10 +60,23 @@ export class Request implements Req {
   }
 
   private async getReqData(): Promise<object> {
+    let buffer = new Uint8Array(BUFFER_LENGTH);
     const conn = this.conn;
-    const buffer = new Uint8Array(4096);
-    await conn.read(buffer);
-    const headers = decoder.decode(buffer);
+    const chunkList = [];
+    let isReadOver = false;
+
+
+    for (let i = 1; i < MB_LIMIT_COUNT; i++) {
+      const readResult = await conn.read(buffer);
+      chunkList.push(decoder.decode(buffer));
+      if (readResult.eof === true || readResult.nread < BUFFER_LENGTH) {
+        isReadOver = true;
+        break;
+      }
+    }
+
+    
+    const headers = chunkList.join("");
     const headersObj = {};
     const headerList = headers.split(CRLF);
     headerList.forEach(function(item, i) {
@@ -86,7 +101,9 @@ export class Request implements Req {
         }
       } else {
         if (typeof item === "string" && item.length > 0) {
-          const itemList = item.split(":");
+          const splitKey = '__$FIRST_COLON$__';
+          const itemStr = item.replace(":", splitKey)
+          const itemList = itemStr.split(splitKey);
           const key = itemList[0];
           const val = itemList[1];
           let keyStr = null;
@@ -98,7 +115,7 @@ export class Request implements Req {
             valStr = val.trim();
           }
           if (typeof keyStr === "string" && typeof valStr === "string") {
-            headersObj[keyStr] = valStr;
+            headersObj[keyStr] = valStr.replace(/[\u0000]{1,}$/i, "");
           }
         }
       }

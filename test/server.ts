@@ -1,4 +1,4 @@
-import { Server } from "./../../index.ts";
+import { Server } from "./../index.ts";
 const app = new Server();
 const addr = "127.0.0.1:4321";
 

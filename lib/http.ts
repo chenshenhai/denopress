@@ -66,7 +66,7 @@ export class Server {
       }
       while (true) {
         const conn = await listener.accept();
-        this.loop(conn);
+        await this.loop(conn);
       }
     } catch (error) {
       err = error;

@@ -1,4 +1,4 @@
-import { Ctx } from "./context.ts";
+import { Ctx, Context } from "./context.ts";
 
 function compose(middleware: Function[]) {
   if (!Array.isArray(middleware)) {
@@ -23,7 +23,9 @@ function compose(middleware: Function[]) {
       }
 
       if (!fn) {
-        ctx.res.end();
+        if (ctx instanceof Context) {
+          ctx.res.end();
+        }
         return Promise.resolve();
       }
 
