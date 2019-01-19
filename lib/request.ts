@@ -63,18 +63,14 @@ export class Request implements Req {
     let buffer = new Uint8Array(BUFFER_LENGTH);
     const conn = this.conn;
     const chunkList = [];
-    let isReadOver = false;
-
 
     for (let i = 1; i < MB_LIMIT_COUNT; i++) {
       const readResult = await conn.read(buffer);
       chunkList.push(decoder.decode(buffer));
       if (readResult.eof === true || readResult.nread < BUFFER_LENGTH) {
-        isReadOver = true;
         break;
       }
     }
-
     
     const headers = chunkList.join("");
     const headersObj = {};
