@@ -7,6 +7,7 @@ app.use(async function(ctx) {
   res.setBody(`hello`);
   res.end(200)
 });
+
 app.listen(addr, function(){
   console.log(`listening on ${addr}`);
 });
