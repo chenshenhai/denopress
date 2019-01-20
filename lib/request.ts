@@ -13,9 +13,10 @@ interface RequestData {
 export interface Req {
   init: Function;
   getMethod: Function;
-  getHeaders: Function;
   getProtocol: Function;
   getSearch: Function;
+  getPathname: Function;
+  getHeaders: Function;
 }
 
 export class Request implements Req {
@@ -59,6 +60,11 @@ export class Request implements Req {
   public getSearch() {
     const currentGeneral = this.reqData.general || {};
     return currentGeneral["search"];
+  }
+
+  public getPathname() {
+    const currentGeneral = this.reqData.general || {};
+    return currentGeneral["pathname"];
   }
 
   private async getReqData(): Promise<RequestData> {

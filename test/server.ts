@@ -22,15 +22,26 @@ app.use(async function(ctx, next) {
   await next();
 });
 
-app.use(async function(ctx) {
+
+app.use(async function(ctx, next) {
   const {req, res} = ctx;
-  res.setBody(`hello`);
-  res.end(200)
+  const pathname = req.getPathname();
+  // console.log('path =', pathname);
+  if (pathname === '/testCtxData.html') {
+    const query = ctx.getData("query");
+    res.setBody(`${JSON.stringify(query)}`);
+    res.end();
+  }
+  await next();
 });
 
-app.use(async function(ctx) {
+app.use(async function(ctx, next) {
   const {req, res} = ctx;
-})
+  res.setBody(`hello`);
+  res.end();
+  await next();
+});
+
 
 app.listen(addr, function(){
   console.log(`listening on ${addr}`);

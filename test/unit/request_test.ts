@@ -7,8 +7,7 @@ const decoder = new TextDecoder();
 const testAdr = "127.0.0.1:4322"
 
 const reqDataList =  [
-  "GET / HTTP/1.1",
-  `Host: ${testAdr}`,
+  `GET / HTTP/1.1 ${testAdr}`,
   "Connection: keep-alive",
   "Pragma: no-cache",
   "Cache-Control: no-cache",
@@ -20,12 +19,12 @@ const reqDataList =  [
 ];
 
 const acceptReqHeadersData = {
-  "method": "GET",
-  "protocol": "HTTP/1.1",
-  "href": "/",
-  "pathname": "/",
-  "search": "",
-  "Host": `${testAdr}`,
+  // "method": "GET",
+  // "protocol": "HTTP/1.1",
+  // "href": "/",
+  // "pathname": "/",
+  // "search": "",
+  // "Host": `${testAdr}`,
   "Connection": "keep-alive",
   "Pragma": "no-cache",
   "Cache-Control": "no-cache",
@@ -36,8 +35,8 @@ const acceptReqHeadersData = {
   "Accept-Language": "zh-CN,zh;q=0.9,en;q=0.8"
 };
 
-test(async function testUnitRequest() {
-  const listener = deno.listen("tcp", testAdr);
+test(async function testUnit_Request_getHeaders() {
+  const listener = deno.listen("tcp", `${testAdr}`);
   listener.accept().then(async conn => {
     const buf = encoder.encode(reqDataList.join('\r\n'));
     await conn.write(buf);
@@ -49,5 +48,7 @@ test(async function testUnitRequest() {
   const reqData = await request.getHeaders();
   const resultStr = JSON.stringify(reqData)
   const acceptStr = JSON.stringify(acceptReqHeadersData);
+  // console.log(`\r\n resultStr = \r\n ${resultStr}`)
+  // console.log(`\r\n acceptStr = \r\n ${acceptStr}`)
   assert( resultStr === acceptStr);
 })
