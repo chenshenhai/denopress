@@ -9,17 +9,23 @@ export interface Ctx {
   cleanData: Function;
   hasData: Function;
   deleteData: Function;
+
+  registerExtender: Function;
+  isExtenderExist: Function;
+  getExtender: Function;
 }
 
 export class Context implements Ctx {
   public req: Req;
   public res: Res;
   private dataMap;
+  private extenderMap;
   
   constructor(req: Req, res: Res) {
     this.req = req;
     this.res = res;
     this.dataMap = {};
+    this.extenderMap = {};
   }
 
   public setData(key: string, val: any) {
@@ -48,6 +54,24 @@ export class Context implements Ctx {
     if (this.dataMap) {
       delete this.dataMap[key];
     }
+  }
+
+  public registerExtender(key: string, extender: Function) {
+    const isExist = this.isExtenderExist(key);
+    if (isExist === true) {
+      throw new Error(`Extender: ${key} is existed. Please rename extender key!`)
+    } else {
+      this.extenderMap[key] = extender;
+    }
+  }
+
+  public async getExtender(key: string) {
+    return this.extenderMap[key];
+  }
+
+  public isExtenderExist(key: string) {
+    const extenderMap = this.extenderMap || {};
+    return extenderMap.hasOwnProperty(key);
   }
   
 }

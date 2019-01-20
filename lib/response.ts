@@ -33,7 +33,7 @@ export class Response implements Res {
     this.req = req;
     this.isEnd = false;
     this.general = {
-      status: 404,
+      status: 200,
       protocol: "HTTP/1.1",
     };
     this.headers = {};
@@ -106,7 +106,10 @@ export class Response implements Res {
   }
 
   private getResult (): Uint8Array {
-    const body = this.getBody();
+    let body = this.getBody();
+    if (!(typeof body === 'string' && body.length > 0)) {
+      body = default404Body;
+    }
     const headers = this.getHeadersLines();
     let resHeaders = [];
     if ( Array.isArray(headers) === true && headers.length > 0) {

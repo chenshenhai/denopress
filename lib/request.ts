@@ -5,30 +5,37 @@ const MB_LIMIT_COUNT = 8;
 const decoder = new TextDecoder();
 const CRLF = "\r\n";
 
+interface RequestData {
+  general: Object;
+  headers: Object;
+}
+
 export interface Req {
   init: Function;
   getMethod: Function;
   getHeaders: Function;
-  getCookie: Function;
-  getQuery: Function;
   getProtocol: Function;
+  getSearch: Function;
 }
 
 export class Request implements Req {
   private conn: Conn;
-  private reqData: {};
+  private reqData: RequestData;
   private hasInitialized: boolean;
   
   constructor (conn: Conn) {
     this.conn = conn;
-    this.reqData = {};
+    this.reqData = {
+      general: {},
+      headers: {},
+    };
     this.hasInitialized = false;
   }
 
   public async init() {
     if (this.hasInitialized !== true) {
       const reqData = await this.getReqData();
-      this.reqData = reqData || {};
+      this.reqData = reqData;
       this.hasInitialized = true;
     }
   }
@@ -39,27 +46,22 @@ export class Request implements Req {
   }
 
   public getProtocol(): string {
-    const reqData = this.reqData;
-    return reqData["protocal"];
+    const currentGeneral = this.reqData.general || {};
+    return currentGeneral["protocal"];
   }
 
   public getHeaders(): object {
-    const reqData = this.reqData;
-    const headers = Object.assign({}, reqData);
+    const currentHeaders = this.reqData.headers;
+    const headers = Object.assign({}, currentHeaders);
     return headers;
   }
 
-  public getCookie() {
-    const reqData = this.reqData || {};
-    return reqData["cookie"];
+  public getSearch() {
+    const currentGeneral = this.reqData.general || {};
+    return currentGeneral["search"];
   }
 
-  public getQuery() {
-    const reqData = this.reqData || {};
-    return reqData["search"];
-  }
-
-  private async getReqData(): Promise<object> {
+  private async getReqData(): Promise<RequestData> {
     let buffer = new Uint8Array(BUFFER_LENGTH);
     const conn = this.conn;
     const chunkList = [];
@@ -73,6 +75,7 @@ export class Request implements Req {
     }
     
     const headers = chunkList.join("");
+    const generalObj = {};
     const headersObj = {};
     const headerList = headers.split(CRLF);
     headerList.forEach(function(item, i) {
@@ -89,11 +92,11 @@ export class Request implements Req {
           const pathname : string = href.split("?")[0] || "";
           const search : string = href.split("?")[1] || "";
           
-          headersObj["method"] = method;
-          headersObj["protocol"] = protocol;
-          headersObj["href"] = href;
-          headersObj["pathname"] = pathname;
-          headersObj["search"] = search;
+          generalObj["method"] = method;
+          generalObj["protocol"] = protocol;
+          generalObj["href"] = href;
+          generalObj["pathname"] = pathname;
+          generalObj["search"] = search;
         }
       } else {
         if (typeof item === "string" && item.length > 0) {
@@ -116,6 +119,9 @@ export class Request implements Req {
         }
       }
     });
-    return headersObj;
+    return {
+      general: generalObj,
+      headers: headersObj,
+    };
   }
 }
