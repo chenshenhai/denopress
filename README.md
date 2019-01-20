@@ -1,4 +1,4 @@
-# denoplus-http
+# denoplus
 
 ## Installation
 
@@ -10,6 +10,11 @@
 
 ```sh
 deno test.ts --allow-run --allow-net
+```
+- or
+
+```sh
+sh ./test.sh
 ```
 
 ## License
