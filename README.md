@@ -1,6 +1,6 @@
 # denoplus
 
-[![Build Status](https://travis-ci.org/chenshenhai/denoplus/qs.svg?branch=master)](https://travis-ci.org/chenshenhai/denoplus)
+[![Build Status](https://travis-ci.com/chenshenhai/denoplus.svg?token=XYNG2F1URZ4nW1TzoJNC&branch=master)](https://travis-ci.org/chenshenhai/denoplus)
 
 ## Installation
 
