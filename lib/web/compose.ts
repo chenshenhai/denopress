@@ -1,11 +1,16 @@
-import { Ctx, Context } from "./context.ts";
-
-function compose(middleware: Function[]) {
+/**
+ * 中间件操作引擎
+ * 处理洋葱模型中间件流程具体讲解可以看
+ * https://github.com/chenshenhai/koajs-design-note/blob/master/note/chapter01/05.md
+ * 
+ * @param middleware {AsyncFunction[]}
+ */
+export const compose = function (middleware: Function[]) {
   if (!Array.isArray(middleware)) {
     throw new TypeError('Middleware stack must be an array!');
   }
 
-  return function(ctx: Ctx, next?: Function) {
+  return function(ctx: object, next?: Function) {
     let index = -1;
 
     return dispatch(0);
@@ -23,9 +28,6 @@ function compose(middleware: Function[]) {
       }
 
       if (!fn) {
-        if (ctx instanceof Context) {
-          ctx.res.end();
-        }
         return Promise.resolve();
       }
 
@@ -39,5 +41,3 @@ function compose(middleware: Function[]) {
     }
   };
 }
-
-export default compose;
