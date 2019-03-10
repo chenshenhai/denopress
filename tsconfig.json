@@ -1,0 +1,18 @@
+{
+  "compilerOptions": {
+    "target": "es2018",
+    "plugins": [
+      {
+        "name": "typescript-deno-plugin"
+      }
+    ]
+  },
+  "include": [
+    "lib/**/*",
+    "mod.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "**/*.spec.ts"
+  ]
+}
