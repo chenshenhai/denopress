@@ -1,5 +1,5 @@
-import { Application } from "./lib/web/mod.ts";
-import { Route, Router } from "./lib/web_router/mod.ts";
+import { Application } from "./core/web/mod.ts";
+import { Route, Router } from "./core/web_router/mod.ts";
 const app = new Application();
 const addr = "127.0.0.1:3001";
 
