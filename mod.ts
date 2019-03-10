@@ -1,18 +1,9 @@
-import { Application } from "./core/web/mod.ts";
-import { Route, Router } from "./core/web_router/mod.ts";
-const app = new Application();
-const addr = "127.0.0.1:3001";
+const run = Deno.run;
 
-const router = new Router();
-
-router.get("/mod/:mod/version/:version", async function(ctx) {
-  const params = ctx.getData("router");
-  ctx.res.setStatus(200);
-  ctx.res.setBody(`${JSON.stringify(params)}`);
+const portalServer = run({
+  args: ["deno", "--allow-net", "./server/portal/mod.ts", ".", "--cors"]
 });
 
-app.use(router.routes());
-
-app.listen(addr, function(){
-  console.log(`listening on ${addr}`);
+const dashboardServer = run({
+  args: ["deno", "--allow-net", "./server/dashboard/mod.ts", ".", "--cors"]
 });
