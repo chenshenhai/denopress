@@ -1,0 +1,21 @@
+{
+  "name": "denoplus",
+  "version": "0.0.1",
+  "scripts": {
+    
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/chenshenhai/denoplus.git"
+  },
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/chenshenhai/denoplus/issues"
+  },
+  "homepage": "https://github.com/chenshenhai/denoplus#readme",
+  "devDependencies": {
+    "typescript": "^3.3.3333",
+    "typescript-deno-plugin": "^1.1.0"
+  }
+}
