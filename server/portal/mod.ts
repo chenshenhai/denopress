@@ -1,18 +1,14 @@
-import config from "./../../config.ts";
-import { Application } from "./../../core/web/mod.ts";
-import { Route, Router } from "./../../core/web_router/mod.ts";
-const app = new Application();
-const router = new Router();
+import { httpServer, } from "./../../deps.ts";
 
-const addr = `127.0.0.1:${config.portalPort}`;
-router.get("/mod/:mod/version/:version", async function(ctx) {
-  const params = ctx.getData("router");
-  ctx.res.setStatus(200);
-  ctx.res.setBody(`${JSON.stringify(params)}`);
-});
+const { serve } = httpServer;
 
-app.use(router.routes());
+const s = serve("0.0.0.0:8002");
 
-app.listen(addr, function(){
-  console.log(`listening on ${addr}`);
-});
+async function main() {
+  console.log('------- portal ------');
+  for await (const req of s) {
+    req.respond({ body: new TextEncoder().encode("Hello Portal\n") });
+  }
+}
+
+main();

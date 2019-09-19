@@ -1,14 +1,36 @@
+import { bufio } from "./deps.ts";
+
 const run = Deno.run;
+const { BufReader } = bufio;
 
-const portalServer = run({
-  args: ["deno", "--allow-net", "./server/portal/mod.ts", ".", "--cors"]
-});
+async function readOneByte(buffer) {
+  const chunk = new Uint8Array(1);
+  await buffer.read(chunk);
+}
 
-console.log('portalServer = ', portalServer)
+async function main() {
 
-const dashboardServer = run({
-  args: ["deno", "--allow-net", "./server/dashboard/mod.ts", ".", "--cors"]
-});
+  const portalProcess = run({
+    args: ["deno", "run",  "--allow-run", "--allow-net", "mod.ts", ".", "--cors"],
+    cwd: "./server/portal/",
+    stdout: "piped"
+  })
+  const buffer = portalProcess.stdout;
+  const bufReader = new BufReader(buffer);
+  await bufReader.readLine();
+  console.log('portalProcess = ', portalProcess.pid)
+  
 
+  const dashboardProcess = run({
+    args: ["deno", "run",  "--allow-run", "--allow-net", "mod.ts", ".", "--cors"],
+    cwd: "./server/dashboard/",
+    stdout: "piped"
+  })
+  const dashboardBuf = dashboardProcess.stdout;
+  const dashboardReader = new BufReader(dashboardBuf);
+  await dashboardReader.readLine();
+  console.log('dashboardProcess = ', dashboardProcess.pid)
 
-console.log('dashboardServer = ', dashboardServer)
+}
+
+main();

@@ -9,7 +9,7 @@
   },
   "include": [
     "lib/**/*",
-    "mod.ts"
+    "start.ts"
   ],
   "exclude": [
     "node_modules",
