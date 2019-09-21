@@ -10,7 +10,7 @@ const { BufReader } = bufio;
 interface DenoPressConfig {
   process: {
     [key: string]: {
-      [key: string]: number;
+      pid: number;
     }
   }
 }
@@ -25,7 +25,6 @@ async function main() {
   const buffer = portalProcess.stdout;
   const bufReader = new BufReader(buffer);
   await bufReader.readLine();
-  console.log('portalProcess = ', portalProcess)
 
   const dashboardProcess = run({
     args: ["deno", "run", "--importmap", "import_map.json", "--allow-run", "--allow-net", "server/dashboard/mod.ts", ".", "--cors"],
@@ -35,7 +34,6 @@ async function main() {
   const dashboardBuf = dashboardProcess.stdout;
   const dashboardReader = new BufReader(dashboardBuf);
   await dashboardReader.readLine();
-  console.log('dashboardProcess = ', dashboardProcess)
 
   // reset process config
   const denopressConfigPath = './.denopress/config.json';
@@ -43,14 +41,11 @@ async function main() {
 
   config.process.portal = {
     pid: portalProcess.pid,
-    rid: portalProcess.rid
   };
   config.process.dashboard = {
     pid: dashboardProcess.pid,
-    rid: dashboardProcess.rid
   };
 
-  console.log(config);
 
   writeJsonSync(denopressConfigPath, config);
   

@@ -6,29 +6,30 @@ import { writeJsonSync } from "fs/write_json.ts";
 interface DenoPressConfig {
   process: {
     [key: string]: {
-      [key: string]: number;
+      pid: number;
     }
   }
 }
 
 async function main() {
-  // reset process config
   const denopressConfigPath = './.denopress/config.json';
   const config: DenoPressConfig = readJsonSync(denopressConfigPath) as DenoPressConfig;
 
   console.log(`kill ${JSON.stringify(config.process.portal)} ...`)
-  // Deno.close(config.process.portal.rid)
   Deno.kill(config.process.portal.pid, Deno.Signal.SIGKILL)
   
   
   console.log(`kill ${JSON.stringify(config.process.dashboard)} ...`)
-  // Deno.close(config.process.dashboard.rid)
   Deno.kill(config.process.dashboard.pid, Deno.Signal.SIGKILL)
 
-  // config.process.portal = -1;
-  // config.process.dashboard = -1;
-  // writeJsonSync(denopressConfigPath, config);
-  console.log(`[Denoprocess]: stop!`);
+  config.process.portal = {
+    pid: -1,
+  };
+  config.process.dashboard = {
+    pid: -1,
+  };
+  writeJsonSync(denopressConfigPath, config);
+  console.log(`[Denoprocess]: stop successfully!`);
 }
 
 main();
