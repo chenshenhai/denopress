@@ -1,4 +1,6 @@
 import { compose } from "./compose.ts";
+import { Server } from "./server.ts";
+import { Context } from "./context.ts";
 
 
 const exit = Deno.exit;
@@ -11,7 +13,6 @@ class Application {
   constructor() {
     this._middlewares = [];
     // 内置一个服务对象
-    this._server = new Server();
   }
 
   /**
@@ -29,31 +30,24 @@ class Application {
    */
   public async listen(addr: string, fn?: Function) {
     const that = this;
-    const server = this._server;
+    const server = new Server();
+    this._server = server;
+    
     // 启动HTTP服务
     server.createServer(async function(ctx) {
       const middlewares = that._middlewares;
-      
       try {
-        // 将HTTP服务生成的 HTTP上下文封装成一个安全操作的上下文
-        // 安全HTTP上下文限制了所有中间件能操作的范围
-        const sctx = new SafeContext(ctx);
-        
         // 等待执行所有中间件
-        await compose(middlewares)(sctx);
-        const body = sctx.res.getBody();
-
-        // 如果最后响应报文没有响应体，就默认设置404文案
-        if (!(body && typeof body === "string" && body.length > 0)) {
-          sctx.res.setBody("404 Not Found!");
-        }
-        // 最后写入响应数据
-        await ctx.res.flush();
+        await compose(middlewares)(ctx);
+        await ctx.flush();
       } catch (err) {
         that._onError(err, ctx);
       }
     }); 
-    server.listen(addr, fn);
+    server.listen(addr);
+    if (typeof fn === "function") {
+      fn();
+    }
   }
 
   /**
@@ -65,9 +59,9 @@ class Application {
     console.log(err);
     if (ctx instanceof Context) {
       // 出现错误，把错误堆栈打印到页面上
-      ctx.res.setBody(err.stack);
-      ctx.res.setStatus(500);
-      await ctx.res.flush();
+      ctx.setResponseBody(err.stack);
+      ctx.setResponseStatus(500);
+      await ctx.flush();
     } else {
       exit(1);
     }

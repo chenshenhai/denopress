@@ -1,10 +1,22 @@
-import { writeResponse, writeResponse, Response } from "http/server";
+import {
+  // writeResponse,
+  ServerRequest,
+  Response
+} from "http/server.ts";
+// import { StringReader } from "io/readers.ts";
+
 
 
 export class Context {
 
   private _sReq: ServerRequest;
-  private _res: Response;
+  private _res: Response = {
+    status: 404,
+    headers: new Headers(),
+    body: new TextEncoder().encode('404 Not Found!'),
+  };
+  private _isFinish: boolean = false;
+
 
   constructor(sReq: ServerRequest) {
     this._sReq = sReq;
@@ -15,18 +27,59 @@ export class Context {
     return headers.get(key);
   }
 
-  setRequestHeader(key: string, val: string): void {
+  setRequestHeader(key: string, val: string): boolean {
+    if (this.isFinish() === true) {
+      return false;
+    }
     const headers = this._sReq.headers;
     headers.set(key, val);
+    return true;
   }
 
   async getRequestBodyStream(): Promise<Uint8Array> {
     return this._sReq.body();
   }
 
-  async setResponseBody(body: string): Promise<void> {
-    return writeResponse(body);
+  setResponseBody(bodyStr: string): boolean {
+    if (this.isFinish() === true) {
+      return false;
+    }
+    const body = new TextEncoder().encode(bodyStr);
+    this._res.body = body;
+    return true;
   }
 
-  
+  setResponseHeader(key: string, val: string) {
+    if (this.isFinish() === true) {
+      return false;
+    }
+    this._res.headers.set(key, val);
+    return true;
+  }
+
+  setResponseStatus(status: number) {
+    if (this.isFinish() === true) {
+      return false;
+    }
+    this._res.status = status;
+    return true;
+  }
+
+  flush(): boolean {
+    if (this.isFinish() === true) {
+      return false;
+    }
+    this._sReq.respond(this._res);
+    this._isFinish = true;
+    return true;
+  }
+
+  isFinish() {
+    return this._isFinish;
+  }
+
+  setFinish() {
+    this._isFinish = true;
+  }
+
 }

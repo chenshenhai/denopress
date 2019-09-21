@@ -1,23 +1,20 @@
-import { httpServer } from "./../../deps.ts";
-import { Context } from './'
-
-const  { serve } = httpServer;
+import { serve } from "http/server.ts";
+import { Context } from "./context.ts";
 
 export class Server {
 
-
   private _addr: string;
-
-  constructor(addr: string) {
-    this._addr = addr;
-  }
+  private _handler: Function = () => {};
 
   async createServer(handler) {
-    const addr: string = this._addr;
+    this._handler = handler;
+  }
+
+  async listen(addr: string) {
     const ser = serve(addr);
     for await (const req of ser) {
-      handler()
-      req.respond({ body: new TextEncoder().encode("Hello World\n") });
+      const ctx: Context = new Context(req);
+      this._handler(ctx);
     }
   }
 
