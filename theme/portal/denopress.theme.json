@@ -1,0 +1,7 @@
+{
+  "name": "portal",
+  "pages": [
+    "/page/home",
+    "/page/about"
+  ]
+}

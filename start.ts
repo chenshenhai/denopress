@@ -11,8 +11,8 @@ async function readOneByte(buffer) {
 async function main() {
 
   const portalProcess = run({
-    args: ["deno", "run",  "--allow-run", "--allow-net", "mod.ts", ".", "--cors"],
-    cwd: "./server/portal/",
+    args: ["deno", "run", "--importmap", "import_map.json",  "--allow-run", "--allow-net", "server/portal/mod.ts", ".", "--cors"],
+    cwd: "./",
     stdout: "piped"
   })
   const buffer = portalProcess.stdout;
@@ -22,8 +22,8 @@ async function main() {
   
 
   const dashboardProcess = run({
-    args: ["deno", "run",  "--allow-run", "--allow-net", "mod.ts", ".", "--cors"],
-    cwd: "./server/dashboard/",
+    args: ["deno", "run", "--importmap", "import_map.json", "--allow-run", "--allow-net", "server/dashboard/mod.ts", ".", "--cors"],
+    cwd: "./",
     stdout: "piped"
   })
   const dashboardBuf = dashboardProcess.stdout;
