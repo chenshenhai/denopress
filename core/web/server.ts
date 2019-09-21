@@ -1,4 +1,4 @@
-import { serve } from "http/server.ts";
+import { server } from "./../../deps.ts";
 import { Context } from "./context.ts";
 
 export class Server {
@@ -11,7 +11,7 @@ export class Server {
   }
 
   async listen(addr: string) {
-    const ser = serve(addr);
+    const ser = server.serve(addr);
     for await (const req of ser) {
       const ctx: Context = new Context(req);
       this._handler(ctx);

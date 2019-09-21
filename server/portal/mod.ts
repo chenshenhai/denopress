@@ -1,6 +1,6 @@
-import { serve } from "http/server.ts"
+import { server } from "./../../deps.ts";
 
-const s = serve("0.0.0.0:8002");
+const s = server.serve("0.0.0.0:8002");
 
 async function main() {
   console.log('------- portal ------');

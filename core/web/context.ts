@@ -1,16 +1,9 @@
-import {
-  // writeResponse,
-  ServerRequest,
-  Response
-} from "http/server.ts";
-// import { StringReader } from "io/readers.ts";
-
-
+import { server } from "./../../deps.ts";
 
 export class Context {
 
-  private _sReq: ServerRequest;
-  private _res: Response = {
+  private _sReq: server.ServerRequest;
+  private _res: server.Response = {
     status: 404,
     headers: new Headers(),
     body: new TextEncoder().encode('404 Not Found!'),
@@ -18,7 +11,7 @@ export class Context {
   private _isFinish: boolean = false;
 
 
-  constructor(sReq: ServerRequest) {
+  constructor(sReq: server.ServerRequest) {
     this._sReq = sReq;
   }
 
