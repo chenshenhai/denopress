@@ -1,6 +1,4 @@
-import { httpServer } from "./../../deps.ts";
-
-const { serve } = httpServer;
+import { serve } from "http/server.ts"
 
 const s = serve("0.0.0.0:8001");
 

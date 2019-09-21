@@ -1,9 +1,11 @@
 {
   "imports": {
-    "http/server": "https://deno.land/std@v0.18.0/http/server.ts",
-    "http/cookie": "https://deno.land/std@v0.18.0/http/cookie.ts",
-    "io/bufio": "https://deno.land/std@v0.18.0/io/bufio.ts",
-    "io/readers": "https://deno.land/std@v0.18.0/io/readers.ts"
+    "fs/read_json.ts": "https://deno.land/std@v0.18.0/fs/read_json.ts",
+    "fs/write_json.ts": "https://deno.land/std@v0.18.0/fs/write_json.ts",
+    "http/server.ts": "https://deno.land/std@v0.18.0/http/server.ts",
+    "http/cookie.ts": "https://deno.land/std@v0.18.0/http/cookie.ts",
+    "io/bufio.ts": "https://deno.land/std@v0.18.0/io/bufio.ts",
+    "io/readers.ts": "https://deno.land/std@v0.18.0/io/readers.ts"
   }
 }
 

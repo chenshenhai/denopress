@@ -1,11 +1,18 @@
-import { bufio } from "./deps.ts";
+#! deno run --importmap ./import_map.json --allow-all  start.ts
+
+import * as bufio from "io/bufio.ts";
+import { readJsonSync } from "fs/read_json.ts";
+import { writeJsonSync } from "fs/write_json.ts";
 
 const run = Deno.run;
 const { BufReader } = bufio;
 
-async function readOneByte(buffer) {
-  const chunk = new Uint8Array(1);
-  await buffer.read(chunk);
+interface DenoPressConfig {
+  process: {
+    [key: string]: {
+      [key: string]: number;
+    }
+  }
 }
 
 async function main() {
@@ -18,8 +25,7 @@ async function main() {
   const buffer = portalProcess.stdout;
   const bufReader = new BufReader(buffer);
   await bufReader.readLine();
-  console.log('portalProcess = ', portalProcess.pid)
-  
+  console.log('portalProcess = ', portalProcess)
 
   const dashboardProcess = run({
     args: ["deno", "run", "--importmap", "import_map.json", "--allow-run", "--allow-net", "server/dashboard/mod.ts", ".", "--cors"],
@@ -29,8 +35,26 @@ async function main() {
   const dashboardBuf = dashboardProcess.stdout;
   const dashboardReader = new BufReader(dashboardBuf);
   await dashboardReader.readLine();
-  console.log('dashboardProcess = ', dashboardProcess.pid)
+  console.log('dashboardProcess = ', dashboardProcess)
 
+  // reset process config
+  const denopressConfigPath = './.denopress/config.json';
+  const config: DenoPressConfig = readJsonSync(denopressConfigPath) as DenoPressConfig;
+
+  config.process.portal = {
+    pid: portalProcess.pid,
+    rid: portalProcess.rid
+  };
+  config.process.dashboard = {
+    pid: dashboardProcess.pid,
+    rid: dashboardProcess.rid
+  };
+
+  console.log(config);
+
+  writeJsonSync(denopressConfigPath, config);
+  
+  console.log(`[Denoprocess]: start successfully!`);
 }
 
 main();
