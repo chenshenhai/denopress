@@ -1,22 +1,28 @@
-# denoplus
-
-[![Build Status](https://travis-ci.com/chenshenhai/denoplus.svg?token=XYNG2F1URZ4nW1TzoJNC&branch=master)](https://travis-ci.org/chenshenhai/denoplus)
+# denopress
 
 ## Installation
 
+```sh
+// TODO
+```
+
 ## Getting started
 
+```sh
+// TODO
+```
+
 ## Documentation
+
+```sh
+// TODO
+```
+
 
 ## Testing
 
 ```sh
-deno test.ts --allow-run --allow-net
-```
-- or
-
-```sh
-sh ./test.sh
+// TODO
 ```
 
 ## License
