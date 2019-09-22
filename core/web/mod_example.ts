@@ -14,6 +14,7 @@ app.use(async(ctx: Context) => {
   const reqData = {
     general: {
       url: req.getURL(),
+      path: req.getPath(),
       query: req.getAllURLParams(),
     },
     headers: req.getAllHeaders(),

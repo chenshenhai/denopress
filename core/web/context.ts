@@ -4,12 +4,18 @@ import { server } from "./../../deps.ts";
 export class ContextRequest {
   private _sReq: server.ServerRequest;
   private _isFinish: boolean = false;
+  private _path: string = '';
   private _search: string = '';
   private _urlSearchParams: URLSearchParams;
 
   constructor(sReq: server.ServerRequest) {
     this._sReq = sReq;
-    this._search = this._sReq.url.split('?')[1] || '';
+  
+    const url: string = this._sReq.url || '';
+    const urlList = url.split('?');
+
+    this._path = urlList[0] || '';
+    this._search = urlList[1] || '';
     this._urlSearchParams = new URLSearchParams(this._search);
   }
 
@@ -33,6 +39,10 @@ export class ContextRequest {
 
   getSearch(): string {
     return this._search;
+  }
+
+  getPath(): string {
+    return this._path;
   }
 
   getURLParam(key: string): string|null {

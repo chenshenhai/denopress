@@ -36,6 +36,7 @@ test(async function server() {
     const expectRes = {
       "general": {
         "url": "/hello?a=1&b=2",
+        "path": "/hello",
         "query": {
           "a": "1",
           "b": "2"
