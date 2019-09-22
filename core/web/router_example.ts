@@ -1,7 +1,7 @@
 import { Application, Router } from "./mod.ts";
 
 const app = new Application();
-const addr = "127.0.0.1:3001";
+const addr = "127.0.0.1:5001";
 
 const router = new Router();
 
