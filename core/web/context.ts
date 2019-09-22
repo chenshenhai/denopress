@@ -1,16 +1,51 @@
 import { server } from "./../../deps.ts";
 
+
 export class ContextRequest {
   private _sReq: server.ServerRequest;
   private _isFinish: boolean = false;
+  private _search: string = '';
+  private _urlSearchParams: URLSearchParams;
 
   constructor(sReq: server.ServerRequest) {
     this._sReq = sReq;
+    this._search = this._sReq.url.split('?')[1] || '';
+    this._urlSearchParams = new URLSearchParams(this._search);
   }
 
-  getHeader(key: string): string|undefined {
+  getAllHeaders(): object{
+    const headers = this._sReq.headers;
+    const allHeaders = {};
+    for (let [key, val] of headers.entries()) {
+      allHeaders[key] = val;
+    }
+    return allHeaders;
+  }
+
+  getURL(): string {
+    return this._sReq.url;
+  }
+
+  getHeader(key: string): string|null {
     const headers = this._sReq.headers;
     return headers.get(key);
+  }
+
+  getSearch(): string {
+    return this._search;
+  }
+
+  getURLParam(key: string): string|null {
+    return this._urlSearchParams.get(key);
+  }
+
+  getAllURLParams(): object {
+    const searchParams = this._urlSearchParams;
+    const params = {};
+    for (let [key, val] of searchParams.entries()) {
+      params[key] = val;
+    }
+    return params;
   }
 
   setHeader(key: string, val: string): boolean {
