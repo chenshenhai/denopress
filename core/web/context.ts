@@ -1,26 +1,19 @@
 import { server } from "./../../deps.ts";
 
-export class Context {
-
+export class ContextRequest {
   private _sReq: server.ServerRequest;
-  private _res: server.Response = {
-    status: 404,
-    headers: new Headers(),
-    body: new TextEncoder().encode('404 Not Found!'),
-  };
   private _isFinish: boolean = false;
-
 
   constructor(sReq: server.ServerRequest) {
     this._sReq = sReq;
   }
 
-  getRequestHeader(key: string): string|undefined {
+  getHeader(key: string): string|undefined {
     const headers = this._sReq.headers;
     return headers.get(key);
   }
 
-  setRequestHeader(key: string, val: string): boolean {
+  setHeader(key: string, val: string): boolean {
     if (this.isFinish() === true) {
       return false;
     }
@@ -29,40 +22,76 @@ export class Context {
     return true;
   }
 
-  async getRequestBodyStream(): Promise<Uint8Array> {
+  async getBodyStream(): Promise<Uint8Array> {
     return this._sReq.body();
   }
 
-  setResponseBody(bodyStr: string): boolean {
+  isFinish() {
+    return this._isFinish;
+  }
+
+  setFinish() {
+    this._isFinish = true;
+  }
+}
+
+export class ContextResponse {
+  private _sReq: server.ServerRequest;
+  private _status:number =  404;
+  private _headers: Headers = new Headers();
+  private _bodyText: string = '404 Not Found!';
+  private _isFinish: boolean = false;
+
+  constructor(sReq: server.ServerRequest) {
+    this._sReq = sReq;
+  }
+
+  getStatus(): number {
+    return this._status;
+  }
+
+  setStatus(status: number): boolean {
     if (this.isFinish() === true) {
       return false;
     }
-    const body = new TextEncoder().encode(bodyStr);
-    this._res.body = body;
+    this._status = status;
     return true;
   }
 
-  setResponseHeader(key: string, val: string) {
+  getHeader(key: string): string|undefined {
+    return this._headers.get(key);
+  }
+
+  setHeader(key: string, val: string): boolean {
     if (this.isFinish() === true) {
       return false;
     }
-    this._res.headers.set(key, val);
+    this._headers.set(key, val);
     return true;
   }
 
-  setResponseStatus(status: number) {
+  setBody(text: string): boolean {
     if (this.isFinish() === true) {
       return false;
     }
-    this._res.status = status;
+    this._bodyText = text;
     return true;
+  }
+
+  getBody(): string {
+    return this._bodyText;
   }
 
   flush(): boolean {
     if (this.isFinish() === true) {
       return false;
     }
-    this._sReq.respond(this._res);
+    const res: server.Response = {
+      status: this._status,
+      headers: this._headers,
+      body: new TextEncoder().encode(this._bodyText),
+    }
+    this._sReq.respond(res);
     this._isFinish = true;
     return true;
   }
@@ -73,6 +102,19 @@ export class Context {
 
   setFinish() {
     this._isFinish = true;
+  }
+}
+
+export class Context {
+
+  // private _sReq: server.ServerRequest;
+  // private _isFinish: boolean = false;
+  public req: ContextRequest;
+  public res: ContextResponse;
+
+  constructor(sReq: server.ServerRequest) {
+    this.req = new ContextRequest(sReq);
+    this.res = new ContextResponse(sReq);
   }
 
 }

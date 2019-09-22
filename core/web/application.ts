@@ -59,9 +59,9 @@ class Application {
     console.log(err);
     if (ctx instanceof Context) {
       // 出现错误，把错误堆栈打印到页面上
-      ctx.setResponseBody(err.stack);
-      ctx.setResponseStatus(500);
-      await ctx.flush();
+      ctx.res.setBody(err.stack);
+      ctx.res.setStatus(500);
+      await ctx.res.flush();
     } else {
       exit(1);
     }
