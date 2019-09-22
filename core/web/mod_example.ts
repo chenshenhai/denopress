@@ -6,10 +6,11 @@ import {
 } from "./mod.ts";
 
 const app = new Application();
+
 app.use(async(ctx: Context) => {
   const req: ContextRequest = ctx.req;
   const res: ContextResponse = ctx.res;
-  
+
   const reqData = {
     general: {
       url: req.getURL(),
@@ -22,6 +23,6 @@ app.use(async(ctx: Context) => {
   await res.setBody(`${JSON.stringify(reqData)}`);
 })
 
-app.listen('127.0.0.1:3002', () => {
+app.listen('127.0.0.1:5001', () => {
   console.log('start success!');
 })

@@ -1,6 +1,6 @@
 #!/usr/bin/env run deno --allow-run --allow-net
 
-import { testing, asserts, bufio } from "./../../deps";
+import { testing, asserts, bufio } from "./../../deps.ts";
 
 const { test, runTests  } = testing;
 const { assert, equal } = asserts;
@@ -9,12 +9,12 @@ const { BufReader } = bufio;
 
 const run = Deno.run;
 
-const testSite = "http://127.0.0.1:3001";
+const testSite = "127.0.0.1:5001";
 
 let httpServer;
 async function startHTTPServer() {
   httpServer = run({
-    args: ["deno", "run", "--allow-net", "./test_server.ts", ".", "--cors"],
+    args: ["deno", "run", "--allow-net", "./mod_example.ts", ".", "--cors"],
     stdout: "piped"
   });
   const buffer = httpServer.stdout;
@@ -31,9 +31,25 @@ function closeHTTPServer() {
 test(async function server() {
   try {
     await startHTTPServer();
-    const res1 = await fetch(`${testSite}/hello`);
-    const result1 = await res1.text();
-    assert(equal(result1, "page_hello"));
+    const res = await fetch(`http://${testSite}/hello?a=1&b=2`);
+    const result = await res.text();
+    const expectRes = {
+      "general": {
+        "url": "/hello?a=1&b=2",
+        "query": {
+          "a": "1",
+          "b": "2"
+        }
+      },
+      "headers": {
+        "user-agent": `Deno/${Deno.version.deno}`,
+        "accept": "*/*",
+        "accept-encoding": "gzip",
+        "host": "127.0.0.1:5001"
+      }
+    }
+
+    assert(equal(expectRes, JSON.parse(result)));
     // close testing server
     closeHTTPServer();
   } catch (err) {
