@@ -28,6 +28,10 @@ export class ContextRequest {
     return allHeaders;
   }
 
+  getMethod(): string {
+    return this._sReq.method;
+  }
+
   getURL(): string {
     return this._sReq.url;
   }
@@ -152,14 +156,37 @@ export class ContextResponse {
 
 export class Context {
 
-  // private _sReq: server.ServerRequest;
-  // private _isFinish: boolean = false;
   public req: ContextRequest;
   public res: ContextResponse;
+
+  private _dataMap: Map<string, object|string|number> = new Map();
 
   constructor(sReq: server.ServerRequest) {
     this.req = new ContextRequest(sReq);
     this.res = new ContextResponse(sReq);
+  }
+
+  public setData(key: string, val: object|string|number) {
+    this._dataMap.set(key, val);
+  }
+
+  public getData(key: string): object|string|number {
+    const val = this._dataMap.get(key);
+    return val;
+  }
+
+  public cleanData() {
+    for (const key of this._dataMap.keys()) {
+      this._dataMap.delete(key);
+    }
+  }
+
+  public hasData(key: string): boolean {
+    return this._dataMap.has(key);
+  }
+
+  public deleteData(key: string) {
+    this._dataMap.delete(key);
   }
 
 }

@@ -7,11 +7,13 @@ import {
 
 const app = new Application();
 
+
 app.use(async(ctx: Context) => {
   const req: ContextRequest = ctx.req;
   const res: ContextResponse = ctx.res;
 
   const reqData = {
+    method: req.getMethod(),
     general: {
       url: req.getURL(),
       path: req.getPath(),
@@ -19,7 +21,6 @@ app.use(async(ctx: Context) => {
     },
     headers: req.getAllHeaders(),
   }
-
   res.setStatus(200);
   await res.setBody(`${JSON.stringify(reqData)}`);
 })

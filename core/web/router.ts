@@ -1,6 +1,8 @@
 // Thanks to:
 // https://github.com/chenshenhai/deno_note/blob/master/demo/web_router/mod.ts
 
+import { Context, ContextRequest, ContextResponse } from "./context.ts";
+
 interface Layer {
   method: string;
   path: string;
@@ -158,12 +160,12 @@ export class Router implements Route {
    */
   public routes() {
     const stack = this._stack;
-    return async function(ctx, next) {
-      const req = ctx.req;
-      const gen = await req.getGeneral();
-      const headers = await req.getHeaders();
-      const currentPath = gen.pathname || "";
-      const method = gen.method;
+    return async function(ctx: Context, next) {
+      const req: ContextRequest = ctx.req;
+      const path: string = req.getPath();
+      const method: string = req.getMethod();
+      const currentPath: string = path || "";
+      
       let route;
       for (let i = 0; i < stack.length; i++) {
         const item: Layer = stack[i];

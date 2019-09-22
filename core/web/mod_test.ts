@@ -34,6 +34,7 @@ test(async function server() {
     const res = await fetch(`http://${testSite}/hello?a=1&b=2`);
     const result = await res.text();
     const expectRes = {
+      "method": "GET",
       "general": {
         "url": "/hello?a=1&b=2",
         "path": "/hello",
