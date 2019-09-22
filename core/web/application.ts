@@ -39,7 +39,7 @@ class Application {
       try {
         // 等待执行所有中间件
         await compose(middlewares)(ctx);
-        await ctx.flush();
+        await ctx.res.flush();
       } catch (err) {
         that._onError(err, ctx);
       }
