@@ -1,4 +1,4 @@
-#!/usr/bin/env run deno --allow-run --allow-net
+#!/usr/bin/env deno run --allow-run --allow-net
 
 import { testing, asserts, bufio } from "./../../deps.ts";
 
