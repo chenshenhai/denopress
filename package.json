@@ -1,19 +1,19 @@
 {
-  "name": "denoplus",
+  "name": "denopress",
   "version": "0.0.1",
   "scripts": {
     
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/chenshenhai/denoplus.git"
+    "url": "git+https://github.com/chenshenhai/denopress.git"
   },
   "author": "",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/chenshenhai/denoplus/issues"
+    "url": "https://github.com/chenshenhai/denopress/issues"
   },
-  "homepage": "https://github.com/chenshenhai/denoplus#readme",
+  "homepage": "https://github.com/chenshenhai/denopress#readme",
   "devDependencies": {
     "typescript": "^3.3.3333",
     "typescript-deno-plugin": "^1.1.0"
