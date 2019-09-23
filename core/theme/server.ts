@@ -1,4 +1,9 @@
-import { Application, Router, Context } from "./../web/mod.ts";
+import {
+  Application,
+  Router,
+  Context,
+  staticServe,
+} from "./../web/mod.ts";
 
 export interface ThemeServerOptsType {
   path: string;
@@ -20,6 +25,12 @@ export class ThemeServer {
     this._opts = opts;
     this._app = new Application();
     const router = new Router();
+
+    const path: string = this._opts.path;
+    const themeName: string = path.split('/').pop();
+    
+    this._app.use(staticServe(`${path}/static/`, {prefix: `/static/${themeName}`}))
+    
     router.get("/page/:pageName", async (ctx) =>{
       const params = ctx.getData("router");
       const pageName: string = params.pageName;
