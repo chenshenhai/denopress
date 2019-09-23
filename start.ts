@@ -25,7 +25,8 @@ async function main() {
   })
   const buffer = portalProcess.stdout;
   const bufReader = new BufReader(buffer);
-  await bufReader.readLine();
+  const portalLog =  await bufReader.readLine();
+  // console.log(portalLog);
 
   const dashboardProcess = run({
     args: ["deno", "run", "--allow-read", "--allow-run", "--allow-net", "server/dashboard/mod.ts", ".", "--cors"],
@@ -34,7 +35,8 @@ async function main() {
   })
   const dashboardBuf = dashboardProcess.stdout;
   const dashboardReader = new BufReader(dashboardBuf);
-  await dashboardReader.readLine();
+  const dashboardLog = await dashboardReader.readLine();
+  // console.log(dashboardLog);
 
   // reset process config
   const denopressConfigPath = './.denopress/config.json';

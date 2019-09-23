@@ -51,9 +51,6 @@ export class ThemeServer {
     }
     const fullPath: string = [path, 'page', pageName, 'page.html'].join('/');
 
-
-    console.log('fullPath = ', fullPath);
-
     try {
       const stat = Deno.lstatSync(fullPath);
       const decoder = new TextDecoder();
