@@ -1,6 +1,6 @@
 import { server } from "./../../deps.ts";
 
-const s = server.serve("0.0.0.0:8001");
+const s = server.serve("0.0.0.0:8002");
 
 async function main() {
   console.log('------- dashboard ------');
@@ -10,3 +10,4 @@ async function main() {
 }
 
 main();
+

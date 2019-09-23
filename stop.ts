@@ -1,7 +1,8 @@
 #! deno run --importmap ./import_map.json --allow-all  start.ts
 
-import { readJsonSync } from "fs/read_json.ts";
-import { writeJsonSync } from "fs/write_json.ts";
+import { readJSON, writeJSON } from "./deps.ts";
+const { readJsonSync } = readJSON;
+const { writeJsonSync } = writeJSON;
 
 interface DenoPressConfig {
   process: {
@@ -15,11 +16,11 @@ async function main() {
   const denopressConfigPath = './.denopress/config.json';
   const config: DenoPressConfig = readJsonSync(denopressConfigPath) as DenoPressConfig;
 
-  console.log(`kill ${JSON.stringify(config.process.portal)} ...`)
+  console.log(`killing portal.pid: ${JSON.stringify(config.process.portal)} ...`)
   Deno.kill(config.process.portal.pid, Deno.Signal.SIGKILL)
   
   
-  console.log(`kill ${JSON.stringify(config.process.dashboard)} ...`)
+  console.log(`killing dashboard.pid: ${JSON.stringify(config.process.dashboard)} ...`)
   Deno.kill(config.process.dashboard.pid, Deno.Signal.SIGKILL)
 
   config.process.portal = {

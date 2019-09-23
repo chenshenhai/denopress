@@ -1,8 +1,9 @@
 #! deno run --importmap ./import_map.json --allow-all  start.ts
 
-import * as bufio from "io/bufio.ts";
-import { readJsonSync } from "fs/read_json.ts";
-import { writeJsonSync } from "fs/write_json.ts";
+
+import { bufio, readJSON, writeJSON } from "./deps.ts";
+const { readJsonSync } = readJSON;
+const { writeJsonSync } = writeJSON;
 
 const run = Deno.run;
 const { BufReader } = bufio;
@@ -18,7 +19,7 @@ interface DenoPressConfig {
 async function main() {
 
   const portalProcess = run({
-    args: ["deno", "run", "--importmap", "import_map.json",  "--allow-run", "--allow-net", "server/portal/mod.ts", ".", "--cors"],
+    args: ["deno", "run", "--allow-read", "--allow-run", "--allow-net", "server/portal/mod.ts", ".", "--cors"],
     cwd: "./",
     stdout: "piped"
   })
@@ -27,7 +28,7 @@ async function main() {
   await bufReader.readLine();
 
   const dashboardProcess = run({
-    args: ["deno", "run", "--importmap", "import_map.json", "--allow-run", "--allow-net", "server/dashboard/mod.ts", ".", "--cors"],
+    args: ["deno", "run", "--allow-read", "--allow-run", "--allow-net", "server/dashboard/mod.ts", ".", "--cors"],
     cwd: "./",
     stdout: "piped"
   })

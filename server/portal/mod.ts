@@ -1,12 +1,20 @@
-import { server } from "./../../deps.ts";
+import { ThemeServer } from "./../../core/theme/mod.ts";
 
-const s = server.serve("0.0.0.0:8002");
+
+const addr = "127.0.0.1:8001";
+const cwd = Deno.cwd();
+const pathList: string[] = cwd.split('/');
+pathList.pop();
+pathList.pop();
+pathList.push()
+const baseDir: string = [Deno.cwd(), 'theme', 'portal'].join("/");
+const server = new ThemeServer(addr, {
+  path: baseDir,
+})
 
 async function main() {
+  await server.start();
   console.log('------- portal ------');
-  for await (const req of s) {
-    req.respond({ body: new TextEncoder().encode("Hello Portal\n") });
-  }
 }
 
 main();

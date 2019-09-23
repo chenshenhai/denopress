@@ -1,1 +1,1 @@
-deno run --importmap ./import_map.json --allow-all  stop.ts
+deno run  --allow-all  stop.ts
