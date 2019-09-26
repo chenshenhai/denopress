@@ -5,14 +5,14 @@ import {
 } from "./types.ts";
 
 const closeTagList = [
-  'img'
+  "img", "br", "hr", "area", "base", "input", "link", "meta", "basefont", "param", "col", "frame", "embed" 
 ];
 
 function getTagName(str: string): string|null {
   const reg = /<[\/]{0,}([a-z])[\S]{0,}[\/]{0,}>/i;
   const matchList = str.match(reg);
-  if (matchList && typeof matchList[0] === 'string') {
-    return matchList[0].replace(/^<[\/]{0,1}/, '').replace(/[\/]{0,1}>$/, '')
+  if (matchList && typeof matchList[0] === "string") {
+    return matchList[0].replace(/^<[\/]{0,1}/, "").replace(/[\/]{0,1}>$/, "")
   } else {
     return null;
   }
@@ -37,11 +37,15 @@ export class Unit implements TypeTemplateUnit {
 
     this._ast = {
       tagName: tagName,
-      content: '',
+      content: "",
       type,
       start: -1,
       end: -1
     }
+  }
+
+  public getType(): TypeUnitASTPropType {
+    return this._ast.type;
   }
 
   public getTplLength(): number {

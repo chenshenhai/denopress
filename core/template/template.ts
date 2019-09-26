@@ -46,6 +46,8 @@ export class Template implements TypeTemplate {
       unitList.push(unit);
       return match;
     });
+
+    
     unitList.forEach((item: Unit, idx: number) => {
       const nextUnit = unitList[idx + 1];
       if (nextUnit) {
@@ -58,6 +60,25 @@ export class Template implements TypeTemplate {
         item.setContent(content);
       }
     });
+
+    let level: number = 0;
+    let rootUnit = new Unit('<root>');
+    let preUnit: Unit = rootUnit;
+    let levelUnitStack: Unit[] = [preUnit];
+    const { TAG_START, TAG_CLOSE, TAG_END, TEXT, } = TypeUnitASTPropType;
+    
+    // TODO
+    unitList.forEach((item: Unit, idx: number) => {
+      const type = item.getType();
+      if (type === TAG_START) {
+        levelUnitStack.push(item);
+        level ++
+      } else if (type === TAG_CLOSE || type === TEXT) {
+        levelUnitStack.push(item);
+      } else if (type === TAG_END) {
+        levelUnitStack.push(item);
+      }
+    })
 
     console.log('unitList = ', JSON.stringify(unitList));
     return null;

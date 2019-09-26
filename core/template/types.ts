@@ -24,3 +24,19 @@ export interface TypeUnitAST {
 }
 
 
+export interface TypeTagASTAttr {
+  [key: string]: string;
+}
+
+export interface TypeTagASTDirect {
+  [key: string]: string;
+}
+
+
+export interface TypeTagAST {
+  tag: string | null;
+  children: TypeTagAST[];
+  text: string;
+  attributes: TypeTagASTAttr;
+  directives: TypeTagASTDirect;
+}
