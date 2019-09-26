@@ -3,7 +3,7 @@ import { Template } from "./template.ts";
 const tplStr: string = `
 <div>
   <h1 class="show-title">
-    hello workd
+    hello >< world
   </h1>
   <div class="show-list">
 
@@ -24,6 +24,6 @@ const tplStr: string = `
 `;
 
 const tpl = new Template(tplStr);
-const ast = tpl.compileToAST();
+const ast = tpl.getAST();
 
 console.log(ast);
