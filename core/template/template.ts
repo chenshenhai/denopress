@@ -1,44 +1,38 @@
 import {
   TypeTemplate,
   TypeUnitAST,
-  TypeUnitASTPropType
+  TypeUnitASTPropType,
+  TypeTagAST
 } from "./types.ts";
 import { Unit } from "./unit.ts";
+import { Tag } from "./tag.ts";
 
 export class Template implements TypeTemplate {
 
   private _tpl: string;
-  private _ast: TypeUnitAST|null = null;
+  private _ast: TypeTagAST|null = null;
   private _unitList: Unit[];
 
   constructor(tpl: string) {
     this._tpl = tpl;
   }
 
-  public getAST(): TypeUnitAST {
+  public getAST(): TypeTagAST {
     if (this._ast) {
       return this._ast;
     }
 
     const ast = this._compileToAST();
+    this._ast = ast;
     return ast;
-    // return {
-    //   tagName: '',
-    //   children: [],
-    //   content: '',
-    //   type: TypeUnitASTPropType.TEXT,
-    //   start: -1,
-    //   end: -1,
-    //   contentLength: -1,
-    // }
   }
 
   public compileToHTML(data: object): string {
     return '';
   }
 
-  private _compileToAST(): TypeUnitAST|null {
-    const tagReg = /<[^>^<].*>/ig;
+  private _compileToAST(): TypeTagAST|null {
+    const tagReg = /<[^>^<]*>/ig;
     const unitList = [];
     this._tpl.replace(tagReg, (match: string, idx: number) => {
       const unit: Unit = new Unit(match);
@@ -55,33 +49,46 @@ export class Template implements TypeTemplate {
         const end: number = nextUnit.getStart() - 1;
         item.setEnd(end);
         const contentStart: number = start + item.getTplLength();
-        const contentEnd: number = end - 1;
-        const content: string = this._tpl.substring(contentStart, contentEnd);
+        const contentEnd: number = end;
+        const content: string = this._tpl.substring(contentStart, contentEnd + 1);
         item.setContent(content);
       }
     });
 
     let level: number = 0;
     let rootUnit = new Unit('<root>');
-    let preUnit: Unit = rootUnit;
-    let levelUnitStack: Unit[] = [preUnit];
+    let rootTag = new Tag(rootUnit.getAST());
+    let preTag: Tag = rootTag;
+    let levelTagStack: Tag[] = [preTag];
     const { TAG_START, TAG_CLOSE, TAG_END, TEXT, } = TypeUnitASTPropType;
     
     // TODO
-    unitList.forEach((item: Unit, idx: number) => {
-      const type = item.getType();
-      if (type === TAG_START) {
-        levelUnitStack.push(item);
-        level ++
-      } else if (type === TAG_CLOSE || type === TEXT) {
-        levelUnitStack.push(item);
-      } else if (type === TAG_END) {
-        levelUnitStack.push(item);
-      }
-    })
+    unitList.forEach((unit: Unit, idx: number) => {
+      const type = unit.getType();
+      const tag = new Tag(unit.getAST());
 
-    console.log('unitList = ', JSON.stringify(unitList));
-    return null;
+      if (type === TAG_START) {
+        levelTagStack.push(tag);
+        preTag.children.push(tag);
+        level ++;
+      } else if (type === TAG_CLOSE || type === TEXT) {
+        preTag.children.push(tag);
+      } else if (type === TAG_END) {
+        levelTagStack.pop();
+        level --;
+      }
+
+      if (level >= 0) {
+        preTag = levelTagStack[level];
+      } else {
+        preTag = rootTag;
+      }
+    });
+
+    // console.log('unitList = ', JSON.stringify(unitList));
+    // console.log(' ------------------------------------- ')
+    // console.log('rootTag = ', JSON.stringify(rootTag));
+    return rootTag;
   }
 
 }

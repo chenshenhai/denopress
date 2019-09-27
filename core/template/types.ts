@@ -1,6 +1,6 @@
 
 export interface TypeTemplate {
-  getAST(): TypeUnitAST;
+  getAST(): TypeTagAST;
   compileToHTML(data: object): string;
 }
 

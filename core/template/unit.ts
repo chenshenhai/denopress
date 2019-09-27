@@ -9,7 +9,7 @@ const closeTagList = [
 ];
 
 function getTagName(str: string): string|null {
-  const reg = /<[\/]{0,}([a-z])[\S]{0,}[\/]{0,}>/i;
+  const reg = /<[\/]{0,1}([a-z0-9]{1,})[\S]{0,}[\/]{0,}[>]{0,1}/i;
   const matchList = str.match(reg);
   if (matchList && typeof matchList[0] === "string") {
     return matchList[0].replace(/^<[\/]{0,1}/, "").replace(/[\/]{0,1}>$/, "")
@@ -53,7 +53,7 @@ export class Unit implements TypeTemplateUnit {
   }
 
   public getAST(): TypeUnitAST|null {
-    return null;
+    return this._ast;
   }
 
   public getStart(): number {
