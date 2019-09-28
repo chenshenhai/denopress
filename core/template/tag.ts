@@ -10,6 +10,7 @@ import {
   TypeASTAttr,
   TypeASTDirect,
   TypeUnitASTPropType,
+  TypeData,
 } from "./types.ts";
 import { isType } from "./../util/is_type.ts";
 import { legalTags, notClosingTags } from "./tag_info.ts";
@@ -44,15 +45,15 @@ function escapeStr (str: string) {
   return str
 }
 
-function parseChildren (content: TypeTagAST[]) {
+function parseChildren (children: TypeTagAST[], data: TypeData) {
   let html = '';
-  if (isType.array(content) !== true) {
+  if (isType.array(children) !== true) {
     return html;
   }
-  for (let i = 0; i < content.length; i++) {
-    const item = content[i];
+  for (let i = 0; i < children.length; i++) {
+    const item = children[i];
     if (isType.json(item) === true) {
-      html += parseTag(item);
+      html += parseTag(item, data);
     } else if (isType.string(item)) {
       html += item;
     }
@@ -78,7 +79,7 @@ function parseAttribute (attribute: object) {
   return attrStr
 }
 
-function parseTag (ast: TypeTagAST): string {
+function parseTag (ast: TypeTagAST, data: TypeData): string {
 
   let html = ''
   if (isType.json(ast) !== true) {
@@ -87,29 +88,40 @@ function parseTag (ast: TypeTagAST): string {
   let tagName = ast.tag;
   if (isType.string(tagName)) {
     const children: TypeTagAST[] = ast.children;
-    // if (legalTags.indexOf(tagName) < 0) {
-    //   tagName = 'div'
-    // }
-    const attrStr = parseAttribute(ast.attributes)
-    if (notClosingTags[tagName] === true) {
-      html = `<${tagName} ${attrStr} />${ast.text}`;
-    } else {
-      html = `<${tagName} ${attrStr}>${ast.text}${parseChildren(children)}</${tagName}>`;
+    const attrStr = parseAttribute(ast.attributes);
+    let isShow: boolean = true;
+    if (ast.directives['@:if']) {
+      const key: string = ast.directives['@:if'] as string;
+      isShow = data[key] === true;
+    }
+    if (isShow === true) {
+      if (notClosingTags[tagName] === true) {
+        html = `<${tagName} ${attrStr} />${ast.text}`;
+      } else {
+        html = `<${tagName} ${attrStr}>${ast.text}${parseChildren(children, data)}</${tagName}>`;
+      }
     }
   } else {
     html = ast.text;
   }
-  
   return html
 }
 
-export function parseTagAST (ast: TypeTagAST|TypeTagAST[]): string {
+
+
+export function parseTagAST (ast: TypeTagAST|TypeTagAST[], data: TypeData): string {
   let html = '';
   if (isType.json(ast)) {
-    html = parseTag(ast as TypeTagAST)
+    html = parseTag(ast as TypeTagAST, data)
   } else if (isType.array(ast)) {
-    html = parseChildren(ast as TypeTagAST[])
+    html = parseChildren(ast as TypeTagAST[], data)
   }
   return html
 }
 
+export class TagASTCompiler {
+  constructor() {
+    
+  }
+  
+}

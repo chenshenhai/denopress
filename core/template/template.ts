@@ -27,8 +27,9 @@ export class Template implements TypeTemplate {
     return ast;
   }
 
-  public compileToHTML(data: object): string {
-    const html = parseTagAST(this._ast);
+  public compile(data: object): string {
+    const ast = this.getAST();
+    const html = parseTagAST(this._ast, data);
     return html;
   }
 

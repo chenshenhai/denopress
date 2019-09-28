@@ -1,7 +1,7 @@
 
 export interface TypeTemplate {
   getAST(): TypeTagAST|TypeTagAST[];
-  compileToHTML(data: object): string;
+  compile(data: object): string;
 }
 
 export interface TypeTemplateUnit  {
@@ -39,4 +39,12 @@ export interface TypeTagAST {
   text: string;
   attributes: TypeASTAttr;
   directives: TypeASTDirect;
+}
+
+export interface TypeData {
+  [key: string]: any;
+}
+
+export interface TypeTagASTCompiler {
+
 }
