@@ -80,28 +80,19 @@ function compileToFunctionContentStr (tpl) {
   return funcCodeStr;
 }
 
-function compileToFunctionInlineDataStr (data: object): string  {
-  const resultList = [];
-  if (Object.prototype.toString.call(data).toLocaleLowerCase() === '[object object]') {
-    const keys: string [] = Object.keys(data);
-    keys.forEach(function(key) {
-      if (typeof key === "string" && key.length > 0) {
-        resultList.push(`const ${key} = ${funcParamKey}.${key}; \r\n`);
-      }
-    })
-  }
-  const resultStr = resultList.join('\r\n');
-  return resultStr;
+export function compileToFunction(tpl): Function {
+  const funcContentStr = compileToFunctionContentStr(tpl);
+  const funcStr = [`with(${funcParamKey}) {`, funcContentStr, '}'].join('\r\n');
+  const func = new Function(funcParamKey, funcStr.replace(/[\r\t\r\n]/g, ""));
+  return func;
 }
 
-const template = {
-  compile (tpl, data) {
-    const funcDataStr = compileToFunctionInlineDataStr(data);
-    const funcContentStr = compileToFunctionContentStr(tpl);
-    const funcStr = [funcDataStr, funcContentStr].join('\r\n');
-    const func = new Function(funcParamKey, funcStr.replace(/[\r\t\r\n]/g, ""));
-    const html = func(data);
-    return html;
-  }
-};
-export const compileTemplate = template.compile;
+export function compile(tpl, data) {
+  const func = compileToFunction(tpl);
+  const html = func(data);
+  return html;
+}
+
+
+
+

@@ -18,11 +18,12 @@ import { legalTags, notClosingTags } from "./tag_info.ts";
 const { TAG_NO_CLOSE, TAG_START, TAG_END, TEXT } = TypeUnitASTPropType;
 
 export class Tag implements TypeTagAST {
-  tag: string | null = null;
-  children: TypeTagAST[];
-  text: string;
-  attributes: TypeASTAttr;
-  directives: TypeASTDirect;
+  public tag: string | null = null;
+  public children: TypeTagAST[];
+  public text: string;
+  public attributes: TypeASTAttr;
+  public directives: TypeASTDirect;
+
 
   constructor(unitAst: TypeUnitAST) {
     if(unitAst.type === TAG_START || unitAst.type === TAG_NO_CLOSE) {
@@ -79,9 +80,11 @@ function parseAttribute (attribute: object) {
   return attrStr
 }
 
+
+const scriptTplKeyword = '@#@';
 function parseTag (ast: TypeTagAST, data: TypeData): string {
 
-  let html = ''
+  let html = '';
   if (isType.json(ast) !== true) {
     return html
   }
@@ -89,18 +92,40 @@ function parseTag (ast: TypeTagAST, data: TypeData): string {
   if (isType.string(tagName)) {
     const children: TypeTagAST[] = ast.children;
     const attrStr = parseAttribute(ast.attributes);
-    let isShow: boolean = true;
-    if (ast.directives['@:if']) {
-      const key: string = ast.directives['@:if'] as string;
-      isShow = data[key] === true;
+    
+    if (notClosingTags[tagName] === true) {
+      html = `<${tagName} ${attrStr} />${ast.text}`;
+    } else {
+      html = `<${tagName} ${attrStr}>${ast.text}${parseChildren(children, data)}</${tagName}>`;
     }
-    if (isShow === true) {
-      if (notClosingTags[tagName] === true) {
-        html = `<${tagName} ${attrStr} />${ast.text}`;
-      } else {
-        html = `<${tagName} ${attrStr}>${ast.text}${parseChildren(children, data)}</${tagName}>`;
+
+    const directives = ast.directives;
+    const direcIf = directives['@:if'];
+    const direcFor = directives['@:for'];
+    const direcIndex = directives['@:index'];
+    // const direcItem = directives['@:item'];
+    if (isType.string(direcIf)) {
+      html = `
+      ${scriptTplKeyword}if(${direcIf})
+        ${html}
+      ${scriptTplKeyword}/if
+      `;
+    } else if (isType.string(direcFor)) {
+      let asStr = '';
+      if (isType.string(direcIndex)) {
+        asStr += `.indexAs(${direcIndex})`;
       }
-    }
+      // if (isType.string(direcItem)) {
+      //   asStr += `.itemAs(${direcItem})`;
+      // }
+
+      html = `
+      ${scriptTplKeyword}foreach(${direcFor})${asStr}
+        ${html}
+      ${scriptTplKeyword}/foreach
+      `
+    } 
+    
   } else {
     html = ast.text;
   }
@@ -108,8 +133,7 @@ function parseTag (ast: TypeTagAST, data: TypeData): string {
 }
 
 
-
-export function parseTagAST (ast: TypeTagAST|TypeTagAST[], data: TypeData): string {
+export function parseTagASTToScriptTpl (ast: TypeTagAST|TypeTagAST[], data: TypeData): string {
   let html = '';
   if (isType.json(ast)) {
     html = parseTag(ast as TypeTagAST, data)
@@ -117,11 +141,4 @@ export function parseTagAST (ast: TypeTagAST|TypeTagAST[], data: TypeData): stri
     html = parseChildren(ast as TypeTagAST[], data)
   }
   return html
-}
-
-export class TagASTCompiler {
-  constructor() {
-    
-  }
-  
 }

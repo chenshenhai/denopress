@@ -1,0 +1,24 @@
+<div>
+  <h1 class="show-title">
+    hello >< world
+  </h1>
+  <div class="show-list">
+
+    <ul class="show-item" @:for="list"  @:index="idx">
+      <li> list[ {{idx}} ] = {{list[idx]}}</li>
+    </ul>
+
+    <ul class="show-child-item" @:for="listChild"  @:index="i">
+      <ul class="show-child-item" @:for="listChild[i].children"  @:index="j">
+        <li> list[ {{i}}-{{j}} ] = {{listChild[i].children[j].name}}</li>
+      </ul>
+    </ul>
+
+    <div class="show-if" @:if="isShow">
+      before text
+      <div>{{str}}</div>
+      after text
+    </div>
+
+  </div>
+</div>

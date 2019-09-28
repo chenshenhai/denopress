@@ -1,6 +1,5 @@
 
 export interface TypeTemplate {
-  getAST(): TypeTagAST|TypeTagAST[];
   compile(data: object): string;
 }
 

@@ -22,12 +22,10 @@ export const legalTags = [
 
 export const directiveKeys = {
   '@:if': true,
-  '@:for-json': true,
-  '@:for-key': true,
-  '@:for-value': true,
-  '@:for-array': true,
-  '@:for-item': true,
-  '@:for-index': true,
+  '@:for': true,
+  '@:index': true,
+  // '@:key': true,
+  // '@:item': true,
 }
 
 export const notClosingTags = {

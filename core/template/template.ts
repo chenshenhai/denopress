@@ -5,7 +5,9 @@ import {
   TypeTagAST
 } from "./types.ts";
 import { Unit } from "./unit.ts";
-import { Tag, parseTagAST } from "./tag.ts";
+import { Tag, parseTagASTToScriptTpl } from "./tag.ts";
+import { compileToFunction } from "./script_template.ts";
+
 
 export class Template implements TypeTemplate {
 
@@ -13,11 +15,24 @@ export class Template implements TypeTemplate {
   private _ast: TypeTagAST[]|null = null;
   private _unitList: Unit[];
 
+  private _scriptTpl: string = '';
+  private _scriptFunc: Function|null = null;
+
   constructor(tpl: string) {
     this._tpl = tpl;
   }
 
-  public getAST(): TypeTagAST[] {
+  public compile(data: object): string {
+    const ast = this.getAST();
+    const scriptTpl = parseTagASTToScriptTpl(ast, data);
+    const scriptFunc = compileToFunction(scriptTpl);
+    const html = scriptFunc(data)
+    return html;
+  }
+
+
+
+  private getAST(): TypeTagAST[] {
     if (this._ast) {
       return this._ast;
     }
@@ -25,12 +40,6 @@ export class Template implements TypeTemplate {
     const ast = this._compileToAST();
     this._ast = ast;
     return ast;
-  }
-
-  public compile(data: object): string {
-    const ast = this.getAST();
-    const html = parseTagAST(this._ast, data);
-    return html;
   }
 
   private _compileToAST(): TypeTagAST[]|null {
@@ -64,7 +73,6 @@ export class Template implements TypeTemplate {
     let levelTagStack: Tag[] = [preTag];
     const { TAG_START, TAG_NO_CLOSE, TAG_END, TEXT, } = TypeUnitASTPropType;
     
-    // TODO
     unitList.forEach((unit: Unit, idx: number) => {
       const type = unit.getType();
       const tag = new Tag(unit.getAST());
@@ -89,9 +97,6 @@ export class Template implements TypeTemplate {
     });
 
     let ast = rootTag.children;
-    // console.log('unitList = ', JSON.stringify(unitList));
-    // console.log(' ------------------------------------- ')
-    // console.log('rootTag = ', JSON.stringify(rootTag));
     return ast;
   }
 
