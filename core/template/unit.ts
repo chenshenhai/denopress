@@ -3,10 +3,13 @@ import {
   TypeUnitAST,
   TypeUnitASTPropType,
   TypeASTAttr,
+  TypeASTDirect,
 } from "./types.ts";
 import {
-  notClosingTags
+  notClosingTags,
+  directiveKeys,
 } from "./tag_info.ts";
+import { isType } from "../util/is_type.ts";
 
 
 function getTagName(str: string): string|null {
@@ -19,10 +22,19 @@ function getTagName(str: string): string|null {
   }
 }
 
-function getAttrMap(tagHtml: string): TypeASTAttr {
+function getAttrMap(tagHtml: string): Map<string, string|undefined> {
   const attrStr = tagHtml.replace(/^<[\/]{0,1}/, '').replace(/[\/]{0,1}>$/, '');
-  const attrMap = {};
+  const attrMap:Map<string, string|undefined> = new Map();
   const attrList = attrStr.split(' ');
+  attrList.forEach((str) => {
+    const strList = str.split('=');
+    const key: string = strList[0];
+    let val: string|undefined = strList[1];
+    if (isType.string(val)) {
+      val = val.replace(/^("|')/, '').replace(/("|')$/, '');
+    }
+    attrMap.set(key, val);
+  });
 
   return attrMap;
 }
@@ -44,14 +56,25 @@ export class Unit implements TypeTemplateUnit {
       type = TypeUnitASTPropType.TAG_END;
     }
 
+    const attrMap: Map<string, string|undefined> = getAttrMap(unitTpl);
+    const attributes: TypeASTAttr = {};
+    const directives: TypeASTDirect = {};
+    for (let [key, val] of attrMap.entries()) {
+      if (directiveKeys[key] === true) {
+        directives[key] = val;
+      } else {
+        attributes[key] = val;
+      }
+    }
+
     this._ast = {
       tagName: tagName,
       content: "",
       type,
       start: -1,
       end: -1,
-      attributes: {},
-      directives: {},
+      attributes,
+      directives,
     }
   }
 

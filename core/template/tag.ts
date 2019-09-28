@@ -29,6 +29,8 @@ export class Tag implements TypeTagAST {
     }
     this.text = unitAst.content;
     this.children = [];
+    this.attributes = unitAst.attributes;
+    this.directives = unitAst.directives;
   }
 }
 
@@ -64,7 +66,7 @@ function parseAttribute (attribute: object) {
     return attrStr
   }
   let keyList = Object.keys(attribute)
-  const attrList: string[] = [' '];
+  const attrList: string[] = [];
   for (let i = 0; i < keyList.length; i++) {
     let keyName = keyList[i]
     let val = attribute[keyName]
@@ -72,7 +74,6 @@ function parseAttribute (attribute: object) {
       attrList.push(`${keyName}="${escapeStr(val)}"`);
     }
   }
-  attrList.push(' ');
   attrStr = attrList.join(' ');
   return attrStr
 }
@@ -91,9 +92,9 @@ function parseTag (ast: TypeTagAST): string {
     // }
     const attrStr = parseAttribute(ast.attributes)
     if (notClosingTags[tagName] === true) {
-      html = `<${tagName}${attrStr} />${ast.text}`;
+      html = `<${tagName} ${attrStr} />${ast.text}`;
     } else {
-      html = `<${tagName}${attrStr}>${ast.text}${parseChildren(children)}</${tagName}>`;
+      html = `<${tagName} ${attrStr}>${ast.text}${parseChildren(children)}</${tagName}>`;
     }
   } else {
     html = ast.text;

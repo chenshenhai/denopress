@@ -20,6 +20,16 @@ export const legalTags = [
   'output', 'progress', 'meter', 'details', 'summary', 'command', 'menu'
 ]
 
+export const directiveKeys = {
+  '@:if': true,
+  '@:for-json': true,
+  '@:for-key': true,
+  '@:for-value': true,
+  '@:for-array': true,
+  '@:for-item': true,
+  '@:for-index': true,
+}
+
 export const notClosingTags = {
   'area': true,
   'base': true,
