@@ -9,13 +9,13 @@ const funcParamKey = "__DATA__";
 
 function compileToFunctionContentStr (tpl) {
   const tplCode = tpl;
-  const regTpl = /#if[\s]{0,}\(([^\)]+)?\)|#elseif[\s]{0,}\(([^\)]+)?\)|#else|\(([^\)]+)?\)|#foreach[\s]{0,}\(([^\)]+)?\)\.indexAs\(([^\)]+)?\)|#foreach[\s]{0,}\(([^\)]+)?\)\.keyAs\(([^\)]+)?\)|{{([^}}]+)?}}|#\/if|#\/foreach/ig;
-  const regDirectEnd = /#\/if|#\/foreach/i;
-  const regDirectIf = /#if[\s]{0,}\(([^\)]+)?\)/i;
-  const regDirectElse = /#else[\s]{0,}/i;
-  const regDirectElseif = /#elseif[\s]{0,}\(([^\)]+)?\)/i;
-  const regDirectForArray = /#foreach[\s]{0,}\(([^\)]+)?\)\.indexAs\(([^\)]+)?\)/i;
-  const regDirectForJSON = /#foreach[\s]{0,}\(([^\)]+)?\)\.keyAs\(([^\)]+)?\)/i;
+  const regTpl = /\@#\@if[\s]{0,}\(([^\)]+)?\)|\@#\@elseif[\s]{0,}\(([^\)]+)?\)|\@#\@else|\(([^\)]+)?\)|\@#\@foreach[\s]{0,}\(([^\)]+)?\)\.indexAs\(([^\)]+)?\)|\@#\@foreach[\s]{0,}\(([^\)]+)?\)\.keyAs\(([^\)]+)?\)|{{([^}}]+)?}}|\@#\@\/if|\@#\@\/foreach/ig;
+  const regDirectEnd = /\@#\@\/if|\@#\@\/foreach/i;
+  const regDirectIf = /\@#\@if[\s]{0,}\(([^\)]+)?\)/i;
+  const regDirectElse = /\@#\@else[\s]{0,}/i;
+  const regDirectElseif = /\@#\@elseif[\s]{0,}\(([^\)]+)?\)/i;
+  const regDirectForArray = /\@#\@foreach[\s]{0,}\(([^\)]+)?\)\.indexAs\(([^\)]+)?\)/i;
+  const regDirectForJSON = /\@#\@foreach[\s]{0,}\(([^\)]+)?\)\.keyAs\(([^\)]+)?\)/i;
   const regData = /{{([^}}]+)?}}/i;
   const directiveStock = [];
   let funcCodeStr = "";

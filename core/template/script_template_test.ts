@@ -14,39 +14,39 @@ const { equal } = asserts;
 test(function testCompileTemplate() {
   const tpl = `
   <div>
-    #if( datalist && datalist.length > 0 )
+    @#@if( datalist && datalist.length > 0 )
       <ul>
-      #foreach(datalist).indexAs(i)
+      @#@foreach(datalist).indexAs(i)
         <li>{{i}}:{{datalist[i]}}</li>
-      #/foreach
+      @#@/foreach
       </ul>
-    #elseif( showOthers === true )
+    @#@elseif( showOthers === true )
       <p> others </p>
-    #else
+    @#@else
       <p> default </p>
-    #/if
+    @#@/if
 
-    #if( dataChildList && dataChildList.length > 0 )
+    @#@if( dataChildList && dataChildList.length > 0 )
       <div>
-      #foreach(dataChildList).indexAs(i)
+      @#@foreach(dataChildList).indexAs(i)
         <ul>
-        #if(dataChildList[i].children)
-          #foreach(dataChildList[i].children).indexAs(j)
+        @#@if(dataChildList[i].children)
+          @#@foreach(dataChildList[i].children).indexAs(j)
             <li>{{i}}-{{j}} : {{dataChildList[i].children[j].name}}</li>
-          #/foreach
-        #/if
+          @#@/foreach
+        @#@/if
         </ul>
-      #/foreach
+      @#@/foreach
       </div>
-    #/if
+    @#@/if
 
-    #if( datajson)
+    @#@if( datajson)
       <ul>
-      #foreach(datajson).keyAs(k)
+      @#@foreach(datajson).keyAs(k)
         <li>{{k}}:{{datajson[k]}}</li>
-      #/foreach
+      @#@/foreach
       </ul>
-    #/if
+    @#@/if
   </div>`;
   const data = {
     title: "helloworld",
