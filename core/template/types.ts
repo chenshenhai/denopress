@@ -11,8 +11,16 @@ export interface TypeTemplateUnit  {
 export enum TypeUnitASTPropType {
   TAG_START = "TAG_START",
   TAG_END = "TAG_END",
-  TAG_CLOSE = "TAG_CLOSE",
+  TAG_NO_CLOSE = "TAG_NO_CLOSE",
   TEXT = "TEXT",
+}
+
+export interface TypeASTAttr {
+  [key: string]: string|null|undefined;
+}
+
+export interface TypeASTDirect {
+  [key: string]: string;
 }
 
 export interface TypeUnitAST {
@@ -21,22 +29,14 @@ export interface TypeUnitAST {
   type: TypeUnitASTPropType;
   start: number;
   end: number;
+  attributes: TypeASTAttr;
+  directives: TypeASTDirect;
 }
-
-
-export interface TypeTagASTAttr {
-  [key: string]: string;
-}
-
-export interface TypeTagASTDirect {
-  [key: string]: string;
-}
-
 
 export interface TypeTagAST {
   tag: string | null;
   children: TypeTagAST[];
   text: string;
-  attributes: TypeTagASTAttr;
-  directives: TypeTagASTDirect;
+  attributes: TypeASTAttr;
+  directives: TypeASTDirect;
 }

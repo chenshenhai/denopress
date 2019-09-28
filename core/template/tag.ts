@@ -7,24 +7,24 @@
 import {
   TypeTagAST,
   TypeUnitAST,
-  TypeTagASTAttr,
-  TypeTagASTDirect,
+  TypeASTAttr,
+  TypeASTDirect,
   TypeUnitASTPropType,
 } from "./types.ts";
 import { isType } from "./../util/is_type.ts";
 import { legalTags, notClosingTags } from "./tag_info.ts";
 
-const { TAG_CLOSE, TAG_START, TAG_END, TEXT } = TypeUnitASTPropType;
+const { TAG_NO_CLOSE, TAG_START, TAG_END, TEXT } = TypeUnitASTPropType;
 
 export class Tag implements TypeTagAST {
   tag: string | null = null;
   children: TypeTagAST[];
   text: string;
-  attributes: TypeTagASTAttr;
-  directives: TypeTagASTDirect;
+  attributes: TypeASTAttr;
+  directives: TypeASTDirect;
 
   constructor(unitAst: TypeUnitAST) {
-    if(unitAst.type === TAG_START || unitAst.type === TAG_CLOSE) {
+    if(unitAst.type === TAG_START || unitAst.type === TAG_NO_CLOSE) {
       this.tag = unitAst.tagName;
     }
     this.text = unitAst.content;
@@ -48,7 +48,6 @@ function parseChildren (content: TypeTagAST[]) {
     return html;
   }
   for (let i = 0; i < content.length; i++) {
-    console.log('parseChildren ====== ', content.length)
     const item = content[i];
     if (isType.json(item) === true) {
       html += parseTag(item);

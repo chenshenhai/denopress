@@ -61,7 +61,7 @@ export class Template implements TypeTemplate {
     let rootTag = new Tag(rootUnit.getAST());
     let preTag: Tag = rootTag;
     let levelTagStack: Tag[] = [preTag];
-    const { TAG_START, TAG_CLOSE, TAG_END, TEXT, } = TypeUnitASTPropType;
+    const { TAG_START, TAG_NO_CLOSE, TAG_END, TEXT, } = TypeUnitASTPropType;
     
     // TODO
     unitList.forEach((unit: Unit, idx: number) => {
@@ -72,7 +72,7 @@ export class Template implements TypeTemplate {
         levelTagStack.push(tag);
         preTag.children.push(tag);
         level ++;
-      } else if (type === TAG_CLOSE || type === TEXT) {
+      } else if (type === TAG_NO_CLOSE || type === TEXT) {
         preTag.children.push(tag);
       } else if (type === TAG_END) {
         preTag.children.push(tag);

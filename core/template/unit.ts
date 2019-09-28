@@ -2,11 +2,12 @@ import {
   TypeTemplateUnit,
   TypeUnitAST,
   TypeUnitASTPropType,
+  TypeASTAttr,
 } from "./types.ts";
+import {
+  notClosingTags
+} from "./tag_info.ts";
 
-const closeTagList = [
-  "img", "br", "hr", "area", "base", "input", "link", "meta", "basefont", "param", "col", "frame", "embed" 
-];
 
 function getTagName(str: string): string|null {
   const reg = /<[\/]{0,1}([a-z0-9]{1,})[\S]{0,}[\/]{0,}[>]{0,1}/i;
@@ -18,6 +19,14 @@ function getTagName(str: string): string|null {
   }
 }
 
+function getAttrMap(tagHtml: string): TypeASTAttr {
+  const attrStr = tagHtml.replace(/^<[\/]{0,1}/, '').replace(/[\/]{0,1}>$/, '');
+  const attrMap = {};
+  const attrList = attrStr.split(' ');
+
+  return attrMap;
+}
+
 export class Unit implements TypeTemplateUnit {
 
   private _unitTpl: string;
@@ -27,8 +36,8 @@ export class Unit implements TypeTemplateUnit {
     this._unitTpl = unitTpl;
     let type: TypeUnitASTPropType = TypeUnitASTPropType.TEXT;
     const tagName = getTagName(unitTpl);
-    if(closeTagList.indexOf(tagName) >= 0) {
-      type = TypeUnitASTPropType.TAG_CLOSE;
+    if(notClosingTags[tagName] === true) {
+      type = TypeUnitASTPropType.TAG_NO_CLOSE;
     } else if (/^<[a-z]/i.test(unitTpl)) {
       type = TypeUnitASTPropType.TAG_START;
     } else if (/^<\//i.test(unitTpl)) {
@@ -40,7 +49,9 @@ export class Unit implements TypeTemplateUnit {
       content: "",
       type,
       start: -1,
-      end: -1
+      end: -1,
+      attributes: {},
+      directives: {},
     }
   }
 
