@@ -25,5 +25,8 @@ const tplStr: string = `
 
 const tpl = new Template(tplStr);
 const ast = tpl.getAST();
+const html = tpl.compileToHTML({});
 
 console.log(JSON.stringify(ast));
+console.log('----------------------');
+console.log(html);

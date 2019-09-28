@@ -5,19 +5,19 @@ import {
   TypeTagAST
 } from "./types.ts";
 import { Unit } from "./unit.ts";
-import { Tag } from "./tag.ts";
+import { Tag, parseTagAST } from "./tag.ts";
 
 export class Template implements TypeTemplate {
 
   private _tpl: string;
-  private _ast: TypeTagAST|null = null;
+  private _ast: TypeTagAST[]|null = null;
   private _unitList: Unit[];
 
   constructor(tpl: string) {
     this._tpl = tpl;
   }
 
-  public getAST(): TypeTagAST {
+  public getAST(): TypeTagAST[] {
     if (this._ast) {
       return this._ast;
     }
@@ -28,10 +28,11 @@ export class Template implements TypeTemplate {
   }
 
   public compileToHTML(data: object): string {
-    return '';
+    const html = parseTagAST(this._ast);
+    return html;
   }
 
-  private _compileToAST(): TypeTagAST|null {
+  private _compileToAST(): TypeTagAST[]|null {
     const tagReg = /<[^>^<]*>/ig;
     const unitList = [];
     this._tpl.replace(tagReg, (match: string, idx: number) => {
@@ -74,6 +75,7 @@ export class Template implements TypeTemplate {
       } else if (type === TAG_CLOSE || type === TEXT) {
         preTag.children.push(tag);
       } else if (type === TAG_END) {
+        preTag.children.push(tag);
         levelTagStack.pop();
         level --;
       }
@@ -85,10 +87,11 @@ export class Template implements TypeTemplate {
       }
     });
 
+    let ast = rootTag.children;
     // console.log('unitList = ', JSON.stringify(unitList));
     // console.log(' ------------------------------------- ')
     // console.log('rootTag = ', JSON.stringify(rootTag));
-    return rootTag;
+    return ast;
   }
 
 }

@@ -1,6 +1,6 @@
 
 export interface TypeTemplate {
-  getAST(): TypeTagAST;
+  getAST(): TypeTagAST|TypeTagAST[];
   compileToHTML(data: object): string;
 }
 
