@@ -32,7 +32,7 @@ test(async function server() {
   try {
     // 等待服务启动
     await startHTTPServer();
-    const res = await fetch(`${testSite}/page/testing`);
+    const res = await fetch(`${testSite}/page/theme_demo/testing`);
     const result = await res.text();
     const expectResult = `<html><head><title>testing</title></head><body><p>hello world</p></body></html>`;
     assert(equal(expectResult, result));

@@ -31,10 +31,11 @@ export class ThemeServer {
     
     this._app.use(staticServe(`${path}/static/`, {prefix: `/static/${themeName}`}))
     
-    router.get("/page/:pageName", async (ctx) =>{
+    router.get("/page/:themeName/:pageName", async (ctx) =>{
       const params = ctx.getData("router");
       const pageName: string = params.pageName;
-      const page: ReadPageResultType = this._readPageFileText(pageName);
+      const themeName: string = params.themeName;
+      const page: ReadPageResultType = this._readPageFileText(themeName, pageName);
       ctx.res.setStatus(page.status);
       ctx.res.setBody(page.content);
     });
@@ -54,13 +55,13 @@ export class ThemeServer {
     })
   }
 
-  private _readPageFileText(pageName): ReadPageResultType{
+  private _readPageFileText(themeName: string, pageName: string): ReadPageResultType{
     const path: string = this._opts.path;
     const result = {
       status: 404,
       content: `404: page/${pageName} Not Found!`,
     }
-    const fullPath: string = [path, 'page', pageName, 'page.html'].join('/');
+    const fullPath: string = [path, themeName, 'page', pageName, 'page.html'].join('/');
 
     try {
       const stat = Deno.lstatSync(fullPath);

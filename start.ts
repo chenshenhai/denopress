@@ -28,15 +28,15 @@ async function main() {
   const portalLog =  await bufReader.readLine();
   // console.log(portalLog);
 
-  const dashboardProcess = run({
-    args: ["deno", "run", "--allow-read", "--allow-run", "--allow-net", "server/dashboard/mod.ts", ".", "--cors"],
-    cwd: "./",
-    stdout: "piped"
-  })
-  const dashboardBuf = dashboardProcess.stdout;
-  const dashboardReader = new BufReader(dashboardBuf);
-  const dashboardLog = await dashboardReader.readLine();
-  // console.log(dashboardLog);
+  // const dashboardProcess = run({
+  //   args: ["deno", "run", "--allow-read", "--allow-run", "--allow-net", "server/dashboard/mod.ts", ".", "--cors"],
+  //   cwd: "./",
+  //   stdout: "piped"
+  // })
+  // const dashboardBuf = dashboardProcess.stdout;
+  // const dashboardReader = new BufReader(dashboardBuf);
+  // const dashboardLog = await dashboardReader.readLine();
+  // // console.log(dashboardLog);
 
   // reset process config
   const denopressConfigPath = './.denopress/config.json';
@@ -45,9 +45,9 @@ async function main() {
   config.process.portal = {
     pid: portalProcess.pid,
   };
-  config.process.dashboard = {
-    pid: dashboardProcess.pid,
-  };
+  // config.process.dashboard = {
+  //   pid: dashboardProcess.pid,
+  // };
 
 
   writeJsonSync(denopressConfigPath, config);

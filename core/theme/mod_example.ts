@@ -2,7 +2,7 @@ import { ThemeServer, ThemeServerOptsType } from "./server.ts";
 
 const addr = "127.0.0.1:5001";
 const cwd = Deno.cwd();
-const baseDir: string = [cwd, 'assets', 'theme_demo'].join("/");
+const baseDir: string = [cwd, 'assets', 'theme'].join("/");
 
 const opts: ThemeServerOptsType = {
   path: baseDir,
