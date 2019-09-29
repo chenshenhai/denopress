@@ -46,7 +46,7 @@ function escapeStr (str: string) {
   return str
 }
 
-function parseChildren (children: TypeTagAST[], data: TypeData) {
+function parseChildren (children: TypeTagAST[]) {
   let html = '';
   if (isType.array(children) !== true) {
     return html;
@@ -54,7 +54,7 @@ function parseChildren (children: TypeTagAST[], data: TypeData) {
   for (let i = 0; i < children.length; i++) {
     const item = children[i];
     if (isType.json(item) === true) {
-      html += parseTag(item, data);
+      html += parseTag(item);
     } else if (isType.string(item)) {
       html += item;
     }
@@ -82,7 +82,7 @@ function parseAttribute (attribute: object) {
 
 
 const scriptTplKeyword = '@#@';
-function parseTag (ast: TypeTagAST, data: TypeData): string {
+function parseTag (ast: TypeTagAST): string {
 
   let html = '';
   if (isType.json(ast) !== true) {
@@ -96,7 +96,7 @@ function parseTag (ast: TypeTagAST, data: TypeData): string {
     if (notClosingTags[tagName] === true) {
       html = `<${tagName} ${attrStr} />${ast.text}`;
     } else {
-      html = `<${tagName} ${attrStr}>${ast.text}${parseChildren(children, data)}</${tagName}>`;
+      html = `<${tagName} ${attrStr}>${ast.text}${parseChildren(children)}</${tagName}>`;
     }
 
     const directives = ast.directives;
@@ -133,12 +133,12 @@ function parseTag (ast: TypeTagAST, data: TypeData): string {
 }
 
 
-export function parseTagASTToScriptTpl (ast: TypeTagAST|TypeTagAST[], data: TypeData): string {
+export function parseTagASTToScriptTpl (ast: TypeTagAST|TypeTagAST[]): string {
   let html = '';
   if (isType.json(ast)) {
-    html = parseTag(ast as TypeTagAST, data)
+    html = parseTag(ast as TypeTagAST)
   } else if (isType.array(ast)) {
-    html = parseChildren(ast as TypeTagAST[], data)
+    html = parseChildren(ast as TypeTagAST[])
   }
   return html
 }

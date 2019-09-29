@@ -1,9 +1,8 @@
 #! deno run --importmap ./import_map.json --allow-all  start.ts
 
 
-import { bufio, readJSON, writeJSON } from "./deps.ts";
-const { readJsonSync } = readJSON;
-const { writeJsonSync } = writeJSON;
+import { bufio, fs } from "./deps.ts";
+const { readJsonSync, writeJsonSync } = fs;
 
 const run = Deno.run;
 const { BufReader } = bufio;

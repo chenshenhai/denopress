@@ -61,7 +61,7 @@ export class ThemeServer {
       status: 404,
       content: `404: page/${pageName} Not Found!`,
     }
-    const fullPath: string = [path, themeName, 'page', pageName, 'page.html'].join('/');
+    const fullPath: string = [path, themeName, 'pages', pageName, 'page.html'].join('/');
 
     try {
       const stat = Deno.lstatSync(fullPath);

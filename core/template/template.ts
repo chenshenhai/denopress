@@ -13,9 +13,6 @@ export class Template implements TypeTemplate {
 
   private _tpl: string;
   private _ast: TypeTagAST[]|null = null;
-  private _unitList: Unit[];
-
-  private _scriptTpl: string = '';
   private _scriptFunc: Function|null = null;
 
   constructor(tpl: string) {
@@ -23,16 +20,24 @@ export class Template implements TypeTemplate {
   }
 
   public compile(data: object): string {
-    const ast = this.getAST();
-    const scriptTpl = parseTagASTToScriptTpl(ast, data);
-    const scriptFunc = compileToFunction(scriptTpl);
+    const scriptFunc = this.compileToFunc();
     const html = scriptFunc(data)
     return html;
   }
 
+  public compileToFunc(): Function {
+    if (this._scriptFunc) {
+      return this._scriptFunc;
+    }
+    const ast = this._getAST();
+    const scriptTpl = parseTagASTToScriptTpl(ast);
+    const scriptFunc = compileToFunction(scriptTpl);
+    this._scriptFunc = scriptFunc;
+    return scriptFunc;
+  }
 
 
-  private getAST(): TypeTagAST[] {
+  private _getAST(): TypeTagAST[] {
     if (this._ast) {
       return this._ast;
     }
@@ -51,7 +56,6 @@ export class Template implements TypeTemplate {
       unitList.push(unit);
       return match;
     });
-
     
     unitList.forEach((item: Unit, idx: number) => {
       const nextUnit = unitList[idx + 1];

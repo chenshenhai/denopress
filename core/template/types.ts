@@ -1,6 +1,7 @@
 
 export interface TypeTemplate {
   compile(data: object): string;
+  compileToFunc(): Function;
 }
 
 export interface TypeTemplateUnit  {
