@@ -7,7 +7,7 @@ import {
 
 export interface ThemeServerOptsType {
   path: string;
-  // inject: ThemeServiceType;
+  themeList?: string[];
 }
 
 interface ReadPageResultType {

@@ -1,1 +1,10 @@
-{"process":{"portal":{"pid":-1},"dashboard":{"pid":-1}}}
+{
+  "process": {
+    "server": {
+      "pid": 5091
+    }
+  },
+  "theme": [
+    "portal"
+  ]
+}
