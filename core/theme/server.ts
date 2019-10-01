@@ -29,8 +29,8 @@ export class ThemeServer {
     const path: string = this._opts.path;
     const themeName: string = path.split('/').pop();
     
-    this._app.use(staticServe(`${path}/[a-zA-Z\-\_]/static/`, {
-      prefix: '/static/[a-zA-Z\-\_]{0,}/',
+    this._app.use(staticServe(`${path}/$0/static/`, {
+      prefix: '^/static/([a-zA-Z\-\_]{1,})/',
       regular: true,
     }))
     

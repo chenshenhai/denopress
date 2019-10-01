@@ -10,7 +10,8 @@ const lstatSync = Deno.lstatSync
 const decoder = new TextDecoder();
 
 interface ServeOptions {
-  prefix: string;
+  prefix?: string;
+  regular?: boolean;
 }
 
 /**
@@ -29,10 +30,17 @@ function renderFile( fullFilePath: string) {
  *  opts.prefix {string}
  * @param {string}
  */
-function pathFilter(path: string, opts?: ServeOptions) {
-  const prefix = (opts && opts.prefix) ? opts.prefix : "";
+function pathFilter(path: string, opts: ServeOptions = {}) {
+  const prefix: string = (opts && opts.prefix) ? opts.prefix : "";
+  const regular: boolean = (opts && opts.regular) ? opts.regular : false;
   let result = "";
-  result = path.replace(prefix, "");
+  if (regular === true) {
+    const prefixReg = new RegExp(prefix)
+    result = path.replace(prefixReg, "");
+  } else {
+    result = path.replace(prefix, "");
+  }
+  
   // 过滤掉路径里 ".." "//" 字符串，防止越级访问文件夹
   result = result.replace(/[\.]{2,}/ig, "").replace(/[\/]{2,}/ig, "/");
   return result;
@@ -44,15 +52,39 @@ function pathFilter(path: string, opts?: ServeOptions) {
  *  opts.prefix {string}
  * @param {function}
  */
-function serve(baseDir: string, options?: ServeOptions): Function {
+function serve(baseDir: string, options: ServeOptions = {}): Function {
+  const { prefix = '', regular = false, } = options || {};
+
+  let isLegalPath: Function = function(pathname) {
+    return options && typeof prefix === "string" && pathname.indexOf(options.prefix) === 0;
+  }
+
+  let prefixReg:RegExp|null = null;
+  if (regular === true && typeof prefix === 'string') {
+    prefixReg = new RegExp(prefix);
+    isLegalPath = function(pathname) {
+      return prefixReg.test(pathname);
+    }
+  }
+  
+
   return async function(ctx: Context, next) {
     await next();
     const {req, res} = ctx;
     const pathname = req.getPath();
-
-    if ( options && typeof options.prefix === "string" && pathname.indexOf(options.prefix) === 0 ) {
+    
+    if ( options && isLegalPath(pathname) ) {
       const path = pathFilter(pathname, options);
-      const fullPath = `${baseDir}${path}`;
+      let fullPath = `${baseDir}${path}`;
+      if (regular === true) {
+        const matchList = pathname.match(prefixReg);
+        Array.isArray(matchList) && matchList.forEach((m, idx) => {
+          if (idx > 0 && m && typeof m === 'string') {
+            fullPath = fullPath.replace(`\$${idx - 1}`, m);
+          }
+        })
+      }
+
       let result = `${path} is not found!`;
       try {
         const stat = lstatSync(fullPath);
@@ -61,7 +93,7 @@ function serve(baseDir: string, options?: ServeOptions): Function {
           res.setStatus(200);
         }
       } catch (err) {
-        // throw new Error(err);
+        throw new Error(err);
       }
       res.setBody(`${result}`);
       res.flush();

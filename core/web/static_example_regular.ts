@@ -7,8 +7,9 @@ const app = new Application();
 const addr = "127.0.0.1:5001";
 const baseDir = [cwd(), "assets"].join("/");
 
-const staticMiddleware = staticServe(baseDir, {
-  prefix: `/static-file`
+const staticMiddleware = staticServe(`${baseDir}/$0/`, {
+  prefix: `^/([a-z]{1,})/static-file/`,
+  regular: true,
 });
 
 app.use(staticMiddleware);
