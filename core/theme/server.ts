@@ -5,24 +5,16 @@ import {
   staticServe,
 } from "./../web/mod.ts";
 import { ThemeLoader } from "./loader.ts";
+import { TypeReadPageResult, TypeThemeServerOpts } from "./types.ts"
 
-export interface ThemeServerOptsType {
-  path: string;
-  themeList?: string[];
-}
-
-interface ReadPageResultType {
-  status: number;
-  content: string;
-}
 
 export class ThemeServer {
   private _addr: string;
-  private _opts: ThemeServerOptsType;
+  private _opts: TypeThemeServerOpts;
   private _app: Application;
   private _loader: ThemeLoader|null = null;
 
-  constructor(addr: string, opts: ThemeServerOptsType) {
+  constructor(addr: string, opts: TypeThemeServerOpts) {
     this._addr = addr;
     this._opts = opts;
     this._app = new Application();
@@ -37,7 +29,7 @@ export class ThemeServer {
       const params = ctx.getData("router");
       const pageName: string = params.pageName;
       const themeName: string = params.themeName;
-      const page: ReadPageResultType = this._readPageFileText(themeName, pageName);
+      const page: TypeReadPageResult = this._readPageFileText(themeName, pageName);
       ctx.res.setStatus(page.status);
       ctx.res.setBody(page.content);
     });
@@ -66,7 +58,7 @@ export class ThemeServer {
     })
   }
 
-  private _readPageFileText(themeName: string, pageName: string): ReadPageResultType{
+  private _readPageFileText(themeName: string, pageName: string): TypeReadPageResult{
     const path: string = this._opts.path;
     const result = {
       status: 404,

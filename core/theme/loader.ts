@@ -1,48 +1,19 @@
 import { fs } from "./../../deps.ts";
 import { Template } from "./../template/mod.ts";
+import {
+  TypeThemeConfig,
+  TypeThemePageController,
+  TypeThemePageScript,
+  TypeTheme,
+  TypeThemeLoader,
+  TypeThemeLoaderOpts,
+  TypeThemeListLoaderOpts,
+  TypeThemeListLoader,
+} from "./types.ts";
 
 const { readJsonSync, readFileStrSync } = fs;
 
-export interface TypeThemeConfig {
-  name: string;
-  version: string;
-  pages: string[];
-}
-
-export interface TypeThemePageController {
-  data(): {
-    [key: string]: any;
-  };
-}
-
-export interface TypeThemePageScript {
-  path: string;
-  template: Function;
-  controller: TypeThemePageController;
-}
-
-export interface TypeTheme {
-  config: TypeThemeConfig;
-  pageScriptMap: Map<string, TypeThemePageScript>;
-}
-
-interface TypeThemeLoader {
-  loadTheme(): Promise<TypeTheme>;
-}
-
-
-export interface TypeThemeLoaderOpts {
-  path: string;
-}
-
-export interface TypeThemeListLoaderOpts {
-  basePath: string;
-  themeList: string[];
-}
-
-export interface TypeThemeListLoader {
-  loadThemeList(): Promise<TypeTheme[]>
-}
+ 
 
 export class ThemeListLoader implements TypeThemeListLoader {
 
