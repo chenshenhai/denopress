@@ -35,6 +35,51 @@ export interface TypeThemeLoaderOpts {
   path: string;
 }
 
+export interface TypeThemeListLoaderOpts {
+  basePath: string;
+  themeList: string[];
+}
+
+export interface TypeThemeListLoader {
+  loadThemeList(): Promise<TypeTheme[]>
+}
+
+export class ThemeListLoader implements TypeThemeListLoader {
+
+  private _opts: TypeThemeListLoaderOpts;
+  private _loaderList: ThemeLoader[];
+
+  constructor(opts: TypeThemeListLoaderOpts) {
+    this._opts = opts;
+    this._loaderList = opts.themeList.map((themeName) => {
+      const path = this._fullPath([themeName]);
+      const loader: ThemeLoader = new ThemeLoader({ path, });
+      return loader;
+    });
+  }
+
+  public async loadThemeList(): Promise<TypeTheme[]> {
+    const list: TypeTheme[] = [];
+    // return new Promise((resolve, reject) => { });
+    for await(const theme of this._asyncGenerator(this._loaderList) ) {
+      list.push(theme);
+    }
+    return list;
+  }
+
+  private async * _asyncGenerator(loaderList: ThemeLoader[]) {
+    for (let i = 0; i < loaderList.length; i++) {
+      yield loaderList[i].loadTheme();
+    }
+  }
+
+  private _fullPath(pathList: string[]): string {
+    const path: string = this._opts.basePath;
+    const fullPath: string = [ ...[path], ...pathList].join('/');
+    return fullPath;
+  }
+}
+
 export class ThemeLoader implements TypeThemeLoader {
   private _opts: TypeThemeLoaderOpts;
   // private _config: TypeThemeConfig;
@@ -45,6 +90,19 @@ export class ThemeLoader implements TypeThemeLoader {
 
   public async loadTheme(): Promise<TypeTheme> {
     const config: TypeThemeConfig = this._loadConfig();
+
+    return new Promise((resolve, reject) => {
+      this._loadPageScriptMap(config).then((pageScriptMap) => {
+        resolve({
+          config,
+          pageScriptMap,
+        })
+      }).catch((err) => {
+        console.log(err);
+        reject(err);
+      })
+    })
+
     const pageScriptMap: Map<string, TypeThemePageScript> = await this._loadPageScriptMap(config);
     return Promise.resolve({
       config,

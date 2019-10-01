@@ -1,8 +1,7 @@
 #! deno run --importmap ./import_map.json --allow-all  start.ts
 
-import { readJSON, writeJSON } from "./deps.ts";
-const { readJsonSync } = readJSON;
-const { writeJsonSync } = writeJSON;
+import { fs } from "./../deps.ts";
+const { readJsonSync, writeJsonSync } = fs;
 
 interface DenoPressConfig {
   process: {

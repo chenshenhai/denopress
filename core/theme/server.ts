@@ -4,6 +4,7 @@ import {
   Context,
   staticServe,
 } from "./../web/mod.ts";
+import { ThemeLoader } from "./loader.ts";
 
 export interface ThemeServerOptsType {
   path: string;
@@ -19,6 +20,7 @@ export class ThemeServer {
   private _addr: string;
   private _opts: ThemeServerOptsType;
   private _app: Application;
+  private _loader: ThemeLoader|null = null;
 
   constructor(addr: string, opts: ThemeServerOptsType) {
     this._addr = addr;
@@ -44,6 +46,15 @@ export class ThemeServer {
 
   async start(): Promise<void> {
     const addr: string = this._addr;
+    // let themeList: string[] = [];
+    // if (this._opts.themeList) {
+    //   themeList = this._opts.themeList;
+    // }
+    // const loader = new ThemeLoader({
+    //   path: [this._opts.path, 'themes'].join('/'),
+    //   themeList,
+    // });
+    // const themeMap = await loader.loadTheme();
     return new Promise((resolve, reject) => {
       try {
         this._app.listen(addr, () => {
