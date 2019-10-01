@@ -15,7 +15,7 @@ let httpServer;
 
 async function startHTTPServer() {
   httpServer = run({
-    args: ["deno", "run", "--allow-net", "--allow-read", "./mod_example.ts", ".", "--cors"],
+    args: ["deno", "run", "--allow-all", "./mod_example.ts", ".", "--cors"],
     stdout: "piped"
   });
   const buffer = httpServer.stdout;
@@ -28,15 +28,23 @@ function closeHTTPServer() {
   httpServer.stdout.close();
 }
 
+function sleep(time = 1000) {
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      resolve();
+    }, time)
+  })
+}
+
 test(async function server() {
   try {
-    // 等待服务启动
     await startHTTPServer();
+    await sleep(2000);
     const res = await fetch(`${testSite}/page/theme_demo/testing`);
     const result = await res.text();
-    const expectResult = `<html><head><title>testing</title></head><body><p>hello world</p></body></html>`;
+    const expectResult = `<html ><head ><title >testing</title></head><body ><p >hello world</p></body></html>`;
     assert(equal(expectResult, result));
-    
+
     closeHTTPServer();
   } catch (err) {
     closeHTTPServer();
