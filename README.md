@@ -1,5 +1,8 @@
 # denopress
 
+[![Build Status](https://dev.azure.com/denopress/denopress/_apis/build/status/denopress.denopress?branchName=master)](https://dev.azure.com/denopress/denopress/_build/latest?definitionId=1&branchName=master)
+
+
 ## Installation
 
 ```sh
