@@ -19,10 +19,25 @@ const testUnitRunList = [
     stdout: "piped"
   },
   {
-    args: ["deno", "run", "--allow-run", "--allow-net", "mod_test.ts", ".", "--cors"],
+    args: ["deno", "run", "--allow-run", "--allow-net", "mod_test.ts", "--allow-read", ".", "--cors"],
     cwd: "./core/theme/",
     stdout: "piped"
   },
+  {
+    args: ["deno", "run", "--allow-run", "--allow-net", "loader_test.ts", "--allow-read", ".", "--cors"],
+    cwd: "./core/theme/",
+    stdout: "piped"
+  },
+  {
+    args: ["deno", "run", "--allow-run", "--allow-net", "--allow-read", "mod_test.ts", ".", "--cors"],
+    cwd: "./core/template/",
+    stdout: "piped"
+  },
+  {
+    args: ["deno", "run", "--allow-run", "--allow-net", "--allow-read", "script_template_test.ts", ".", "--cors"],
+    cwd: "./core/template/",
+    stdout: "piped"
+  }
 ]
 
 async function runUnitTest(opts: Deno.RunOptions): Promise<string> {
