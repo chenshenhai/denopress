@@ -6,6 +6,10 @@ const baseDir: string = [cwd, 'assets', 'themes'].join("/");
 
 const opts: TypeThemeServerOpts = {
   path: baseDir,
+  themeList: [
+    'theme_demo',
+    'theme_script',
+  ]
 }
 const server = new ThemeServer(addr, opts)
 

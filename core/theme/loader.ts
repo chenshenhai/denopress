@@ -1,5 +1,6 @@
 import { fs } from "./../../deps.ts";
 import { Template } from "./../template/mod.ts";
+import { isType } from "./../util/is_type.ts";
 import {
   TypeThemeConfig,
   TypeThemePageController,
@@ -13,13 +14,11 @@ import {
 
 const { readJsonSync, readFileStrSync } = fs;
 
- 
 
 export class ThemeListLoader implements TypeThemeListLoader {
 
   private _opts: TypeThemeListLoaderOpts;
   private _loaderList: ThemeLoader[];
-
   constructor(opts: TypeThemeListLoaderOpts) {
     this._opts = opts;
     this._loaderList = opts.themeList.map((themeName) => {
@@ -27,6 +26,19 @@ export class ThemeListLoader implements TypeThemeListLoader {
       const loader: ThemeLoader = new ThemeLoader({ path, });
       return loader;
     });
+  }
+
+  public async loadThemeMap(): Promise<Map<string, TypeTheme>> {
+    const themeList = await this.loadThemeList();
+    if (isType.error(themeList) === true) {
+      return Promise.reject(themeList);
+    };
+    const map: Map<string, TypeTheme> = new Map();
+    themeList.forEach((theme: TypeTheme) => {
+      const name = theme.config.name;
+      map.set(name, theme);
+    });
+    return Promise.resolve(map);
   }
 
   public async loadThemeList(): Promise<TypeTheme[]> {

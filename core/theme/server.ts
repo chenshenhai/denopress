@@ -4,15 +4,21 @@ import {
   Context,
   staticServe,
 } from "./../web/mod.ts";
-import { ThemeLoader } from "./loader.ts";
-import { TypeReadPageResult, TypeThemeServerOpts } from "./types.ts"
+import { ThemeListLoader } from "./loader.ts";
+import {
+  TypeTheme,
+  TypeReadPageResult,
+  TypeThemeServerOpts,
+  TypeThemePageScript,
+} from "./types.ts"
 
 
 export class ThemeServer {
   private _addr: string;
   private _opts: TypeThemeServerOpts;
   private _app: Application;
-  private _loader: ThemeLoader|null = null;
+  private _loader: ThemeListLoader;
+  private _themeMap: Map<string, TypeTheme> = new Map();
 
   constructor(addr: string, opts: TypeThemeServerOpts) {
     this._addr = addr;
@@ -23,60 +29,69 @@ export class ThemeServer {
     const path: string = this._opts.path;
     const themeName: string = path.split('/').pop();
     
-    this._app.use(staticServe(`${path}/static/`, {prefix: `/static/${themeName}`}))
+    this._app.use(staticServe(`${path}/[a-zA-Z\-\_]/static/`, {
+      prefix: '/static/[a-zA-Z\-\_]{0,}/',
+      regular: true,
+    }))
     
     router.get("/page/:themeName/:pageName", async (ctx) =>{
       const params = ctx.getData("router");
       const pageName: string = params.pageName;
       const themeName: string = params.themeName;
-      const page: TypeReadPageResult = this._readPageFileText(themeName, pageName);
+      const page: TypeReadPageResult = await this._readPageContent(themeName, pageName);
       ctx.res.setStatus(page.status);
       ctx.res.setBody(page.content);
     });
     this._app.use(router.routes());
+
+    let themeNameList: string[] = [];
+    if (this._opts.themeList) {
+      themeNameList = this._opts.themeList;
+    }
+    const loader = new ThemeListLoader({
+      basePath: [this._opts.path].join('/'),
+      themeList: themeNameList,
+    });
+    this._loader = loader;
   }
 
   async start(): Promise<void> {
     const addr: string = this._addr;
-    // let themeList: string[] = [];
-    // if (this._opts.themeList) {
-    //   themeList = this._opts.themeList;
-    // }
-    // const loader = new ThemeLoader({
-    //   path: [this._opts.path, 'themes'].join('/'),
-    //   themeList,
-    // });
-    // const themeMap = await loader.loadTheme();
     return new Promise((resolve, reject) => {
-      try {
+      this._loader.loadThemeMap().then((themeMap) => {
+        this._themeMap = themeMap;
         this._app.listen(addr, () => {
           resolve();
         })
-      } catch (err) {
+      }).catch((err) => {
         reject(err);
-      }
+      });
     })
   }
 
-  private _readPageFileText(themeName: string, pageName: string): TypeReadPageResult{
+  private async _readPageContent(themeName: string, pageName: string): Promise<TypeReadPageResult> {
     const path: string = this._opts.path;
     const result = {
       status: 404,
-      content: `404: page/${pageName} Not Found!`,
+      content: `404: page/${themeName}/${pageName} Not Found!`,
     }
-    const fullPath: string = [path, themeName, 'pages', pageName, 'page.html'].join('/');
+    
+    const themeMap: Map<string, TypeTheme> = this._themeMap;
+    const theme: TypeTheme = themeMap.get(themeName);
 
-    try {
-      const stat = Deno.lstatSync(fullPath);
-      const decoder = new TextDecoder();
-      if (stat.isFile() === true) {
-        const bytes = Deno.readFileSync(fullPath);
-        const content = decoder.decode(bytes);
-        result.content = content;
+    if (theme) {
+      const pageMap: Map<string, TypeThemePageScript> = theme.pageScriptMap;
+      const scriptMap = pageMap.get(`pages/${pageName || ''}`);
+      
+      if (scriptMap) {
+        const pageData = await scriptMap.controller.data();
+        const pageContent = scriptMap.template(pageData);
         result.status = 200;
+        result.content = pageContent;
       }
-    } catch (err) {
-      // TODO;
+    } else {
+      result.status = 404;
+      result.content = `404: theme/${themeName} Not Found!`;
     }
     return result;
   }

@@ -21,6 +21,7 @@ export interface TypeTheme {
   pageScriptMap: Map<string, TypeThemePageScript>;
 }
 
+
 export interface TypeThemeLoader {
   loadTheme(): Promise<TypeTheme>;
 }

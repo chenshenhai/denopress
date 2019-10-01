@@ -51,6 +51,10 @@ export const isType = {
 
   imageData(data: any) {
     return parsePrototype(data) === 'ImageData';
+  },
+
+  error(data: any) {
+    return parsePrototype(data) === 'Error';
   }
   
 };
