@@ -29,7 +29,7 @@ class Application {
     const server = new Server();
     this._server = server;
     
-    server.createServer(async function(ctx) {
+    server.createServer(async function(ctx: Context) {
       const middlewares = that._middlewares;
       try {
         await compose(middlewares)(ctx);
@@ -51,7 +51,7 @@ class Application {
   private async _onError(err: Error, ctx: Context) {
     console.log(err);
     if (ctx instanceof Context) {
-      ctx.res.setBody(err.stack);
+      ctx.res.setBody(err.stack as string);
       ctx.res.setStatus(500);
       await ctx.res.flush();
     } else {

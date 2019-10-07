@@ -11,21 +11,27 @@ const run = Deno.run;
 
 const testSite = "127.0.0.1:5001";
 
-let httpServer;
+let httpServer: Deno.Process;
 async function startHTTPServer() {
   httpServer = run({
     args: ["deno", "run", "--allow-net", "./mod_example.ts", ".", "--cors"],
     stdout: "piped"
   });
-  const buffer = httpServer.stdout;
-  const bufReader = new BufReader(buffer);
-  const line = await bufReader.readLine();
+  let line: string|null = null;
+  const buffer: Deno.ReadCloser|undefined = httpServer.stdout;
+  if (buffer) {
+    const bufReader = new BufReader(buffer);
+    let rsline = await bufReader.readLine();
+    if (rsline) {
+      line = rsline.toString();
+    }
+  }
   equal(`listening on ${testSite}`, line)
 }
 
 function closeHTTPServer() {
   httpServer.close();
-  httpServer.stdout.close();
+  httpServer.stdout && httpServer.stdout.close();
 }
 
 test(async function server() {

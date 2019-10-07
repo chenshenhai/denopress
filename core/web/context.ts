@@ -1,6 +1,5 @@
 import { server } from "./../../deps.ts";
 
-
 export class ContextRequest {
   private _sReq: server.ServerRequest;
   private _isFinish: boolean = false;
@@ -21,7 +20,7 @@ export class ContextRequest {
 
   getAllHeaders(): object{
     const headers = this._sReq.headers;
-    const allHeaders = {};
+    const allHeaders: { [key: string]: string } = {};
     for (let [key, val] of headers.entries()) {
       allHeaders[key] = val;
     }
@@ -55,7 +54,7 @@ export class ContextRequest {
 
   getAllURLParams(): object {
     const searchParams: URLSearchParams = this._urlSearchParams;
-    const params = {};
+    const params: {[key: string]: string} = {};
 
     // for (let key of searchParams.keys()) {
     //   const val = searchParams.get(val);
@@ -119,7 +118,7 @@ export class ContextResponse {
     return true;
   }
 
-  getHeader(key: string): string|undefined {
+  getHeader(key: string): string|null {
     return this._headers.get(key);
   }
 
@@ -182,7 +181,7 @@ export class Context {
     this._dataMap.set(key, val);
   }
 
-  public getData(key: string): object|string|number {
+  public getData(key: string): object|string|number|undefined {
     const val = this._dataMap.get(key);
     return val;
   }
