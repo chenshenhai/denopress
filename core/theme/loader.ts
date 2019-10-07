@@ -138,7 +138,7 @@ export class ThemeLoader implements TypeThemeLoader {
 
   private _fullPath(pathList: string[]): string {
     const path: string = this._opts.path;
-    const fullPath: string = [...['/'], ...[path], ...pathList].join('/');
+    const fullPath: string = [...[path], ...pathList].join('/');
     return fullPath;
   }
   
