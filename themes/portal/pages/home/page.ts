@@ -1,5 +1,5 @@
 /// <reference path="./../lib.d.ts" />
-export default $ThemePage({
+export default $Theme.Page({
   data() {
     return {};
   }

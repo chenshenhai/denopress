@@ -44,6 +44,13 @@ export interface TypeThemeListLoader {
 export interface TypeThemeServerOpts {
   path: string;
   themeList?: string[];
+  themeServiceAPI?: {
+    [key: string]: TypeThemeAPI
+  }
+}
+
+export interface TypeThemeAPI {
+  [key: string]: Function;
 }
 
 export interface TypeReadPageResult {
