@@ -5,6 +5,8 @@ import * as fs from "https://deno.land/std@v0.19.0/fs/mod.ts";
 import * as testing from "https://deno.land/std@v0.19.0/testing/mod.ts";
 import * as asserts from "https://deno.land/std@v0.19.0/testing/asserts.ts";
 
+// import * as mysql from "https://deno.land/x/mysql@1.2.3/mod.ts";
+
 export {
   server,
   cookie,
@@ -12,4 +14,5 @@ export {
   testing,
   asserts,
   fs,
+  // mysql,
 }
