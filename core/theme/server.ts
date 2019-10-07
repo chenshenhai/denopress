@@ -10,6 +10,8 @@ import {
   TypeReadPageResult,
   TypeThemeServerOpts,
   TypeThemePageScript,
+  TypeThemeAPI,
+  TypeThemeServiceAPI,
 } from "./types.ts"
 
 
@@ -42,6 +44,17 @@ export class ThemeServer {
       ctx.res.setStatus(page.status);
       ctx.res.setBody(page.content);
     });
+    if (this._opts.themeServiceAPI) {
+      router.get("/api/:service/:api", async (ctx) => {
+        const params = ctx.getData("router");
+        const urlParams = ctx.req.getAllURLParams();
+        const api: TypeReadPageResult = await this._getServiceAPIContent(urlParams, params.service, params.api);
+        ctx.res.setStatus(api.status);
+        ctx.res.setBody(api.content);
+      });
+    }
+
+
     this._app.use(router.routes());
 
     let themeNameList: string[] = [];
@@ -91,7 +104,31 @@ export class ThemeServer {
       }
     } else {
       result.status = 404;
-      result.content = `404: theme/${themeName} Not Found!`;
+      result.content = `404: theme/${themeName} is not found!`;
+    }
+    return result;
+  }
+
+  private async _getServiceAPIContent(params: object, serviceName: string, apiName: string): Promise<TypeReadPageResult> {
+    const path: string = this._opts.path;
+    const result = {
+      status: 404,
+      content: `404: api/${serviceName}/${apiName} is not found!`,
+    }
+    
+    const themeServiceAPI: TypeThemeServiceAPI|undefined = this._opts.themeServiceAPI;
+    const service = themeServiceAPI[serviceName];
+
+    if (service) {
+      const api = service[apiName];
+      if (typeof api === 'function') {
+        const apiContent = await api(params);
+        result.status = 200;
+        result.content = JSON.stringify(apiContent);
+      }
+    } else {
+      result.status = 404;
+      result.content = `404: api/${serviceName} is not found!`;
     }
     return result;
   }
