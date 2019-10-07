@@ -54,11 +54,23 @@ export class ContextRequest {
   }
 
   getAllURLParams(): object {
-    const searchParams = this._urlSearchParams;
+    const searchParams: URLSearchParams = this._urlSearchParams;
     const params = {};
-    for (let [key, val] of searchParams.entries()) {
+
+    // for (let key of searchParams.keys()) {
+    //   const val = searchParams.get(val);
+    //   params[key] = val;
+    // }
+    
+    const queryStr: string = searchParams.toString();
+    const queryStrList: string[] = queryStr.split('&');
+    queryStrList.forEach((str: string) => {
+      const data = str.split('=');
+      const key: string = data[0];
+      const val: string = data[1];
       params[key] = val;
-    }
+    })
+
     return params;
   }
 

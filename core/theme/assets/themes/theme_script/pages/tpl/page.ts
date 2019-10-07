@@ -1,5 +1,5 @@
-/// <reference path="./../../../../../page.d.ts" />
-export default $ThemePage({
+/// <reference path="./../../../../../theme.d.ts" />
+export default $Theme.Page({
   data() {
     return {
       list: [ 'item-001', 'item-002', 'item-003', 'item-004'],

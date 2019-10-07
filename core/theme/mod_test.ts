@@ -39,7 +39,7 @@ function sleep(time = 1000) {
 test(async function server() {
   try {
     await startHTTPServer();
-    await sleep(2000);
+    await sleep(3000);
     const res = await fetch(`${testSite}/page/theme_demo/testing`);
     const result = await res.text();
     const expectResult = `<html ><head ><title >testing</title></head><body ><p >hello world</p></body></html>`;

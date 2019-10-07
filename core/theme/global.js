@@ -1,5 +1,5 @@
-import { ThemePage } from "./page.ts";
+import { $Theme } from "./theme.ts";
 
-if (!window['$ThemePage']) {
-  window['$ThemePage'] = ThemePage;
+if (!window['$Theme']) {
+  window['$Theme'] = $Theme;
 }
