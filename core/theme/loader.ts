@@ -117,6 +117,8 @@ export class ThemeLoader implements TypeThemeLoader {
       const tpl: Template = new Template(tplText);
       const tplFunc: Function = tpl.compileToFunc();
       console.log(`[Denopress]: load theme ${fullPathCtrl}`);
+      // TODO
+      import.meta.url = '';
       import(fullPathCtrl).then((mod) => {
         resolve({
           path: pageName,
