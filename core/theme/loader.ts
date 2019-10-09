@@ -110,15 +110,13 @@ export class ThemeLoader implements TypeThemeLoader {
 
   private _loadPageScript(pageName: string): Promise<TypeThemePageScript> {
     const fullPathTpl: string = this._fullPath([pageName, 'page.html']);
-    const fullPathCtrl: string = this._fullPath([pageName, 'page.ts']);
+    const fullPathCtrl: string = this._fullPath([pageName, 'page.ts'], true);
     return new Promise((resolve, reject) => {
       console.log(`[Denopress]: load theme ${fullPathTpl}`);
       const tplText: string = readFileStrSync(fullPathTpl, { encoding: "utf8" });
       const tpl: Template = new Template(tplText);
       const tplFunc: Function = tpl.compileToFunc();
       console.log(`[Denopress]: load theme ${fullPathCtrl}`);
-      // TODO
-      import.meta.url = '';
       import(fullPathCtrl).then((mod) => {
         resolve({
           path: pageName,
@@ -138,9 +136,13 @@ export class ThemeLoader implements TypeThemeLoader {
     return config;
   }
 
-  private _fullPath(pathList: string[]): string {
+  private _fullPath(pathList: string[], localFile?: boolean): string {
     const path: string = this._opts.path;
-    const fullPath: string = [...[path], ...pathList].join('/');
+    const fileBase: string[] = [];
+    if (localFile === true) {
+      fileBase.push('file:/');
+    } 
+    const fullPath: string = [...fileBase, ...[path], ...pathList].join('/');
     return fullPath;
   }
   
