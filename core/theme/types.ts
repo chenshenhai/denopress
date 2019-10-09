@@ -38,6 +38,7 @@ export interface TypeThemeListLoaderOpts {
 
 export interface TypeThemeListLoader {
   loadThemeList(): Promise<TypeTheme[]>
+  loadThemeMap(): Promise<Map<string, TypeTheme>>
 }
 
 
@@ -45,6 +46,7 @@ export interface TypeThemeServerOpts {
   path: string;
   themeList?: string[];
   themeServiceAPI?: TypeThemeServiceAPI;
+  hotUpdate?: boolean;
 }
 
 export interface TypeThemeServiceAPI {
