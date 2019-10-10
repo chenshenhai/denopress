@@ -9,7 +9,8 @@ const opts: TypeThemeServerOpts = {
   themeList: [
     'theme_demo',
     'theme_script',
-  ]
+  ],
+  hotLoading: true,
 }
 const server = new ThemeServer(addr, opts)
 

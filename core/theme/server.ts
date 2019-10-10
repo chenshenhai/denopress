@@ -83,29 +83,41 @@ export class ThemeServer {
   }
 
   private async _readPageContent(themeName: string, pageName: string): Promise<TypeReadPageResult> {
-    const path: string = this._opts.path;
+
     const result = {
       status: 404,
       content: `404: page/${themeName}/${pageName} Not Found!`,
     }
+    const pageKey = `pages/${pageName || ''}`;
     
-    const themeMap: Map<string, TypeTheme> = this._themeMap;
-    const theme: TypeTheme|undefined = themeMap.get(themeName);
+    if (this._opts.hotLoading !== true) {
+      const themeMap: Map<string, TypeTheme> = this._themeMap;
+      const theme: TypeTheme|undefined = themeMap.get(themeName);
 
-    if (theme) {
-      const pageMap: Map<string, TypeThemePageScript> = theme.pageScriptMap;
-      const scriptMap = pageMap.get(`pages/${pageName || ''}`);
-      
+      if (theme) {
+        const pageMap: Map<string, TypeThemePageScript> = theme.pageScriptMap;
+        const scriptMap = pageMap.get(pageKey);
+        
+        if (scriptMap) {
+          const pageData = await scriptMap.controller.data();
+          const pageContent = scriptMap.template(pageData);
+          result.status = 200;
+          result.content = pageContent;
+        }
+      } else {
+        result.status = 404;
+        result.content = `404: theme/${themeName} is not found!`;
+      }
+    } else {
+      const scriptMap = await this._loader.reloadThemePage(themeName, pageKey);
       if (scriptMap) {
         const pageData = await scriptMap.controller.data();
         const pageContent = scriptMap.template(pageData);
         result.status = 200;
         result.content = pageContent;
       }
-    } else {
-      result.status = 404;
-      result.content = `404: theme/${themeName} is not found!`;
     }
+
     return result;
   }
 

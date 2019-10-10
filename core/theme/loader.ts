@@ -19,15 +19,19 @@ export class ThemeListLoader implements TypeThemeListLoader {
 
   private _opts: TypeThemeListLoaderOpts;
   private _loaderList: ThemeLoader[];
-  private _themeMap: Map<string, TypeTheme>|null = null;
-
+  private _loaderMap: Map<string, ThemeLoader> = new Map();
+  private _themeMap: Map<string, TypeTheme>
+  
   constructor(opts: TypeThemeListLoaderOpts) {
     this._opts = opts;
+    const loaderMap = new Map();
     this._loaderList = opts.themeList.map((themeName) => {
       const path = this._fullPath([themeName]);
       const loader: ThemeLoader = new ThemeLoader({ path, });
+      loaderMap.set(themeName, loader);
       return loader;
     });
+    this._loaderMap = loaderMap;
   }
 
   // public loadTheme(themeName: string): TypeTheme|null {
@@ -59,6 +63,16 @@ export class ThemeListLoader implements TypeThemeListLoader {
     return Promise.resolve(map);
   }
 
+  public async reloadThemePage(theme: string, page: string): Promise<TypeThemePageScript|undefined> {
+    const loader: TypeThemeLoader|undefined = this._loaderMap.get(theme);
+    if (loader) {
+      const themePage = await loader.reloadThemePage(page);
+      return Promise.resolve(themePage);
+    } else {
+      return Promise.resolve(undefined);
+    }
+  }
+
   public async loadThemeList(): Promise<TypeTheme[]> {
     const list: TypeTheme[] = [];
     // return new Promise((resolve, reject) => { });
@@ -83,7 +97,7 @@ export class ThemeListLoader implements TypeThemeListLoader {
 
 export class ThemeLoader implements TypeThemeLoader {
   private _opts: TypeThemeLoaderOpts;
-  // private _config: TypeThemeConfig;
+  private _config: TypeThemeConfig|null = null;
 
   constructor(opts: TypeThemeLoaderOpts) {
     this._opts = opts;
@@ -91,6 +105,7 @@ export class ThemeLoader implements TypeThemeLoader {
 
   public async loadTheme(): Promise<TypeTheme> {
     const config: TypeThemeConfig = this._loadConfig();
+    this._config = config;
 
     return new Promise((resolve, reject) => {
       this._loadPageScriptMap(config).then((pageScriptMap) => {
@@ -103,12 +118,20 @@ export class ThemeLoader implements TypeThemeLoader {
         reject(err);
       })
     })
+  }
 
-    const pageScriptMap: Map<string, TypeThemePageScript> = await this._loadPageScriptMap(config);
-    return Promise.resolve({
-      config,
-      pageScriptMap,
-    })
+  public async reloadThemePage(page: string): Promise<TypeThemePageScript> {
+    return this._loadPageScript(page, {
+      reload: true
+    });
+  }
+
+  private _getThemeName(): string {
+    let name: string = '';
+    if (this._config) {
+      name = this._config.name;
+    }
+    return name;
   }
 
   private async _loadPageScriptMap(config: TypeThemeConfig): Promise<Map<string, TypeThemePageScript>> {
@@ -126,15 +149,24 @@ export class ThemeLoader implements TypeThemeLoader {
     }
   }
 
-  private _loadPageScript(pageName: string): Promise<TypeThemePageScript> {
+  private _loadPageScript(pageName: string, opts?: {
+    reload?: boolean
+  }): Promise<TypeThemePageScript> {
+    const reload = opts && opts.reload === true;
+    const themeName: string = this._getThemeName();
+    
     const fullPathTpl: string = this._fullPath([pageName, 'page.html']);
-    const fullPathCtrl: string = this._fullPath([pageName, 'page.ts'], true);
+    const fullPathCtrl: string = this._fullPath([pageName, 'page.ts'], {
+      localFile: true,
+      reload,
+    });
+    const logStatus = reload === true ? 'reload' : 'loading';
     return new Promise((resolve, reject) => {
-      console.log(`[Denopress]: load theme ${fullPathTpl}`);
+      console.log(`[Denopress]: ${logStatus} ${themeName}/${pageName}/page.html`);
       const tplText: string = readFileStrSync(fullPathTpl, { encoding: "utf8" });
       const tpl: Template = new Template(tplText);
       const tplFunc: Function = tpl.compileToFunc();
-      console.log(`[Denopress]: load theme ${fullPathCtrl}`);
+      console.log(`[Denopress]: ${logStatus} ${themeName}/${pageName}/page.ts`);
       import(fullPathCtrl).then((mod) => {
         resolve({
           path: pageName,
@@ -149,18 +181,24 @@ export class ThemeLoader implements TypeThemeLoader {
 
   private _loadConfig(): TypeThemeConfig {
     const fullPath: string = this._fullPath(["theme.config.json"]);
-    console.log(`[Denopress]: load theme ${fullPath}`);
+    console.log(`[Denopress]: load theme.config ${fullPath}`);
     const config = readJsonSync(fullPath) as TypeThemeConfig;;
     return config;
   }
 
-  private _fullPath(pathList: string[], localFile?: boolean): string {
+  private _fullPath(
+    pathList: string[],
+    opts?: { localFile?: boolean, reload?: boolean }): string {
+      
     const path: string = this._opts.path;
     const fileBase: string[] = [];
-    if (localFile === true) {
+    if (opts && opts.localFile === true) {
       fileBase.push('file:/');
     } 
-    const fullPath: string = [...fileBase, ...[path], ...pathList].join('/');
+    let fullPath: string = [...fileBase, ...[path], ...pathList].join('/');
+    if (opts && opts.reload === true) {
+      fullPath = `${fullPath}?_t=${Date.now()}`
+    }
     return fullPath;
   }
   
