@@ -24,6 +24,7 @@ export interface TypeTheme {
 
 export interface TypeThemeLoader {
   loadTheme(): Promise<TypeTheme>;
+  reloadThemePage(page: string): Promise<TypeThemePageScript>
 }
 
 
@@ -38,6 +39,8 @@ export interface TypeThemeListLoaderOpts {
 
 export interface TypeThemeListLoader {
   loadThemeList(): Promise<TypeTheme[]>
+  loadThemeMap(): Promise<Map<string, TypeTheme>>
+  reloadThemePage(theme: string, page: string): Promise<TypeThemePageScript|undefined>
 }
 
 
@@ -45,6 +48,7 @@ export interface TypeThemeServerOpts {
   path: string;
   themeList?: string[];
   themeServiceAPI?: TypeThemeServiceAPI;
+  hotLoading?: boolean;
 }
 
 export interface TypeThemeServiceAPI {
