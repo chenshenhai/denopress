@@ -20,6 +20,7 @@ export class ThemeListLoader implements TypeThemeListLoader {
   private _opts: TypeThemeListLoaderOpts;
   private _loaderList: ThemeLoader[];
   private _loaderMap: Map<string, ThemeLoader> = new Map();
+  private _themeMap: Map<string, TypeTheme>
   
   constructor(opts: TypeThemeListLoaderOpts) {
     this._opts = opts;
@@ -33,7 +34,22 @@ export class ThemeListLoader implements TypeThemeListLoader {
     this._loaderMap = loaderMap;
   }
 
+  // public loadTheme(themeName: string): TypeTheme|null {
+  //   if (this._themeMap) {
+  //     if (this._themeMap.has(themeName)) {
+  //       return this._themeMap.get(themeName);
+  //     } else {
+  //       return null;
+  //     }
+  //   } else {
+  //     return null;
+  //   }
+  // }
+
   public async loadThemeMap(): Promise<Map<string, TypeTheme>> {
+    if (this._themeMap) {
+      return Promise.resolve(this._themeMap);
+    }
     const themeList = await this.loadThemeList();
     if (isType.error(themeList) === true) {
       return Promise.reject(themeList);
@@ -43,6 +59,7 @@ export class ThemeListLoader implements TypeThemeListLoader {
       const name = theme.config.name;
       map.set(name, theme);
     });
+    this._themeMap = map;
     return Promise.resolve(map);
   }
 
