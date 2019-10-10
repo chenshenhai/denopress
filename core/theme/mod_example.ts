@@ -10,7 +10,7 @@ const opts: TypeThemeServerOpts = {
     'theme_demo',
     'theme_script',
   ],
-  // hotLoading: true,
+  hotLoading: true,
 }
 const server = new ThemeServer(addr, opts)
 
