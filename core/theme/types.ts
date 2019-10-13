@@ -38,8 +38,14 @@ export interface TypeThemeListLoaderOpts {
 }
 
 export interface TypeThemeListLoader {
-  loadThemeList(): Promise<TypeTheme[]>
   loadThemeMap(): Promise<Map<string, TypeTheme>>
+
+  // hasTheme(): boolean;
+  // hasThemePage(): boolean;
+  // getThemePage(theme: string, page: string): Promise<TypeThemePageScript|undefined>
+  // addTheme(): boolean;
+  // deleteTheme(): boolean;
+  // reloadTheme(): boolean;
   reloadThemePage(theme: string, page: string): Promise<TypeThemePageScript|undefined>
 }
 
