@@ -25,6 +25,14 @@ export interface TypeTheme {
 export interface TypeThemeLoader {
   loadTheme(): Promise<TypeTheme>;
   reloadThemePage(page: string): Promise<TypeThemePageScript>
+
+  // loadConfig(): boolean;
+  // reloadConfig(): boolean;
+  // hasConfig(): boolean;
+
+  // exist(): boolean;
+  // existPage(page: string): boolean;
+  // hasPage(page: string): boolean;
 }
 
 
@@ -40,12 +48,18 @@ export interface TypeThemeListLoaderOpts {
 export interface TypeThemeListLoader {
   loadThemeMap(): Promise<Map<string, TypeTheme>>
 
-  // hasTheme(): boolean;
-  // hasThemePage(): boolean;
+  hasThemeConfig(theme: string): boolean;
+  hasThemePageConfig(theme: string, page: string): boolean;
+
+  existTheme(theme: string): boolean;
+  existThemePage(theme: string, page: string): boolean;
+
+  // reloadThemeConfig(theme: string): boolean;
   // getThemePage(theme: string, page: string): Promise<TypeThemePageScript|undefined>
   // addTheme(): boolean;
   // deleteTheme(): boolean;
   // reloadTheme(): boolean;
+  
   reloadThemePage(theme: string, page: string): Promise<TypeThemePageScript|undefined>
 }
 

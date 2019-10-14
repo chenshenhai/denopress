@@ -1,13 +1,13 @@
 
 // const pageMap: Map<string, Function> = new Map();
 // const themeMap: Map<string, Map<string, Function>> = new Map();
-function ThemePage (page): object {
+function ThemePage (page: any): object {
   return page;
 }
 
 
 // const ajaxMap: Map<string, Function> = new Map();
-function ThemeAjax (api): object {
+function ThemeAjax (api: any): object {
   return api;
 }
 

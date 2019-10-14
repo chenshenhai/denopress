@@ -12,7 +12,7 @@ import {
   TypeThemeListLoader,
 } from "./types.ts";
 
-const { readJsonSync, readFileStrSync } = fs;
+const { readJsonSync, readFileStrSync, existsSync } = fs;
 
 
 export class ThemeListLoader implements TypeThemeListLoader {
@@ -21,6 +21,7 @@ export class ThemeListLoader implements TypeThemeListLoader {
   private _loaderList: ThemeLoader[];
   private _loaderMap: Map<string, ThemeLoader> = new Map();
   private _themeMap: Map<string, TypeTheme> = new Map();
+  private _configMap: Map<string, TypeThemeConfig> = new Map();
   
   constructor(opts: TypeThemeListLoaderOpts) {
     this._opts = opts;
@@ -32,6 +33,71 @@ export class ThemeListLoader implements TypeThemeListLoader {
       return loader;
     });
     this._loaderMap = loaderMap;
+  }
+
+  /**
+   * Test whether or not the theme's configuration exists
+   * @param {string} theme
+   * @return {boolean}
+   */
+  public hasThemeConfig(theme: string): boolean {
+    if (this._configMap.get(theme)) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  /**
+   * Test whether or not the page of theme's configuration exists
+   * @param {string} theme
+   * @return {boolean}
+   */
+  public hasThemePageConfig(theme: string, page: string): boolean {
+    const config:TypeThemeConfig|undefined = this._configMap.get(theme)
+    let result: boolean = false;
+    if (config) {
+      if (config.pages && config.pages.indexOf(page) >= 0) {
+        result = true;
+      }
+    }
+    return result;
+  }
+
+  /**
+   * Test whether or not theme exist
+   * @param {string} theme 
+   * @return {boolean}
+   */
+  public existTheme(theme: string): boolean {
+    const dirFullPath = this._fullPath([theme]);
+    const isDirExist = existsSync(dirFullPath);
+
+    const configFullPath = this._fullPath([theme, 'theme.config.json']);
+    const isConfigFileExist = existsSync(configFullPath);
+
+    return isDirExist && isConfigFileExist;
+  }
+
+  /**
+   * Test whether or not the template and script of page exist
+   * @param {string} theme 
+   * @param {string} page 
+   * @return {boolean}
+   */
+  public existThemePage(theme: string, page: string): boolean {
+    const isThemeExist = this.existTheme(theme);
+    let result: boolean = false;
+    if (isThemeExist) {
+      const tplFullPath = this._fullPath([page, 'page.html']);
+      const isTplExist = existsSync(tplFullPath);
+
+      const scriptFullPath = this._fullPath([page, 'page.ts']);
+      const isScriptExist = existsSync(scriptFullPath);
+
+      result = isTplExist && isScriptExist;
+    }
+    return result;
   }
 
   public async loadThemeMap(): Promise<Map<string, TypeTheme>> {
@@ -50,6 +116,10 @@ export class ThemeListLoader implements TypeThemeListLoader {
     this._themeMap = map;
     return Promise.resolve(map);
   }
+
+  // public async reloadThemeConfig() {
+
+  // }
 
   public async reloadThemePage(theme: string, page: string): Promise<TypeThemePageScript|undefined> {
     const loader: TypeThemeLoader|undefined = this._loaderMap.get(theme);
