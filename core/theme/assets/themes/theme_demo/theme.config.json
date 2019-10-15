@@ -1,6 +1,7 @@
 {
   "name": "theme_demo",
   "pages": [
-    "pages/testing"
+    "pages/testing",
+    "pages/server_api"
   ]
 }

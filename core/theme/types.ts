@@ -4,8 +4,13 @@ export interface TypeThemeConfig {
   pages: string[];
 }
 
+
+export interface TypeThemePageControllerDataOpts {
+  api?: TypeThemeServiceAPI;
+}
+
 export interface TypeThemePageController {
-  data(): {
+  data(opts?: TypeThemePageControllerDataOpts): {
     [key: string]: any;
   };
 }
@@ -74,7 +79,7 @@ export interface TypeThemeServerOpts {
   path: string;
   themeList?: string[];
   serviceFrontAPI?: TypeThemeServiceAPI;
-  // serviceServerAPI?: TypeThemeServiceAPI;
+  serviceServerAPI?: TypeThemeServiceAPI;
   hotLoading?: boolean;
 }
 

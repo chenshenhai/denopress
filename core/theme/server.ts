@@ -43,6 +43,8 @@ export class ThemeServer {
       ctx.res.setStatus(page.status);
       ctx.res.setBody(page.content);
     });
+
+    // front api config
     if (this._opts.serviceFrontAPI) {
       router.get("/api/:service/:api", async (ctx: Context) => {
         const params: {[key: string]: string} = ctx.getData("router") as {[key: string]: string};
@@ -88,12 +90,15 @@ export class ThemeServer {
     }
     const pageKey = `pages/${pageName || ''}`;
     const loaderHub = this._loaderHub;
+    const controllerDataOpts = {
+      api: this._opts.serviceServerAPI,
+    };
     
     if (this._opts.hotLoading !== true) {
       if (loaderHub.hasTheme(themeName)) {
         const pageScript = loaderHub.getThemePage(themeName, pageKey);
         if (loaderHub.hasThemePage(themeName, pageKey) && pageScript) {
-          const pageData = await pageScript.controller.data();
+          const pageData = await pageScript.controller.data(controllerDataOpts);
           const pageContent = pageScript.template(pageData);
           result.status = 200;
           result.content = pageContent;
@@ -109,7 +114,7 @@ export class ThemeServer {
       if (loaderHub.existTheme(themeName)) {
         const pageScript = await loaderHub.reloadThemePage(themeName, pageKey);
         if (loaderHub.existThemePage(themeName, pageKey) && pageScript) {
-          const pageData = await pageScript.controller.data();
+          const pageData = await pageScript.controller.data(controllerDataOpts);
           const pageContent = pageScript.template(pageData);
           result.status = 200;
           result.content = pageContent;
