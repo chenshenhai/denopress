@@ -4,7 +4,7 @@ import {
   Context,
   staticServe,
 } from "./../web/mod.ts";
-import { ThemeListLoader } from "./loader.ts";
+import { ThemeLoaderHub } from "./loader_hub";
 import {
   TypeTheme,
   TypeReadPageResult,
@@ -19,8 +19,7 @@ export class ThemeServer {
   private _addr: string;
   private _opts: TypeThemeServerOpts;
   private _app: Application;
-  private _loader: ThemeListLoader;
-  private _themeMap: Map<string, TypeTheme> = new Map();
+  private _loaderHub: ThemeLoaderHub;
 
   constructor(addr: string, opts: TypeThemeServerOpts) {
     this._addr = addr;
@@ -61,18 +60,17 @@ export class ThemeServer {
     if (this._opts.themeList) {
       themeNameList = this._opts.themeList;
     }
-    const loader = new ThemeListLoader({
+    const loaderHub = new ThemeLoaderHub({
       basePath: [this._opts.path].join('/'),
       themeList: themeNameList,
     });
-    this._loader = loader;
+    this._loaderHub = loaderHub;
   }
 
   async start(): Promise<void> {
     const addr: string = this._addr;
     return new Promise((resolve, reject) => {
-      this._loader.loadThemeMap().then((themeMap) => {
-        this._themeMap = themeMap;
+      this._loaderHub.resetAllThemes().then(() => {
         this._app.listen(addr, () => {
           resolve();
         })
@@ -89,18 +87,18 @@ export class ThemeServer {
       content: `404: page/${themeName}/${pageName} Not Found!`,
     }
     const pageKey = `pages/${pageName || ''}`;
+    const loaderHub = this._loaderHub;
     
     if (this._opts.hotLoading !== true) {
-      const themeMap: Map<string, TypeTheme> = this._themeMap;
-      const theme: TypeTheme|undefined = themeMap.get(themeName);
+      if (loaderHub.existTheme(themeName) !== true) {
+        loaderHub.addTheme(themeName);
+      }
 
-      if (theme) {
-        const pageMap: Map<string, TypeThemePageScript> = theme.pageScriptMap;
-        const scriptMap = pageMap.get(pageKey);
-        
-        if (scriptMap) {
-          const pageData = await scriptMap.controller.data();
-          const pageContent = scriptMap.template(pageData);
+      if (loaderHub.existTheme(themeName)) {
+        const pageScript = await loaderHub.reloadThemePage(themeName, pageKey);
+        if (loaderHub.existThemePage(themeName, pageKey) && pageScript) {
+          const pageData = await pageScript.controller.data();
+          const pageContent = pageScript.template(pageData);
           result.status = 200;
           result.content = pageContent;
         }
@@ -109,12 +107,17 @@ export class ThemeServer {
         result.content = `404: theme/${themeName} is not found!`;
       }
     } else {
-      const scriptMap = await this._loader.reloadThemePage(themeName, pageKey);
-      if (scriptMap) {
-        const pageData = await scriptMap.controller.data();
-        const pageContent = scriptMap.template(pageData);
-        result.status = 200;
-        result.content = pageContent;
+      if (loaderHub.hasTheme(themeName)) {
+        const pageScript = loaderHub.getThemePage(themeName, pageKey);
+        if (loaderHub.hasThemePage(themeName, pageKey) && pageScript) {
+          const pageData = await pageScript.controller.data();
+          const pageContent = pageScript.template(pageData);
+          result.status = 200;
+          result.content = pageContent;
+        }
+      } else {
+        result.status = 404;
+        result.content = `404: theme/${themeName} is not found!`;
       }
     }
 

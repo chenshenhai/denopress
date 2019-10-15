@@ -23,16 +23,17 @@ export interface TypeTheme {
 
 
 export interface TypeThemeLoader {
-  loadTheme(): Promise<TypeTheme>;
-  reloadThemePage(page: string): Promise<TypeThemePageScript>
+  reset(): Promise<void>
+  reloadTheme(): Promise<TypeTheme>;
+  reloadThemePage(page: string): Promise<TypeThemePageScript>;
+  reloadConfig(): TypeThemeConfig;
 
-  // loadConfig(): boolean;
-  // reloadConfig(): boolean;
-  // hasConfig(): boolean;
-
-  // exist(): boolean;
-  // existPage(page: string): boolean;
-  // hasPage(page: string): boolean;
+  hasConfig(): boolean;
+  getConfig(): TypeThemeConfig|undefined;
+  exist(): boolean;
+  existPage(page: string): boolean;
+  hasPage(page: string): boolean;
+  getPage(page: string): TypeThemePageScript|undefined;
 }
 
 
@@ -40,27 +41,32 @@ export interface TypeThemeLoaderOpts {
   path: string;
 }
 
-export interface TypeThemeListLoaderOpts {
+export interface TypeThemeLoaderHubOpts {
   basePath: string;
   themeList: string[];
 }
 
-export interface TypeThemeListLoader {
-  loadThemeMap(): Promise<Map<string, TypeTheme>>
+export interface TypeThemeLoaderHub {
 
-  hasThemeConfig(theme: string): boolean;
-  hasThemePageConfig(theme: string, page: string): boolean;
-
+  resetAllThemes(): Promise<void>
   existTheme(theme: string): boolean;
   existThemePage(theme: string, page: string): boolean;
+  hasTheme(theme: string): boolean;
+  hasThemePage(theme: string, page: string): boolean;
+  getThemePage(theme: string, page: string): TypeThemePageScript|undefined;
+  addTheme(theme: string): void;
+  reloadThemePage(theme: string, page: string): Promise<TypeThemePageScript|undefined>
 
+  // loadAllThemeMap(): Promise<Map<string, TypeTheme>>
+  // hasThemeConfig(theme: string): boolean;
+  // hasThemePageConfig(theme: string, page: string): boolean;
+  
   // reloadThemeConfig(theme: string): boolean;
   // getThemePage(theme: string, page: string): Promise<TypeThemePageScript|undefined>
-  // addTheme(): boolean;
   // deleteTheme(): boolean;
+  // removeTheme(): boolean;
   // reloadTheme(): boolean;
   
-  reloadThemePage(theme: string, page: string): Promise<TypeThemePageScript|undefined>
 }
 
 
