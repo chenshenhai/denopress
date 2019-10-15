@@ -88,17 +88,11 @@ export class ThemeServer {
     }
     const pageKey = `pages/${pageName || ''}`;
     const loaderHub = this._loaderHub;
-
-    // console.log(' ========= ', themeName, pageKey);
     
     if (this._opts.hotLoading !== true) {
-      if (loaderHub.existTheme(themeName) !== true) {
-        loaderHub.addTheme(themeName);
-      }
-
-      if (loaderHub.existTheme(themeName)) {
-        const pageScript = await loaderHub.reloadThemePage(themeName, pageKey);
-        if (loaderHub.existThemePage(themeName, pageKey) && pageScript) {
+      if (loaderHub.hasTheme(themeName)) {
+        const pageScript = loaderHub.getThemePage(themeName, pageKey);
+        if (loaderHub.hasThemePage(themeName, pageKey) && pageScript) {
           const pageData = await pageScript.controller.data();
           const pageContent = pageScript.template(pageData);
           result.status = 200;
@@ -109,9 +103,12 @@ export class ThemeServer {
         result.content = `404: theme/${themeName} is not found!`;
       }
     } else {
-      if (loaderHub.hasTheme(themeName)) {
-        const pageScript = loaderHub.getThemePage(themeName, pageKey);
-        if (loaderHub.hasThemePage(themeName, pageKey) && pageScript) {
+      if (loaderHub.existTheme(themeName) !== true) {
+        loaderHub.addTheme(themeName);
+      }
+      if (loaderHub.existTheme(themeName)) {
+        const pageScript = await loaderHub.reloadThemePage(themeName, pageKey);
+        if (loaderHub.existThemePage(themeName, pageKey) && pageScript) {
           const pageData = await pageScript.controller.data();
           const pageContent = pageScript.template(pageData);
           result.status = 200;
