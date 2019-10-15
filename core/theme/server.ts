@@ -43,7 +43,7 @@ export class ThemeServer {
       ctx.res.setStatus(page.status);
       ctx.res.setBody(page.content);
     });
-    if (this._opts.themeServiceAPI) {
+    if (this._opts.serviceFrontAPI) {
       router.get("/api/:service/:api", async (ctx: Context) => {
         const params: {[key: string]: string} = ctx.getData("router") as {[key: string]: string};
         const urlParams: {[key: string]: string} = ctx.req.getAllURLParams() as {[key: string]: string};
@@ -130,10 +130,10 @@ export class ThemeServer {
       content: `404: api/${serviceName}/${apiName} is not found!`,
     }
     
-    const themeServiceAPI: TypeThemeServiceAPI|undefined = this._opts.themeServiceAPI;
+    const serviceFrontAPI: TypeThemeServiceAPI|undefined = this._opts.serviceFrontAPI;
     
-    if (themeServiceAPI) {
-      const service = themeServiceAPI[serviceName];
+    if (serviceFrontAPI) {
+      const service = serviceFrontAPI[serviceName];
       if (service) {
         const api = service[apiName];
         if (typeof api === 'function') {

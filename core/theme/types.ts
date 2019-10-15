@@ -73,7 +73,8 @@ export interface TypeThemeLoaderHub {
 export interface TypeThemeServerOpts {
   path: string;
   themeList?: string[];
-  themeServiceAPI?: TypeThemeServiceAPI;
+  serviceFrontAPI?: TypeThemeServiceAPI;
+  // serviceServerAPI?: TypeThemeServiceAPI;
   hotLoading?: boolean;
 }
 

@@ -36,20 +36,34 @@ function sleep(time = 1000) {
   })
 }
 
-test(async function server() {
+test(async function startServer() {
+  await startHTTPServer();
+  await sleep(3000);
+  assert(equal(1, 1));
+})
+
+test(async function themeRender() {
   try {
-    await startHTTPServer();
-    await sleep(3000);
     const res = await fetch(`${testSite}/page/theme_demo/testing`);
     const result = await res.text();
     const expectResult = `<html ><head ><title >testing</title></head><body ><p >hello world</p></body></html>`;
     assert(equal(expectResult, result));
-
-    closeHTTPServer();
+    // closeHTTPServer();
   } catch (err) {
-    closeHTTPServer();
+    // closeHTTPServer();
     throw new Error(err);
   }
 });
+
+test(async function themeFrontApi() {
+  const res = await fetch(`${testSite}/api/testFront/getData`);
+  const result = await res.json();
+  assert(equal(result, { type: "front", todolist: [ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 ] }));
+});
+
+test(async function closeServer() {
+  await closeHTTPServer();
+  assert(equal(1, 1));
+})
 
 runTests();
