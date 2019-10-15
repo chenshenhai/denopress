@@ -4,7 +4,7 @@ import {
   Context,
   staticServe,
 } from "./../web/mod.ts";
-import { ThemeLoaderHub } from "./loader_hub";
+import { ThemeLoaderHub } from "./loader_hub.ts";
 import {
   TypeTheme,
   TypeReadPageResult,
@@ -88,6 +88,8 @@ export class ThemeServer {
     }
     const pageKey = `pages/${pageName || ''}`;
     const loaderHub = this._loaderHub;
+
+    // console.log(' ========= ', themeName, pageKey);
     
     if (this._opts.hotLoading !== true) {
       if (loaderHub.existTheme(themeName) !== true) {

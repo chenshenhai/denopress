@@ -21,10 +21,11 @@ export class ThemeLoader implements TypeThemeLoader {
     this._opts = opts;
   }
 
-  public async reset(): Promise<void> {
+  public async reset(): Promise<TypeThemeConfig> {
     const theme: TypeTheme = await this.reloadTheme();
     this._config = theme.config;
     this._pageScriptMap = theme.pageScriptMap;
+    return theme.config;
   }
 
   /**

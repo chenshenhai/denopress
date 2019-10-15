@@ -38,8 +38,11 @@ export class ThemeLoaderHub implements TypeThemeLoaderHub {
 
   public async resetAllThemes(): Promise<void> {
     try {
-      await this._resetAllLoaderMapAsync();
+      for await (const config of this._resetAllLoaderMapAsync()) {
+        console.log(`[Denopress]: theme ${config.name} has loaded!`);
+      }
     } catch (err) {
+      console.log(err);
       return Promise.reject(err);
     }
     return Promise.resolve();
@@ -125,78 +128,6 @@ export class ThemeLoaderHub implements TypeThemeLoaderHub {
       }
     });
   }
-
-  // /**
-  //  * Test whether or not the theme's configuration exists
-  //  * @param {string} theme
-  //  * @return {boolean}
-  //  */
-  // public hasThemeConfig(theme: string): boolean {
-  //   if (this._configMap.get(theme)) {
-  //     return true;
-  //   } else {
-  //     return false;
-  //   }
-  // }
-
-  // /**
-  //  * Test whether or not the page of theme's configuration exists
-  //  * @param {string} theme
-  //  * @return {boolean}
-  //  */
-  // public hasThemePageConfig(theme: string, page: string): boolean {
-  //   const config:TypeThemeConfig|undefined = this._configMap.get(theme)
-  //   let result: boolean = false;
-  //   if (config) {
-  //     if (config.pages && config.pages.indexOf(page) >= 0) {
-  //       result = true;
-  //     }
-  //   }
-  //   return result;
-  // }
-
-  
-
-
-  // public async loadThemeMap(): Promise<Map<string, TypeTheme>> {
-  //   if (this._themeMap) {
-  //     return Promise.resolve(this._themeMap);
-  //   }
-  //   const themeList = await this._loadThemeList();
-  //   if (isType.error(themeList) === true) {
-  //     return Promise.reject(themeList);
-  //   };
-  //   const map: Map<string, TypeTheme> = new Map();
-  //   themeList.forEach((theme: TypeTheme) => {
-  //     const name = theme.config.name;
-  //     map.set(name, theme);
-  //   });
-  //   this._themeMap = map;
-  //   return Promise.resolve(map);
-  // }
-
-  // // public async reloadThemeConfig() {
-
-  // // }
-
-  // public async reloadThemePage(theme: string, page: string): Promise<TypeThemePageScript|undefined> {
-  //   const loader: TypeThemeLoader|undefined = this._loaderMap.get(theme);
-  //   if (loader) {
-  //     const themePage = await loader.reloadThemePage(page);
-  //     return Promise.resolve(themePage);
-  //   } else {
-  //     return Promise.resolve(undefined);
-  //   }
-  // }
-
-  // private async _loadThemeList(): Promise<TypeTheme[]> {
-  //   const list: TypeTheme[] = [];
-  //   // return new Promise((resolve, reject) => { });
-  //   for await(const theme of this._asyncGenerator(this._loaderList) ) {
-  //     list.push(theme);
-  //   }
-  //   return list;
-  // }
 
   private async * _resetAllLoaderMapAsync() {
     for (let [key, loader] of this._loaderMap.entries()) {

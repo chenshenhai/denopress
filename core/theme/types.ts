@@ -23,7 +23,7 @@ export interface TypeTheme {
 
 
 export interface TypeThemeLoader {
-  reset(): Promise<void>
+  reset(): Promise<TypeThemeConfig>
   reloadTheme(): Promise<TypeTheme>;
   reloadThemePage(page: string): Promise<TypeThemePageScript>;
   reloadConfig(): TypeThemeConfig;

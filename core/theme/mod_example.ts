@@ -15,8 +15,8 @@ const opts: TypeThemeServerOpts = {
 const server = new ThemeServer(addr, opts)
 
 async function main() {
-  await server.start();
-  console.log('start theme server !')
+  const result = await server.start();
+  console.log('start theme server !', result)
 }
 
 main();
