@@ -5,8 +5,9 @@ import config from "./config.json";
 const { writeJsonSync } = fs;
 
 const logger = new Logger({
-  prefix: 'Denopress init',
+  prefix: 'denopress init',
 })
+
 
 export function init(baseDir: string) {
   const fullPath: string = path.join(baseDir, "denopress.json");
@@ -18,3 +19,4 @@ export function init(baseDir: string) {
   });
   logger.log("[1/1]write denopress.json successfully!")
 }
+
