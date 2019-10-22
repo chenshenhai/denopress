@@ -12,3 +12,4 @@ CREATE TABLE  IF NOT EXISTS  `dp_users` (
   `modified_time` timestamp NOT NULL default current_timestamp,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+

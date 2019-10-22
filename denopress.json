@@ -1,5 +1,16 @@
 {
   "themesInUse": [
     "portal"
-  ]
+  ],
+  "database": {
+    "type": "mysql",
+    "config": {
+      "hostname": "127.0.0.1",
+      "username": "root",
+      "password": "abc123def",
+      "timeout": 10000,
+      "pool": 3,
+      "debug": true
+    }
+  }
 }
