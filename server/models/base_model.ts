@@ -23,7 +23,7 @@ export class BaseModel {
     this._opts = opts;
   }
 
-  query() {
+  insert(data: {[key: string]: string|number;}) {
     
   }
 }

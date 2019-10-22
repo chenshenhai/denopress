@@ -2,7 +2,6 @@ import { mysql, fs } from "./../../deps.ts";
 const { Client } = mysql;
 const { readJsonSync } = fs;
 
-
 // const config = {
 //   hostname: "127.0.0.1",
 //   username: "root",
@@ -11,6 +10,7 @@ const { readJsonSync } = fs;
 //   pool: 3,
 //   debug: true,
 // };
+
 
 export interface TypeDatabaseOpts {
   hostname: string,

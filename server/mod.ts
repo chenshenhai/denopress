@@ -7,6 +7,7 @@ const server = new ThemeServer(addr, {
   path: baseDir,
   themeList: [
     "portal",
+    "admin",
   ],
   serviceFrontAPI: {
     todoList: serviceTodoList,

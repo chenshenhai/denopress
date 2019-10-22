@@ -1,6 +1,6 @@
 {
   "themesInUse": [
-    "portal"
+   
   ],
   "database": {
     "type": "mysql",

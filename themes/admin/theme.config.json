@@ -1,0 +1,6 @@
+{
+  "name": "admin",
+  "pages": [
+    "pages/init"
+  ]
+}
