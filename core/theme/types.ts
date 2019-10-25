@@ -86,10 +86,10 @@ export interface TypeReadPageResult {
 }
 
 
-export interface TypeRemoteLoaderOpts {
+export interface TypeRemoteThemeLoaderOpts {
   basePath: string;
 }
 
-export interface TypeRemoteLoader {
+export interface TypeRemoteThemeLoader {
   loadRemoteTheme(config: TypeThemeConfig): Promise<void>;
 }

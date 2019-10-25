@@ -4,10 +4,10 @@
     "name": "theme_portal",
     "config": "https://raw.githubusercontent.com/denopress/theme_portal/master/theme.config.json"
   }],
-  "adminTheme": [{
+  "adminTheme": {
     "name": "theme_admin",
     "config": "https://raw.githubusercontent.com/denopress/theme_portal/master/theme.config.json"
-  }],
+  },
   "database": {
     "type": "mysql",
     "config": {
