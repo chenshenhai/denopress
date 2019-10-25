@@ -1,4 +1,4 @@
-import { compose } from "./compose.ts";
+import { compose } from "./../util/compose.ts";
 import { Server } from "./server.ts";
 import { Context } from "./context.ts";
 
