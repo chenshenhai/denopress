@@ -2,7 +2,9 @@
   "name": "denopress",
   "version": "0.0.1",
   "scripts": {
-    
+    "lint": "./node_modules/.bin/eslint --fix --ext .ts ./core",
+    "_precommit": "npm run lint",
+    "_prepush": "npm run lint"
   },
   "repository": {
     "type": "git",
@@ -15,7 +17,11 @@
   },
   "homepage": "https://github.com/chenshenhai/denopress#readme",
   "devDependencies": {
-    "typescript": "^3.3.3333",
+    "@typescript-eslint/eslint-plugin": "^2.5.0",
+    "@typescript-eslint/parser": "^2.5.0",
+    "eslint": "^6.5.1",
+    "tslib": "^1.10.0",
+    "typescript": "^3.6.4",
     "typescript-deno-plugin": "^1.1.0"
   }
 }

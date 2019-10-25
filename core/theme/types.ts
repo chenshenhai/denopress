@@ -61,17 +61,6 @@ export interface TypeThemeLoaderHub {
   getThemePage(theme: string, page: string): TypeThemePageScript|undefined;
   addTheme(theme: string): void;
   reloadThemePage(theme: string, page: string): Promise<TypeThemePageScript|undefined>
-
-  // loadAllThemeMap(): Promise<Map<string, TypeTheme>>
-  // hasThemeConfig(theme: string): boolean;
-  // hasThemePageConfig(theme: string, page: string): boolean;
-  
-  // reloadThemeConfig(theme: string): boolean;
-  // getThemePage(theme: string, page: string): Promise<TypeThemePageScript|undefined>
-  // deleteTheme(): boolean;
-  // removeTheme(): boolean;
-  // reloadTheme(): boolean;
-  
 }
 
 
@@ -94,4 +83,13 @@ export interface TypeThemeAPI {
 export interface TypeReadPageResult {
   status: number;
   content: string;
+}
+
+
+export interface TypeRemoteLoaderOpts {
+  basePath: string;
+}
+
+export interface TypeRemoteLoader {
+  loadRemoteTheme(config: TypeThemeConfig): Promise<void>;
 }
