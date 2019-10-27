@@ -20,9 +20,9 @@ SUBCOMMANDS:
 
 async function main() {
   if (order === 'init') {
-    init(baseDir);
+    await init(baseDir);
   } else if (order === 'start') {
-    start(baseDir);
+    await start(baseDir);
   } else {
     showHelp();
   }

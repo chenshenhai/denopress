@@ -6,7 +6,7 @@ export interface TypeThemePressConfig {
 
 export interface TypeThemeConfig {
   name: string;
-  version: string;
+  version?: string;
   configLink: string;
 }
 
