@@ -2,7 +2,7 @@ import { fs } from "./../../deps.ts";
 import { Template } from "./../template/mod.ts";
 import { isType } from "./../util/is_type.ts";
 import {
-  TypeThemeConfig,
+  TypeThemePressConfig,
   TypeThemePageController,
   TypeThemePageScript,
   TypeTheme,
@@ -14,14 +14,14 @@ const { readJsonSync, readFileStrSync, existsSync } = fs;
 
 export class ThemeLoader implements TypeThemeLoader {
   private _opts: TypeThemeLoaderOpts;
-  private _config: TypeThemeConfig|undefined = undefined;
+  private _config: TypeThemePressConfig|undefined = undefined;
   private _pageScriptMap: Map<string, TypeThemePageScript>|null = new Map();
 
   constructor(opts: TypeThemeLoaderOpts) {
     this._opts = opts;
   }
 
-  public async reset(): Promise<TypeThemeConfig> {
+  public async reset(): Promise<TypeThemePressConfig> {
     const theme: TypeTheme = await this.reloadTheme();
     this._config = theme.config;
     this._pageScriptMap = theme.pageScriptMap;
@@ -60,9 +60,9 @@ export class ThemeLoader implements TypeThemeLoader {
     return result;
   }
 
-  public reloadConfig(): TypeThemeConfig {
+  public reloadConfig(): TypeThemePressConfig {
     const fullPath: string = this._fullPath(["theme.config.json"]);
-    const config = readJsonSync(fullPath) as TypeThemeConfig;;
+    const config = readJsonSync(fullPath) as TypeThemePressConfig;;
     return config;
   }
 
@@ -88,13 +88,13 @@ export class ThemeLoader implements TypeThemeLoader {
     return result;
   }
 
-  public getConfig(): TypeThemeConfig|undefined {
+  public getConfig(): TypeThemePressConfig|undefined {
     return this._config;
   }
 
 
   public async reloadTheme(): Promise<TypeTheme> {
-    const config: TypeThemeConfig = this.reloadConfig();
+    const config: TypeThemePressConfig = this.reloadConfig();
     this._config = config;
     return new Promise((resolve, reject) => {
       this._loadPageScriptMap(config).then((pageScriptMap) => {
@@ -123,7 +123,7 @@ export class ThemeLoader implements TypeThemeLoader {
     return name;
   }
 
-  private async _loadPageScriptMap(config: TypeThemeConfig): Promise<Map<string, TypeThemePageScript>> {
+  private async _loadPageScriptMap(config: TypeThemePressConfig): Promise<Map<string, TypeThemePageScript>> {
     const map: Map<string, TypeThemePageScript> = new Map();
     const pages: string[] = config.pages;
     for await(const script of this._asyncGenerator(pages) ) {

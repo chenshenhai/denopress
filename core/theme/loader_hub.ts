@@ -4,7 +4,7 @@ import { isType } from "./../util/is_type.ts";
 import { ThemeLoader } from "./loader.ts";
 
 import {
-  TypeThemeConfig,
+  TypeThemePressConfig,
   TypeThemePageController,
   TypeThemePageScript,
   TypeTheme,
@@ -22,7 +22,7 @@ export class ThemeLoaderHub implements TypeThemeLoaderHub {
   private _opts: TypeThemeLoaderHubOpts;
   private _loaderMap: Map<string, ThemeLoader> = new Map();
   private _themeMap: Map<string, TypeTheme> = new Map();
-  private _configMap: Map<string, TypeThemeConfig> = new Map();
+  private _configMap: Map<string, TypeThemePressConfig> = new Map();
   
   constructor(opts: TypeThemeLoaderHubOpts) {
     this._opts = opts;

@@ -14,4 +14,8 @@ export class Logger {
   public log(text: string) {
     console.log(`[${this._opts.prefix}] ${text}`);
   }
+
+  public info(text: string) {
+    console.log(`[${this._opts.prefix}] ${text}`);
+  }
 }

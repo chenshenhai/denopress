@@ -1,7 +1,13 @@
-export interface TypeThemeConfig {
+export interface TypeThemePressConfig {
   name: string;
   version: string;
   pages: string[];
+}
+
+export interface TypeThemeConfig {
+  name: string;
+  version: string;
+  configLink: string;
 }
 
 
@@ -22,19 +28,19 @@ export interface TypeThemePageScript {
 }
 
 export interface TypeTheme {
-  config: TypeThemeConfig;
+  config: TypeThemePressConfig;
   pageScriptMap: Map<string, TypeThemePageScript>;
 }
 
 
 export interface TypeThemeLoader {
-  reset(): Promise<TypeThemeConfig>
+  reset(): Promise<TypeThemePressConfig>
   reloadTheme(): Promise<TypeTheme>;
   reloadThemePage(page: string): Promise<TypeThemePageScript>;
-  reloadConfig(): TypeThemeConfig;
+  reloadConfig(): TypeThemePressConfig;
 
   hasConfig(): boolean;
-  getConfig(): TypeThemeConfig|undefined;
+  getConfig(): TypeThemePressConfig|undefined;
   exist(): boolean;
   existPage(page: string): boolean;
   hasPage(page: string): boolean;
@@ -87,9 +93,15 @@ export interface TypeReadPageResult {
 
 
 export interface TypeRemoteThemeLoaderOpts {
-  basePath: string;
+  baseDir: string;
 }
 
 export interface TypeRemoteThemeLoader {
   loadRemoteTheme(config: TypeThemeConfig): Promise<void>;
+}
+
+export interface TypeRemoteThemeLoaderTaskContext {
+  index: number;
+  count: number;
+  remoteFileLinkList: string[]
 }

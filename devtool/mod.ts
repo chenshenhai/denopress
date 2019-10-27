@@ -1,6 +1,6 @@
 import { fs } from "./../deps.ts";
 import { ThemeServer } from "./../core/theme/mod.ts";
-import { TypeThemeConfig } from "./../core/theme/types.ts";
+import { TypeThemePressConfig } from "./../core/theme/types.ts";
 import { backPath } from "./util/path.ts";
 
 // const { ThemeServer } = Theme;
@@ -11,7 +11,7 @@ const baseDir: string = [Deno.cwd()].join("/");
 const prevDir: string = backPath(baseDir);
 const configPath: string = [baseDir, 'theme.config.json'].join("/");
 
-const config: TypeThemeConfig = readJsonSync(configPath) as TypeThemeConfig;
+const config: TypeThemePressConfig = readJsonSync(configPath) as TypeThemePressConfig;
 
 const server = new ThemeServer(addr, {
   path: prevDir,

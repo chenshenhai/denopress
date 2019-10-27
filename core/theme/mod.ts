@@ -1,6 +1,7 @@
 import "./global.js";
 
 export {
+  TypeThemePressConfig,
   TypeThemeConfig,
   TypeThemeServerOpts,
   TypeThemeServiceAPI
