@@ -2,12 +2,12 @@
   "createTime": -1,
   "themes": [{
     "name": "theme_portal",
-    "configLink": "https://raw.githubusercontent.com/denopress/theme_portal/master/theme.config.json"
+    "configLink": "https://raw.githubusercontent.com/denopress/theme_portal/master/denopress.theme.json"
   }],
-  "adminTheme": {
+  "adminThemes": [{
     "name": "theme_admin",
-    "configLink": "https://raw.githubusercontent.com/denopress/theme_portal/master/theme.config.json"
-  },
+    "configLink": "https://raw.githubusercontent.com/denopress/theme_admin/master/denopress.theme.json"
+  }],
   "database": {
     "type": "mysql",
     "config": {

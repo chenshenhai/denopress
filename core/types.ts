@@ -5,5 +5,5 @@ import {
 export interface TypeDenopressConfig {
   createTime: number;
   themes: TypeThemeConfig[];
-  adminTheme: TypeThemeConfig;
+  adminThemes: TypeThemeConfig[];
 }

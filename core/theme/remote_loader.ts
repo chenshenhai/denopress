@@ -11,10 +11,11 @@ import {
 import { compose } from "./../util/compose.ts";
 import { Logger } from "./../util/logger.ts";
 import { isType } from "./../util/is_type.ts";
-import { writeEnsureFileStrSync } from "./../util/file.ts";
+import { writeEnsureFileStrSync, writeEnsureJsonSync } from "./../util/file.ts";
 
-const pagePathReg: RegExp = /pages\/[0-9a-zA-Z\_\-]{1,}$/;
-const pageLinkReg: RegExp = /pages\/[0-9a-zA-Z\_\-]{1,}\/page\.(ts|html)$/;
+const PAGE_PATH_REGEXP: RegExp = /pages\/[0-9a-zA-Z\_\-]{1,}$/;
+const PAGE_LINK_REGEXP: RegExp = /pages\/[0-9a-zA-Z\_\-]{1,}\/page\.(ts|html)$/;
+const CONFIG_BASENAME: string = "denopress.theme.json";
 
 const logger = new Logger({
   prefix: 'denopress:remoteLoader',
@@ -33,8 +34,6 @@ export class RemoteThemeLoader implements TypeRemoteThemeLoader {
   }
   
   async loadRemoteTheme(config: TypeThemeConfig): Promise<void> {
-    // TODO
-    // console.log('config =', config);
 
     logger.log(`loading theme@${config.name} ...`);
     const taskList: Function[] = [];
@@ -43,7 +42,6 @@ export class RemoteThemeLoader implements TypeRemoteThemeLoader {
       count: 0,
       remoteFileLinkList: [],
     }
-    taskList.push(this._makeRootThemesDir());
     taskList.push(this._loadRemoteThemeConfig(config));
     taskList.push(this._loadRemoteFileLinks(config.name));
     
@@ -58,18 +56,21 @@ export class RemoteThemeLoader implements TypeRemoteThemeLoader {
     return async(ctx: TypeRemoteThemeLoaderTaskContext, next: Function) => {
       ctx.index ++;
       taskLogger(ctx, `loading remote theme@${config.name} config ...`);
-      const fullPath = path.join(baseDir, "themes", config.name);
+      const fullPath = path.join(baseDir, config.name);
       if (fs.existsSync(fullPath)) {
         taskLogger(ctx, `theme@${config.name}\'s dir is existed`);
       } else {
-        Deno.mkdirSync(fullPath);
         const res = await fetch(config.configLink);
         const json = await res.json();
-        const configFullPath: string = path.join(fullPath, 'denopress.theme.json');
+        const configBasename = path.basename(config.configLink);
+        if (CONFIG_BASENAME !== configBasename) {
+          throw new Error(`basename is illegal: ${config.configLink}`)
+        }
+        const configFullPath: string = path.join(fullPath, configBasename);
         taskLogger(ctx, `writing remote theme@${config.name} config ...`);
         if (json && isType.array(json.pages)) {
           json.pages.forEach((page: string) => {
-            if (isType.string(page) && pagePathReg.test(`${page}`)) {
+            if (isType.string(page) && PAGE_PATH_REGEXP.test(`${page}`)) {
               const pageTplLink = path.join(themeBaseDir, page, "page.html");
               const pageCtrlLink = path.join(themeBaseDir, page, "page.ts");
               ctx.remoteFileLinkList.push(pageTplLink);
@@ -78,7 +79,7 @@ export class RemoteThemeLoader implements TypeRemoteThemeLoader {
           });
         }
 
-        fs.writeJsonSync(configFullPath, json, {
+        writeEnsureJsonSync(configFullPath, json, {
           spaces: 2,
         });
         await next();
@@ -86,19 +87,19 @@ export class RemoteThemeLoader implements TypeRemoteThemeLoader {
     }
   }
 
-  private _makeRootThemesDir(): Function {
-    return async  (ctx: TypeRemoteThemeLoaderTaskContext, next: Function) => {
-      ctx.index ++;
-      taskLogger(ctx, 'making root themes dir ...');
-      const baseDir: string = this._opts.baseDir;
-      const fullPath = path.join(baseDir, 'themes');
-      const status = fs.existsSync(fullPath);
-      if (!status) {
-        Deno.mkdirSync(fullPath); 
-      }
-      await next();
-    }
-  }
+  // private _makeRootThemesDir(): Function {
+  //   return async  (ctx: TypeRemoteThemeLoaderTaskContext, next: Function) => {
+  //     ctx.index ++;
+  //     taskLogger(ctx, 'making themes root dir ...');
+  //     const baseDir: string = this._opts.baseDir;
+  //     const fullPath = path.join(baseDir);
+  //     const status = fs.existsSync(fullPath);
+  //     if (!status) {
+  //       Deno.mkdirSync(fullPath); 
+  //     }
+  //     await next();
+  //   }
+  // }
 
   private _loadRemoteFileLinks(themeName: string): Function {
     
@@ -124,7 +125,7 @@ export class RemoteThemeLoader implements TypeRemoteThemeLoader {
     
     links.forEach((link: string) => {
       const endPath = this._getFileEndPath(link);
-      const fullPath = path.join(baseDir, "themes", themeName, endPath);
+      const fullPath = path.join(baseDir, themeName, endPath);
       const func = async (): Promise<void> => {
         taskLogger(ctx, `loading ${themeName}@${endPath} ...`);
         const res = await fetch(link);
@@ -141,8 +142,8 @@ export class RemoteThemeLoader implements TypeRemoteThemeLoader {
 
   private _getFileEndPath(link: string): string {
     let endPath: string = '';
-    if (pageLinkReg.test(link)) {
-      const rs = link.match(pageLinkReg);
+    if (PAGE_LINK_REGEXP.test(link)) {
+      const rs = link.match(PAGE_LINK_REGEXP);
       if (rs && rs[0] && isType.string(rs[0])) {
         endPath = rs[0];
       }
