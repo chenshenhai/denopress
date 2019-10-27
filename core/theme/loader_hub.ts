@@ -129,7 +129,7 @@ export class ThemeLoaderHub implements TypeThemeLoaderHub {
     });
   }
 
-  private async * _resetAllLoaderMapAsync() {
+  private async * _resetAllLoaderMapAsync(): AsyncGenerator<TypeThemePressConfig, void, unknown> {
     for (let [key, loader] of this._loaderMap.entries()) {
       yield loader.reset();
     }

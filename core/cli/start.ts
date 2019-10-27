@@ -16,7 +16,7 @@ export async function start(baseDir: string): Promise<void> {
   const fullPath: string = path.join(baseDir, "denopress.json");
   const config: TypeDenopressConfig = readJsonSync(fullPath) as TypeDenopressConfig;
   // TODO
-  const themeConfList: TypeThemeConfig[] = config.themes;
+  // const themeConfList: TypeThemeConfig[] = config.themes;
   const adminThemeConf: TypeThemeConfig = config.adminTheme;
   const remoteLoader = new RemoteThemeLoader({ baseDir: baseDir });
   // await remoteLoader.loadRemoteTheme(adminThemeConf);
