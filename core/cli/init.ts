@@ -1,6 +1,6 @@
 import { fs, path } from "./../../deps.ts";
 import { Logger } from "./../util/logger.ts";
-import config from "./config.json";
+import config from "./asserts/denopress.json";
 import { TypeDenopressConfig } from "./../types.ts";
 import { RemoteThemeLoader, TypeThemeConfig, } from "./../theme/mod.ts";
 

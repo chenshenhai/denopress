@@ -9,11 +9,12 @@ const { readJsonSync } = fs;
 
 const logger = new Logger({
   prefix: 'denopress start',
-})
-
+});
 
 export async function start(baseDir: string): Promise<void> {
   logger.log('hello world!');
+  const { HOME } = Deno.env();
+  console.log('HOME =', HOME);
 }
 
 
