@@ -35,7 +35,7 @@ export async function start(baseDir: string): Promise<void> {
 }
 
 async function initAdminThemeAsync(baseDir: string, adminThemeConf: TypeThemeConfig): Promise<void> {
-  const adminThemesBaseDir = path.join(baseDir, "admin_themes");
+  const adminThemesBaseDir = path.join(baseDir, "themes_admin");
   const adminRemoteLoader = new RemoteThemeLoader({ baseDir: adminThemesBaseDir });
   return adminRemoteLoader.loadRemoteTheme(adminThemeConf);
 }
