@@ -11,7 +11,7 @@ export interface TypeCommanderOpts{
 interface TypeCommander {
   getVersion(): string;
   setSubcommand(name: string, opts: TypeSubcommandOpts): void;
-  execute(): void;
+  execute(): Promise<void>;
 }
 
 export class Commander implements TypeCommander {
@@ -32,14 +32,14 @@ export class Commander implements TypeCommander {
     this._subcommandMap.set(name, opts);
   }
 
-  public execute(): void {
+  public async execute(): Promise<void> {
     if (this._isReady === true) {
       return;
     }
-    this._exec();
+    await this._exec();
   }
 
-  private _exec() {
+  private async _exec(): Promise<void> {
     const args: string[] = Deno.args;
     const subcmd: string|undefined = args[1];
     let hasCommand: boolean = false;
@@ -47,7 +47,7 @@ export class Commander implements TypeCommander {
       const subOpts: TypeSubcommandOpts|undefined = this._subcommandMap.get(subcmd);
       if (subOpts) {
         hasCommand = true;
-        subOpts.method();
+        await subOpts.method();
       }
     }
 
