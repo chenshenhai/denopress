@@ -1,4 +1,6 @@
-import { mysql, fs } from "./../deps.ts";
+import { fs } from "./../deps.ts";
+import  * as mysql from "./../core/mysql/mod.ts";
+
 const { readFileStrSync } = fs;
 const { Client } = mysql;
 const config = {

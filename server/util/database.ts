@@ -1,4 +1,5 @@
-import { mysql, fs } from "./../../deps.ts";
+import * as mysql from "./../../core/mysql/mod.ts";
+import { fs } from "./../../deps.ts";
 const { Client } = mysql;
 const { readJsonSync } = fs;
 

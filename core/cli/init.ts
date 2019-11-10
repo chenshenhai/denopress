@@ -1,8 +1,9 @@
-import { fs, path } from "./../../deps.ts";
+import { fs, path, bufio } from "./../../deps.ts";
 import { Logger } from "./../util/logger.ts";
 import config from "./asserts/denopress.json";
 import { TypeDenopressConfig } from "./../types.ts";
 import { RemoteThemeLoader, TypeThemeConfig, } from "./../theme/mod.ts";
+import { initHomeDir } from "./lib/home.ts";
 
 const { writeJsonSync } = fs;
 
@@ -11,29 +12,42 @@ const logger = new Logger({
 })
 
 
+function readStdinLine(limitLen: number = 64): string {
+  const chunk = new Uint8Array(limitLen);
+  Deno.stdin.readSync(chunk);
+  const decoder = new TextDecoder();
+  const text = decoder.decode(chunk);
+  return text.trim();
+}
+
 export async function init(baseDir: string) {
+  initHomeDir();
   const fullPath: string = path.join(baseDir, "denopress.json");
-  logger.log("write denopress.json ...");
+  logger.log("init denopress.json ...");
+
+  console.log("please input mysql hostname: ")
+  const hostname = readStdinLine();
+
   config.createTime = Date.now();
+  config.database.config.hostname = hostname;
   writeJsonSync(fullPath, config, {
     spaces: 2
   });
-  const adminThemeConf: TypeThemeConfig = config.adminThemes[0];
-  const themeConf: TypeThemeConfig = config.themes[0];
+  logger.log("write denopress.json successfully!")
 
-  initAdminThemeAsync(baseDir, adminThemeConf).then(() => {
-    logger.log("admin theme is initialization completed! ");
-
-    initPortalThemeAsync(baseDir, themeConf).then(() => {
-      logger.log("portal theme is initialization completed! ");
-    }).catch((err) => {
-      console.log(err);
-    });
-
-  }).catch((err) => {
-    console.log(err);
-  });
-  logger.log("[1/1]write denopress.json successfully!")
+  // const adminThemeConf: TypeThemeConfig = config.adminThemes[0];
+  // const themeConf: TypeThemeConfig = config.themes[0];
+  // initAdminThemeAsync(baseDir, adminThemeConf).then(() => {
+  //   logger.log("admin theme is initialization completed! ");
+  //   initPortalThemeAsync(baseDir, themeConf).then(() => {
+  //     logger.log("portal theme is initialization completed! ");
+  //   }).catch((err) => {
+  //     console.log(err);
+  //   });
+  // }).catch((err) => {
+  //   console.log(err);
+  // });
+  
 }
 
 
