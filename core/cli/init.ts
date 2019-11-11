@@ -4,6 +4,7 @@ import config from "./asserts/denopress.json";
 import { TypeDenopressConfig } from "./../types.ts";
 import { RemoteThemeLoader, TypeThemeConfig, } from "./../theme/mod.ts";
 import { initHomeDir } from "./lib/home.ts";
+import { Input } from "./../commander/input.ts";
 
 const { writeJsonSync } = fs;
 
@@ -25,28 +26,36 @@ export async function init(baseDir: string) {
   const fullPath: string = path.join(baseDir, "denopress.json");
   logger.log("init denopress.json ...");
 
-  console.log("please input mysql hostname: ")
-  const hostname = readStdinLine();
+  const inputSQLUsername = new Input("Please input mysql username: ");
+  const username = await inputSQLUsername.listenInput();
+
+  const inputSQLPassword = new Input("Please input mysql password: ");
+  const password = await inputSQLPassword.listenInput();
+
+  const inputSQLDatabase = new Input("Please input mysql database: ");
+  const database = await inputSQLDatabase.listenInput();
 
   config.createTime = Date.now();
-  config.database.config.hostname = hostname;
+  config.database.config.username = username;
+  config.database.config.password = password;
+  config.database.config.database = database;
   writeJsonSync(fullPath, config, {
     spaces: 2
   });
   logger.log("write denopress.json successfully!")
 
-  // const adminThemeConf: TypeThemeConfig = config.adminThemes[0];
-  // const themeConf: TypeThemeConfig = config.themes[0];
-  // initAdminThemeAsync(baseDir, adminThemeConf).then(() => {
-  //   logger.log("admin theme is initialization completed! ");
-  //   initPortalThemeAsync(baseDir, themeConf).then(() => {
-  //     logger.log("portal theme is initialization completed! ");
-  //   }).catch((err) => {
-  //     console.log(err);
-  //   });
-  // }).catch((err) => {
-  //   console.log(err);
-  // });
+  const adminThemeConf: TypeThemeConfig = config.adminThemes[0];
+  const themeConf: TypeThemeConfig = config.themes[0];
+  initAdminThemeAsync(baseDir, adminThemeConf).then(() => {
+    logger.log("admin theme is initialization completed! ");
+    initPortalThemeAsync(baseDir, themeConf).then(() => {
+      logger.log("portal theme is initialization completed! ");
+    }).catch((err) => {
+      console.log(err);
+    });
+  }).catch((err) => {
+    console.log(err);
+  });
   
 }
 
