@@ -1,11 +1,17 @@
 {
   "createTime": -1,
-  "themes": [{
-    "name": "theme_portal",
+  "portalServer": {
+    "port": 8001
+  },
+  "adminServer": {
+    "port": 8002
+  },
+  "themesPortal": [{
+    "name": "portal",
     "configLink": "https://raw.githubusercontent.com/denopress/theme_portal/master/denopress.theme.json"
   }],
-  "adminThemes": [{
-    "name": "theme_admin",
+  "themesAdmin": [{
+    "name": "admin",
     "configLink": "https://raw.githubusercontent.com/denopress/theme_admin/master/denopress.theme.json"
   }],
   "database": {

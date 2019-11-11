@@ -44,8 +44,8 @@ export async function init(baseDir: string) {
   });
   logger.log("write denopress.json successfully!")
 
-  const adminThemeConf: TypeThemeConfig = config.adminThemes[0];
-  const themeConf: TypeThemeConfig = config.themes[0];
+  const adminThemeConf: TypeThemeConfig = config.themesAdmin[0];
+  const themeConf: TypeThemeConfig = config.themesPortal[0];
   initAdminThemeAsync(baseDir, adminThemeConf).then(() => {
     logger.log("admin theme is initialization completed! ");
     initPortalThemeAsync(baseDir, themeConf).then(() => {
