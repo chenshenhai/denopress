@@ -1,5 +1,5 @@
 import { fs, path } from "./../deps.ts";
-import { createPortalServer } from "./../server/mod.ts";
+import { createPortalServer, createAdminServer } from "./../server/mod.ts";
 import { TypeDenopressConfig } from "./../core/types.ts"
 
 const baseDir = Deno.cwd();
@@ -9,4 +9,11 @@ const config: TypeDenopressConfig = fs.readJsonSync(configPath) as TypeDenopress
 const portal = createPortalServer(config, {
   baseDir: path.join(baseDir, 'portal_themes'),
 });
-portal.start();
+const admin = createAdminServer(config, {
+  baseDir: path.join(baseDir, 'admin_themes'),
+});
+
+(async () => {
+  await admin.start();
+  await portal.start();
+})();

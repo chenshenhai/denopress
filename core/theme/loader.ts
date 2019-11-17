@@ -61,7 +61,8 @@ export class ThemeLoader implements TypeThemeLoader {
   }
 
   public reloadConfig(): TypeThemePressConfig {
-    const fullPath: string = this._fullPath(["theme.config.json"]);
+    const fullPath: string = this._fullPath(["denopress.theme.json"]);
+    // console.log('fullPath = ', fullPath);
     const config = readJsonSync(fullPath) as TypeThemePressConfig;;
     return config;
   }
