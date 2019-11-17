@@ -1,0 +1,33 @@
+{
+  "createTime": 1573980717544,
+  
+  "adminServer": {
+    "port": 8002
+  },
+  "adminThemes": [
+    {
+      "name": "admin",
+      "configLink": "https://raw.githubusercontent.com/denopress/theme_admin/master/denopress.theme.json"
+    }
+  ],
+  "portalServer": {
+    "port": 8001
+  },
+  "portalThemes": [
+    {
+      "name": "portal",
+      "configLink": "https://raw.githubusercontent.com/denopress/theme_portal/master/denopress.theme.json"
+    }
+  ],
+  
+  "database": {
+    "type": "mysql",
+    "config": {
+      "hostname": "127.0.0.1",
+      "port": 3306,
+      "username": "admin001",
+      "password": "admin001",
+      "database": "dp_demo"
+    }
+  }
+}

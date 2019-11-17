@@ -2,8 +2,15 @@ import {
   TypeThemeConfig
 } from "./theme/types.ts";
 
+
 export interface TypeDenopressConfig {
   createTime: number;
-  themes: TypeThemeConfig[];
+  portalServer: {
+    port: number;
+  }
+  portalThemes: TypeThemeConfig[];
   adminThemes: TypeThemeConfig[];
+  adminServer: {
+    port: number;
+  }
 }
