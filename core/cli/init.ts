@@ -67,7 +67,7 @@ async function initAdminThemeAsync(baseDir: string, adminThemeConf: TypeThemeCon
 }
 
 async function initPortalThemeAsync(baseDir: string, portalThemeConf: TypeThemeConfig): Promise<void> {
-  const portalThemesBaseDir = path.join(baseDir, "themes");
+  const portalThemesBaseDir = path.join(baseDir, "themes_portal");
   const adminRemoteLoader = new RemoteThemeLoader({ baseDir: portalThemesBaseDir });
   return adminRemoteLoader.loadRemoteTheme(portalThemeConf);
 }
