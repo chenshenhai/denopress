@@ -23,7 +23,13 @@ export class BaseModel {
     this._opts = opts;
   }
 
-  insert(data: {[key: string]: string|number;}) {
-    
+  insert(data: {[key: string]: string|number|boolean }) {
+    const keyValList: string[] = [];
+    for (const key in data) {
+      keyValList.push(`${key}='${data[key] || ''}'`);
+    }
+    const sql = `
+      INSERT INTO \`${this._opts.tableName}\`
+      set ${keyValList.join(', ')};`;
   }
 }

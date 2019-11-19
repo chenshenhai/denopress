@@ -17,7 +17,7 @@ export interface TypeDatabaseOpts {
   hostname: string,
   username: string,
   password: string,
-  db?: string;
+  database?: string;
   timeout?: number;
   pool?: number;
   debug?: boolean;
@@ -30,7 +30,7 @@ export class Database {
   }
 
   public userDatabase(db: string) {
-    this._opts.db = db;
+    this._opts.database = db;
   }
 
   public async clientExec(execStr: string, args: string|number[]) {
