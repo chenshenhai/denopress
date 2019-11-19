@@ -1,5 +1,6 @@
 import { init } from "./core/cli/init.ts";
 import { start } from "./core/cli/start.ts";
+import { db } from "./core/cli/db.ts";
 import { initHome } from "./core/cli/lib/home.ts";
 
 const args = Deno.args;
@@ -14,6 +15,7 @@ USAGE:
   denopress  [SUBCOMMAND]
 SUBCOMMANDS:
   init           initialize a denopress.json
+  db             initialize mysql
   start          load theme basic resources and start web
 `);
 }
@@ -25,6 +27,8 @@ async function main() {
     await init(baseDir);
   } else if (order === 'start') {
     await start(baseDir);
+  } else if (order === 'db') {
+    await db(baseDir);
   } else {
     showHelp();
   }

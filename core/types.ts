@@ -13,4 +13,14 @@ export interface TypeDenopressConfig {
   adminServer: {
     port: number;
   }
+  database: {
+    type: string;
+    config: {
+      hostname: string,
+      port: number,
+      username: string,
+      password: string,
+      database: string
+    }
+  }
 }
