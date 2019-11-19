@@ -1,7 +1,8 @@
 export default {
-  "sqlList" : [
-    `DROP TABLE IF EXISTS dp_posts;
-    CREATE TABLE IF NOT EXISTS  dp_posts (
+  sqlList : [
+    `DROP TABLE IF EXISTS dp_posts;`,
+
+    `CREATE TABLE IF NOT EXISTS  dp_posts (
       id INT(11) NOT NULL AUTO_INCREMENT,
       uuid VARCHAR(255) NOT NULL,
       user_uuid VARCHAR(255) DEFAULT NULL,
@@ -12,8 +13,9 @@ export default {
       PRIMARY KEY (id)
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8;`,
 
-    `DROP TABLE IF EXISTS dp_users;
-    CREATE TABLE  IF NOT EXISTS  dp_users (
+    `DROP TABLE IF EXISTS dp_users;`,
+    
+    `CREATE TABLE  IF NOT EXISTS  dp_users (
       id int(11) NOT NULL AUTO_INCREMENT,
       uuid varchar(255) NOT NULL,
       email varchar(255) DEFAULT NULL,
