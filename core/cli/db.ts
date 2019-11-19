@@ -35,7 +35,6 @@ async function initMysql(
 }
 
 export async function db(baseDir: string): Promise<void> {
-  logger.log('hello db!');
   const configPath = path.join(baseDir, 'denopress.json');
   const config: TypeDenopressConfig = readJsonSync(configPath) as TypeDenopressConfig;
   
