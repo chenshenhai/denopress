@@ -12,18 +12,21 @@ const opts: TypeThemeServerOpts = {
   ],
   serviceFrontAPI: {
     testFront: {
-      getData(): Promise<object> {
-        return new Promise((resolve) => {
-          setTimeout(() => {
-            resolve({
-              type: 'front',
-              todolist: [
-                0,1,2,3,4,5,6,7,8,9
-              ]
-            })
-          }, 1000);
-        });
-      } 
+      getData: {
+        method: 'GET',
+        action(): Promise<object> {
+          return new Promise((resolve) => {
+            setTimeout(() => {
+              resolve({
+                type: 'front',
+                todolist: [
+                  0,1,2,3,4,5,6,7,8,9
+                ]
+              })
+            }, 1000);
+          });
+        } 
+      }
     }
   },
   serviceServerAPI: {

@@ -73,9 +73,20 @@ export interface TypeThemeLoaderHub {
 export interface TypeThemeServerOpts {
   path: string;
   themeList?: string[];
-  serviceFrontAPI?: TypeThemeServiceAPI;
+  serviceFrontAPI?: TypeThemeServiceFrontAPI;
   serviceServerAPI?: TypeThemeServiceAPI;
   hotLoading?: boolean;
+}
+
+export interface TypeThemeFrontAPI {
+  [key: string]: {
+    method: string;  //  GET|POST|PUT|PATCH
+    action: Function;
+  };
+}
+
+export interface TypeThemeServiceFrontAPI {
+  [key: string]: TypeThemeFrontAPI
 }
 
 export interface TypeThemeServiceAPI {

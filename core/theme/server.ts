@@ -12,6 +12,8 @@ import {
   TypeThemePageScript,
   TypeThemeAPI,
   TypeThemeServiceAPI,
+  TypeThemeFrontAPI,
+  TypeThemeServiceFrontAPI,
 } from "./types.ts"
 
 
@@ -49,7 +51,15 @@ export class ThemeServer {
       router.get("/api/:service/:api", async (ctx: Context) => {
         const params: {[key: string]: string} = ctx.getData("router") as {[key: string]: string};
         const urlParams: {[key: string]: string} = ctx.req.getAllURLParams() as {[key: string]: string};
-        const api: TypeReadPageResult = await this._getServiceAPIContent(urlParams, params.service, params.api);
+        const api: TypeReadPageResult = await this._getServiceAPIContent('GET', urlParams, params.service, params.api);
+        ctx.res.setStatus(api.status);
+        ctx.res.setBody(api.content);
+      });
+
+      router.post("/api/:service/:api", async (ctx: Context) => {
+        const params: {[key: string]: string} = ctx.getData("router") as {[key: string]: string};
+        const urlParams: {[key: string]: string} = ctx.req.getAllURLParams() as {[key: string]: string};
+        const api: TypeReadPageResult = await this._getServiceAPIContent('POST', urlParams, params.service, params.api);
         ctx.res.setStatus(api.status);
         ctx.res.setBody(api.content);
       });
@@ -128,20 +138,21 @@ export class ThemeServer {
     return result;
   }
 
-  private async _getServiceAPIContent(params: object, serviceName: string, apiName: string): Promise<TypeReadPageResult> {
+  private async _getServiceAPIContent(method: string, params: object, serviceName: string, apiName: string): Promise<TypeReadPageResult> {
     // const path: string = this._opts.path;
     const result = {
       status: 404,
       content: `404: api/${serviceName}/${apiName} is not found!`,
     }
     
-    const serviceFrontAPI: TypeThemeServiceAPI|undefined = this._opts.serviceFrontAPI;
+    const serviceFrontAPI: TypeThemeServiceFrontAPI|undefined = this._opts.serviceFrontAPI;
     
     if (serviceFrontAPI) {
-      const service = serviceFrontAPI[serviceName];
-      if (service) {
-        const api = service[apiName];
-        if (typeof api === 'function') {
+      const frontApi: TypeThemeFrontAPI = serviceFrontAPI[serviceName];
+      if (frontApi) {
+        const ser = frontApi[apiName];
+        const api = ser.action;
+        if (typeof api === 'function' && ser.method === method) {
           const apiContent = await api(params);
           result.status = 200;
           result.content = JSON.stringify(apiContent);
