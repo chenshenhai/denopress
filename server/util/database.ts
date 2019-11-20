@@ -18,6 +18,7 @@ export interface TypeDatabaseOpts {
   username: string,
   password: string,
   database?: string;
+  port: number;
   timeout?: number;
   pool?: number;
   debug?: boolean;
@@ -29,11 +30,7 @@ export class Database {
     this._opts = opts;
   }
 
-  public userDatabase(db: string) {
-    this._opts.database = db;
-  }
-
-  public async clientExec(execStr: string, args: string|number[]) {
+  public async clientExec(execStr: string, args?: string|number[]) {
     const client = await new Client().connect(this._opts);
     const result = await client.execute(execStr, args as any[]);
     await client.close();

@@ -1,6 +1,7 @@
 import { ThemeServer } from "./../core/theme/mod.ts";
 import { TypeDenopressConfig } from "./../core/types.ts";
 import serviceTodoList from "./services/todo_list.ts"; 
+import { createPortalServiceMap } from "./services/mod.ts";
 
 
 export function createPortalServer(config: TypeDenopressConfig, opts: { baseDir: string }) {
@@ -9,9 +10,7 @@ export function createPortalServer(config: TypeDenopressConfig, opts: { baseDir:
     themeList: config.portalThemes.map((item) => {
       return item.name;
     }),
-    serviceFrontAPI: {
-      todoList: serviceTodoList,
-    },
+    serviceFrontAPI: createPortalServiceMap(config),
     serviceServerAPI: {
       todoList: serviceTodoList,
     },

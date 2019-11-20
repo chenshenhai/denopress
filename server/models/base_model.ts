@@ -1,3 +1,5 @@
+import { Database } from "./../util/database.ts";
+
 export enum TypeModelFieldType {
   string = 'string',
   number = 'number',
@@ -9,6 +11,7 @@ export interface TypeModelField {
   require: boolean;
 }
 
+
 export interface TypeBaseModelOpts {
   tableName: string;
   fields: {
@@ -17,19 +20,27 @@ export interface TypeBaseModelOpts {
 }
 
 export class BaseModel {
-  private _opts: TypeBaseModelOpts
+  private _opts: TypeBaseModelOpts;
+  private _database: Database;
 
-  constructor(opts: TypeBaseModelOpts) {
+  constructor(opts: TypeBaseModelOpts, db: Database) {
     this._opts = opts;
+    this._database = db;
   }
 
-  insert(data: {[key: string]: string|number|boolean }) {
+  async create(data: {[key: string]: string|number|boolean }) {
     const keyValList: string[] = [];
+    const database: Database = this._database;
     for (const key in data) {
       keyValList.push(`${key}='${data[key] || ''}'`);
     }
     const sql = `
       INSERT INTO \`${this._opts.tableName}\`
       set ${keyValList.join(', ')};`;
+    await database.clientExec(sql);
+  }
+
+  query(data: {[key: string]: string|number|boolean }) {
+
   }
 }
