@@ -3,7 +3,7 @@
 import { testing, asserts, bufio } from "./../../deps.ts";
 
 const { test, runTests  } = testing;
-const { assert, equal } = asserts;
+const { assertEquals, equal } = asserts;
 const { BufReader } = bufio;
 const run = Deno.run;
 
@@ -11,7 +11,7 @@ const testAddr = "127.0.0.1:5001";
 
 const testSite = `http://${testAddr}`;
 
-let httpServer;
+let httpServer: any;
 
 async function startHTTPServer() {
   httpServer = run({
@@ -34,19 +34,19 @@ test(async function server() {
     await startHTTPServer();
     const res1 = await fetch(`${testSite}/hello`);
     const result1 = await res1.text();
-    assert(equal(result1, "page_hello"));
+    assertEquals(result1, "page_hello");
 
     const res2 = await fetch(`${testSite}/foo`);
     const result2 = await res2.text();
-    assert(equal(result2, "page_foo"));
+    assertEquals(result2, "page_foo");
 
     const res3 = await fetch(`${testSite}/bar`);
     const result3 = await res3.text();
-    assert(equal(result3, "page_bar"));
+    assertEquals(result3, "page_bar");
 
     const res4 = await fetch(`${testSite}/page/p001/user/u001`);
     const result4 = await res4.json();
-    assert(equal(result4, {"pageId":"p001","userId":"u001"}));
+    assertEquals(result4, {"pageId":"p001","userId":"u001"});
     
     closeHTTPServer();
   } catch (err) {

@@ -8,7 +8,7 @@ import { testing, asserts } from "./../../deps.ts";
 import { compile } from "./script_template.ts";
 
 const { test, runTests } = testing;
-const { equal } = asserts;
+const { assertEquals } = asserts;
 
 
 test(function testCompileTemplate() {
@@ -90,7 +90,7 @@ test(function testCompileTemplate() {
   };
   const html = compile(tpl, data);
   const expectedResult = `  <div>          <ul>              <li>0:item1</li>              <li>1:item2</li>              <li>2:item3</li>            </ul>              <div>              <ul>                              <li>0-0 : child-1-1</li>                      <li>0-1 : child-1-2</li>                          </ul>              <ul>                              <li>1-0 : child-2-1</li>                      <li>1-1 : child-2-2</li>                      <li>1-2 : child-3-2</li>                          </ul>            </div>              <ul>              <li>key1:val1</li>              <li>key2:val2</li>            </ul>      </div>`;
-  equal(expectedResult, html);
+  assertEquals(expectedResult, html);
 });
 
 runTests();

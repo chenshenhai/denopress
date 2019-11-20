@@ -3,7 +3,7 @@
 import { testing, asserts, bufio } from "./../../deps.ts";
 
 const { test, runTests  } = testing;
-const { assert, equal } = asserts;
+const { assertEquals, equal } = asserts;
 const { BufReader } = bufio;
 
 
@@ -57,7 +57,7 @@ test(async function server() {
       }
     }
 
-    assert(equal(expectRes, JSON.parse(result)));
+    assertEquals(expectRes, JSON.parse(result));
     // close testing server
     closeHTTPServer();
   } catch (err) {
