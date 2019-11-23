@@ -151,11 +151,13 @@ export class ThemeServer {
       const frontApi: TypeThemeFrontAPI = serviceFrontAPI[serviceName];
       if (frontApi) {
         const ser = frontApi[apiName];
-        const api = ser.action;
-        if (typeof api === 'function' && ser.method === method) {
-          const apiContent = await api(params);
-          result.status = 200;
-          result.content = JSON.stringify(apiContent);
+        if (ser) {
+          const api = ser.action;
+          if (typeof api === 'function' && ser.method === method) {
+            const apiContent = await api(params);
+            result.status = 200;
+            result.content = JSON.stringify(apiContent);
+          }
         }
       } else {
         result.status = 404;
