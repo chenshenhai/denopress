@@ -3,6 +3,8 @@
 
 import { Context, ContextRequest, ContextResponse } from "./context.ts";
 
+const CONTEXT_ROUTER_KEY = '@moddleware/data/router';
+
 interface Layer {
   method: string;
   path: string;
@@ -93,6 +95,7 @@ export interface Route {
   delete: Function;  // register DELETE method
   put: Function;  // register PUT method
   patch: Function;  // register PATCH method
+  getContextDataKey(): string;
 }
 
 /**
@@ -115,6 +118,10 @@ export class Router implements Route {
   private register(method: string, path: string, middleware: Function) {
     const layer = new RouteLayer(method, path, middleware);
     this._stack.push(layer);
+  }
+
+  public getContextDataKey(): string {
+    return CONTEXT_ROUTER_KEY;
   }
 
   /**
@@ -174,7 +181,7 @@ export class Router implements Route {
         if (item.pathRegExp.test(currentPath) && item.method.indexOf(method) >= 0) {
           route = item.middleware;
           const pathParams = item.getParams(currentPath);
-          ctx.setData("router", pathParams);
+          ctx.setData(CONTEXT_ROUTER_KEY, pathParams);
           break;
         }
       }

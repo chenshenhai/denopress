@@ -171,6 +171,7 @@ export class Context {
   public res: ContextResponse;
 
   private _dataMap: Map<string, object|string|number> = new Map();
+  private _funcMap: Map<string, Function> = new Map();
 
   constructor(sReq: server.ServerRequest) {
     this.req = new ContextRequest(sReq);
@@ -198,6 +199,24 @@ export class Context {
 
   public deleteData(key: string) {
     this._dataMap.delete(key);
+  }
+
+  public setFunc(key: string, func: Function) {
+    this._funcMap.set(key, func);
+  }
+
+  public getFunc(key: string): Function|undefined {
+    return this._funcMap.get(key);
+  }
+
+  public hasFunc(key: string): boolean {
+    return this._funcMap.has(key);
+  }
+
+  public cleanFunc() {
+    for (const key of this._funcMap.keys()) {
+      this._funcMap.delete(key);
+    }
   }
 
 }
