@@ -55,10 +55,28 @@ test(async function themeRender() {
   }
 });
 
-test(async function themeFrontAPI() {
+test(async function themeFrontGetAPI() {
   const res = await fetch(`${testSite}/api/testFront/getData`);
   const result = await res.json();
   assertEquals(result, { type: "front", todolist: [ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 ] });
+});
+
+
+test(async function themeFrontPostAPI() {
+  const res = await fetch(`${testSite}/api/testFront/postData`, {
+    method: "POST", // *GET, POST, PUT, DELETE, etc.
+    mode: "cors", // no-cors, cors, *same-origin
+    cache: "no-cache", // *default, no-cache, reload, force-cache, only-if-cached
+    credentials: "same-origin", // include, *same-origin, omit
+    headers: {
+      "Content-Type": "application/x-www-form-urlencoded",
+    },
+    redirect: "follow", // manual, *follow, error
+    referrer: "no-referrer", // no-referrer, *client
+    body: "a=1&b=2&c=3", // body data type must match "Content-Type" header
+  });
+  const result = await res.json();
+  assertEquals(result, { type: "front", body: {"a":"1","b":"2","c":"3"} });
 });
 
 test(async function themeServerAPI() {

@@ -14,7 +14,7 @@ export function createPortalServiceFrontMap(config: TypeDenopressConfig): {[key:
   return {
     user: {
       create: {
-        method: 'GET',
+        method: 'POST',
         action: serviceMap.create,
       },
       test: {

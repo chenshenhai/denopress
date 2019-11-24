@@ -2,7 +2,7 @@ import {
   TypeBaseModelOpts,
   TypeModelField,
   TypeModelFieldType,
-} from "./../base_model.ts";
+} from "../base_model.ts";
 
 
 export const user: TypeBaseModelOpts = {

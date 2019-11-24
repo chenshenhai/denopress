@@ -26,6 +26,19 @@ const opts: TypeThemeServerOpts = {
             }, 1000);
           });
         } 
+      },
+      postData: {
+        method: 'POST',
+        action(params: any): Promise<object> {
+          return new Promise((resolve) => {
+            setTimeout(() => {
+              resolve({
+                type: 'front',
+                body: params
+              })
+            }, 1000);
+          });
+        } 
       }
     }
   },

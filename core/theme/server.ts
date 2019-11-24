@@ -3,6 +3,8 @@ import {
   Router,
   Context,
   staticServe,
+  bodyTextParser,
+  getBodyTextParserKey
 } from "./../web/mod.ts";
 import { ThemeLoaderHub } from "./loader_hub.ts";
 import {
@@ -31,6 +33,9 @@ export class ThemeServer {
 
     const path: string = this._opts.path;
     // const themeName: string = path.split('/').pop();
+    const routerDataKey = router.getContextDataKey();
+
+    this._app.use(bodyTextParser);
     
     this._app.use(staticServe(`${path}/$0/static/`, {
       prefix: '^/static/([a-zA-Z\-\_]{1,})/',
@@ -38,7 +43,7 @@ export class ThemeServer {
     }))
     
     router.get("/page/:themeName/:pageName", async (ctx: Context) =>{
-      const params: {[key: string]: string} = ctx.getData("router") as {[key: string]: string};
+      const params: {[key: string]: string} = ctx.getData(routerDataKey) as {[key: string]: string};
       const pageName: string = params.pageName as string;
       const themeName: string = params.themeName;
       const page: TypeReadPageResult = await this._readPageContent(themeName, pageName);
@@ -48,18 +53,24 @@ export class ThemeServer {
 
     // front api config
     if (this._opts.serviceFrontAPI) {
+      
       router.get("/api/:service/:api", async (ctx: Context) => {
-        const params: {[key: string]: string} = ctx.getData("router") as {[key: string]: string};
+        const params: {[key: string]: string} = ctx.getData(router.getContextDataKey()) as {[key: string]: string};
         const urlParams: {[key: string]: string} = ctx.req.getAllURLParams() as {[key: string]: string};
         const api: TypeReadPageResult = await this._getServiceAPIContent('GET', urlParams, params.service, params.api);
         ctx.res.setStatus(api.status);
         ctx.res.setBody(api.content);
       });
 
+      const funcKey = getBodyTextParserKey();
       router.post("/api/:service/:api", async (ctx: Context) => {
-        const params: {[key: string]: string} = ctx.getData("router") as {[key: string]: string};
-        const urlParams: {[key: string]: string} = ctx.req.getAllURLParams() as {[key: string]: string};
-        const api: TypeReadPageResult = await this._getServiceAPIContent('POST', urlParams, params.service, params.api);
+        const parserTextFunc = ctx.getFunc(funcKey);
+        const params: {[key: string]: string} = ctx.getData(router.getContextDataKey()) as {[key: string]: string};
+        let bodyParams: {[key: string]: string} = {};
+        if (typeof parserTextFunc === "function") {
+          bodyParams = await parserTextFunc();
+        }
+        const api: TypeReadPageResult = await this._getServiceAPIContent('POST', bodyParams, params.service, params.api);
         ctx.res.setStatus(api.status);
         ctx.res.setBody(api.content);
       });
