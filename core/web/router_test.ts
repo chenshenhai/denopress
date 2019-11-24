@@ -2,7 +2,7 @@
 
 import { testing, asserts, bufio } from "./../../deps.ts";
 
-const { test, runTests  } = testing;
+const { test } = testing;
 const { assertEquals, equal } = asserts;
 const { BufReader } = bufio;
 const run = Deno.run;
@@ -15,7 +15,7 @@ let httpServer: any;
 
 async function startHTTPServer() {
   httpServer = run({
-    args: ["deno", "run", "--allow-net", "./router_example.ts", ".", "--cors"],
+    args: [Deno.execPath(), "run", "--allow-net", "core/web/router_example.ts", ".", "--cors"],
     stdout: "piped"
   });
   const buffer = httpServer.stdout;
@@ -54,5 +54,3 @@ test(async function server() {
     throw new Error(err);
   }
 });
-
-runTests();

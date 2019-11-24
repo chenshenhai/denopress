@@ -10,7 +10,7 @@ const { BufReader } = bufio;
 
 
 test(async function testThemeListLoader() {
-  const basePath = [Deno.cwd(), 'assets/themes/'].join('/');
+  const basePath = [Deno.cwd(), 'core/theme/assets/themes/'].join('/');
   const themeName = "theme_script";
   const loaderHub = new ThemeLoaderHub({
     basePath,
@@ -30,4 +30,4 @@ test(async function testThemeListLoader() {
   assertEquals(html, expectResult);
 });
 
-runTests();
+// runTests();

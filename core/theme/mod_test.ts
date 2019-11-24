@@ -2,7 +2,7 @@
 
 import { testing, asserts, bufio } from "./../../deps.ts";
 
-const { test, runTests  } = testing;
+const { test } = testing;
 const { assertEquals } = asserts;
 const { BufReader } = bufio;
 const run = Deno.run;
@@ -15,7 +15,7 @@ let httpServer: any;
 
 async function startHTTPServer() {
   httpServer = run({
-    args: ["deno", "run", "--allow-all", "./mod_example.ts", ".", "--cors"],
+    args: [Deno.execPath(), "run", "--allow-all", "core/theme/mod_example.ts", ".", "--cors"],
     stdout: "piped"
   });
   const buffer = httpServer.stdout;
@@ -36,7 +36,7 @@ function sleep(time = 1000) {
   })
 }
 
-test(async function startServer() {
+test(async function startThemeLoaderServer() {
   await startHTTPServer();
   await sleep(3000);
   assertEquals(1, 1);
@@ -86,9 +86,7 @@ test(async function themeServerAPI() {
   assertEquals(result, expectResult);
 });
 
-test(async function closeServer() {
+test(async function closeThemeLoaderServer() {
   await closeHTTPServer();
   assertEquals(1, 1);
 })
-
-runTests();

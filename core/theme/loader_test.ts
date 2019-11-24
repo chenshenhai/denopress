@@ -10,7 +10,7 @@ const { BufReader } = bufio;
 
 
 test(async function testThemeLoader() {
-  const path = [Deno.cwd(), 'assets/themes/theme_script'].join('/')
+  const path = [Deno.cwd(), 'core/theme/assets/themes/theme_script'].join('/')
   const loader = new ThemeLoader({
     path,
   })
@@ -66,4 +66,4 @@ test(async function testThemeLoader() {
 //   assert(equal(html, expectResult));
 // });
 
-runTests();
+// runTests();

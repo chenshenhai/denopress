@@ -93,4 +93,4 @@ test(function testCompileTemplate() {
   assertEquals(expectedResult, html);
 });
 
-runTests();
+// runTests();

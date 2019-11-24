@@ -8,7 +8,7 @@ const readFileSync = Deno.readFileSync;
 const decoder = new TextDecoder();
 
 test(function testCompileTemplate() {
-  const buf = readFileSync('./assets/tpl.html');
+  const buf = readFileSync('core/template/assets/tpl.html');
   const tplStr: string = decoder.decode(buf);
 
   const tpl = new Template(tplStr);
@@ -50,7 +50,7 @@ test(function testCompileTemplate() {
 });
 
 test(function testCompileFunc() {
-  const buf = readFileSync('./assets/tpl.html');
+  const buf = readFileSync('core/template/assets/tpl.html');
   const tplStr: string = decoder.decode(buf);
 
   const tpl = new Template(tplStr);
@@ -93,4 +93,4 @@ test(function testCompileFunc() {
 });
 
 
-runTests();
+// runTests();

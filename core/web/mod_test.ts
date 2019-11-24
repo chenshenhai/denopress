@@ -1,8 +1,8 @@
 #!/usr/bin/env run deno --allow-run --allow-net
 
-import { testing, asserts, bufio } from "./../../deps.ts";
+import { testing, asserts, bufio, path } from "./../../deps.ts";
 
-const { test, runTests  } = testing;
+const { test } = testing;
 const { assertEquals, equal } = asserts;
 const { BufReader } = bufio;
 
@@ -14,7 +14,7 @@ const testSite = "127.0.0.1:5001";
 let httpServer: Deno.Process;
 async function startHTTPServer() {
   httpServer = run({
-    args: ["deno", "run", "--allow-net", "./mod_example.ts", ".", "--cors"],
+    args: [Deno.execPath(), "run", "--allow-net", "core/web/mod_example.ts", ".", "--cors"],
     stdout: "piped"
   });
   let line: string|null = null;
@@ -66,6 +66,3 @@ test(async function server() {
     throw new Error(err);
   }
 });
-
-// start
-runTests()
