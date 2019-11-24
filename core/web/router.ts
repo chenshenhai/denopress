@@ -17,7 +17,7 @@ class RouteLayer implements Layer {
   public middleware: Function;  // router middleware
   public pathRegExp: RegExp;  // router regpex
   private pathParamKeyList: string[]; // router parse keywords
-  constructor(method, path, middleware) {
+  constructor(method: string, path: string, middleware: Function) {
     this.path = path;
     this.method = method;
     this.middleware = middleware;
@@ -36,17 +36,19 @@ class RouteLayer implements Layer {
    * @return {object}
    */
   public getParams(actionPath: string) {
-    const result = {};
+    const result: {[key: string]: string} = {};
     const pathRegExp = this.pathRegExp;
     const pathParamKeyList = this.pathParamKeyList;
     if (Array.isArray(pathParamKeyList) && pathParamKeyList.length > 0) {
       const execResult = pathRegExp.exec(actionPath);
-      pathParamKeyList.forEach(function(key, index){
-        const val = execResult[index + 1];
-        if (typeof val === "string") {
-          result[key] = val;
-        }
-      });
+      if (execResult) {
+        pathParamKeyList.forEach(function(key, index){
+          const val = execResult[index + 1];
+          if (typeof val === "string") {
+            result[key] = val;
+          }
+        });
+      }
     }
     return result;
   }
@@ -59,9 +61,9 @@ class RouteLayer implements Layer {
   private initPathToRegExpConfig(path: string) {
     const pathItemRegExp = /\/([^\/]{2,})/ig;
     const paramKeyRegExp = /^\/\:[0-9a-zA-Z\_]/i;
-    const pathItems: string[] = path.match(pathItemRegExp);
-    const pathParamKeyList = [];
-    const pathRegExpItemStrList = [];
+    const pathItems: string[]|null = path.match(pathItemRegExp);
+    const pathParamKeyList: string[] = [];
+    const pathRegExpItemStrList: string[] = [];
     if (Array.isArray(pathItems)) {
       pathItems.forEach(function(item){
         if (typeof item === "string") {
@@ -110,7 +112,7 @@ export class Router implements Route {
    * @param path {string} router path, example: "/page/hello" or "/page/:pid/user/:uid"
    * @param middleware {Function} router exec func function(ctx, next) { //... }
    */
-  private register(method, path, middleware) {
+  private register(method: string, path: string, middleware: Function) {
     const layer = new RouteLayer(method, path, middleware);
     this._stack.push(layer);
   }
@@ -119,7 +121,7 @@ export class Router implements Route {
    * @param path {string}
    * @param middleware {Function}
    */
-  public get(path, middleware) {
+  public get(path: string, middleware: Function) {
     this.register("GET", path, middleware);
   }
 
@@ -127,7 +129,7 @@ export class Router implements Route {
    * @param path {string}
    * @param middleware {Function}
    */
-  public post(path, middleware) {
+  public post(path: string, middleware: Function) {
     this.register("POST", path, middleware);
   }
 
@@ -135,7 +137,7 @@ export class Router implements Route {
    * @param path {string}
    * @param middleware {Function}
    */
-  public delete(path, middleware) {
+  public delete(path: string, middleware: Function) {
     this.register("DELETE", path, middleware);
   }
 
@@ -143,7 +145,7 @@ export class Router implements Route {
    * @param path {string}
    * @param middleware {Function}
    */
-  public put(path, middleware) {
+  public put(path: string, middleware: Function) {
     this.register("PUT", path, middleware);
   }
 
@@ -151,7 +153,7 @@ export class Router implements Route {
    * @param path {string}
    * @param middleware {Function}
    */
-  public patch(path, middleware) {
+  public patch(path: string, middleware: Function) {
     this.register("PATCH", path, middleware);
   }
 
@@ -160,7 +162,7 @@ export class Router implements Route {
    */
   public routes() {
     const stack = this._stack;
-    return async function(ctx: Context, next) {
+    return async function(ctx: Context, next: Function) {
       const req: ContextRequest = ctx.req;
       const path: string = req.getPath();
       const method: string = req.getMethod();
