@@ -1,4 +1,4 @@
-import { BaseModel } from "./../../models/base_model.ts";
+import { BaseModel } from "./../../model/base_model.ts";
 
 export function createUserService(models: {[key: string]: BaseModel}) {
   const serivce = {

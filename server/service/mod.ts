@@ -1,7 +1,7 @@
 import { TypeThemeAPI, TypeThemeFrontAPI } from "./../../core/theme/types.ts";
 import { TypeDenopressConfig } from "./../../core/types.ts";
 import { TypeDatabaseOpts, Database } from "./../util/database.ts";
-import { createModelMap } from "./../models/mod.ts";
+import { createModelMap } from "./../model/mod.ts";
 import { createUserService } from "./service/user.ts";
 
 
