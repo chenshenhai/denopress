@@ -19,6 +19,11 @@ const testUnitRunList = [
     stdout: "piped"
   },
   {
+    args: ["deno", "run", "--allow-run", "--allow-net", "bodyparser_test.ts", ".", "--cors"],
+    cwd: "./core/web/",
+    stdout: "piped"
+  },
+  {
     args: ["deno", "run", "--allow-run", "--allow-net", "mod_test.ts", "--allow-read", ".", "--cors"],
     cwd: "./core/theme/",
     stdout: "piped"
