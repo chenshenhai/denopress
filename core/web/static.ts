@@ -55,20 +55,20 @@ function pathFilter(path: string, opts: ServeOptions = {}) {
 function serve(baseDir: string, options: ServeOptions = {}): Function {
   const { prefix = '', regular = false, } = options || {};
 
-  let isLegalPath: Function = function(pathname) {
-    return options && typeof prefix === "string" && pathname.indexOf(options.prefix) === 0;
+  let isLegalPath: Function = function(pathname: string) {
+    return options && typeof prefix === "string" && pathname.indexOf(prefix) === 0;
   }
 
   let prefixReg:RegExp|null = null;
   if (regular === true && typeof prefix === 'string') {
     prefixReg = new RegExp(prefix);
-    isLegalPath = function(pathname) {
-      return prefixReg.test(pathname);
+    isLegalPath = function(pathname: string): boolean|null {
+      return prefixReg && prefixReg.test(pathname);
     }
   }
   
 
-  return async function(ctx: Context, next) {
+  return async function(ctx: Context, next: Function) {
     await next();
     const {req, res} = ctx;
     const pathname = req.getPath();
@@ -76,7 +76,7 @@ function serve(baseDir: string, options: ServeOptions = {}): Function {
     if ( options && isLegalPath(pathname) ) {
       const path = pathFilter(pathname, options);
       let fullPath = `${baseDir}${path}`;
-      if (regular === true) {
+      if (regular === true && prefixReg) {
         const matchList = pathname.match(prefixReg);
         Array.isArray(matchList) && matchList.forEach((m, idx) => {
           if (idx > 0 && m && typeof m === 'string') {
