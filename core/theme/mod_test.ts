@@ -20,7 +20,9 @@ async function startHTTPServer() {
   });
   const buffer = httpServer.stdout;
   const bufReader = new BufReader(buffer);
-  await bufReader.readLine();
+  for (let i = 0; i < 11; i++) {
+    await bufReader.readLine();
+  }
 }
 
 function closeHTTPServer() {
@@ -38,7 +40,7 @@ function sleep(time = 1000) {
 
 test(async function startThemeLoaderServer() {
   await startHTTPServer();
-  await sleep(3000);
+  await sleep(1000);
   assertEquals(1, 1);
 })
 
