@@ -1,3 +1,6 @@
 [submodule "example/admin_themes/admin"]
 	path = example/admin_themes/admin
 	url = git@github.com:denopress/theme_admin.git
+[submodule "example/portal_themes/portal"]
+	path = example/portal_themes/portal
+	url = git@github.com:denopress/theme_portal.git
