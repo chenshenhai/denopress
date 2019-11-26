@@ -1,7 +1,0 @@
-{
-  "name": "portal",
-  "pages": [
-    "pages/home",
-    "pages/tpl"
-  ]
-}
