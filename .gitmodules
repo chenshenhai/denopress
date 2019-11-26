@@ -1,0 +1,3 @@
+[submodule "example/admin_themes/admin"]
+	path = example/admin_themes/admin
+	url = git@github.com:denopress/theme_admin.git
