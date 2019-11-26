@@ -10,7 +10,14 @@ export function createPortalServer(config: TypeDenopressConfig, opts: { baseDir:
     themeList: config.portalThemes.map((item) => {
       return item.name;
     }),
-    serviceFrontAPI: createPortalServiceFrontMap(config),
+    serviceFrontAPI: {
+      todoList: {
+        getData: {
+          method: 'GET',
+          action: serviceTodoList.getData,
+        }
+      },
+    },
     serviceServerAPI: {
       todoList: serviceTodoList,
     },
@@ -25,14 +32,7 @@ export function createAdminServer(config: TypeDenopressConfig, opts: { baseDir: 
     themeList: config.adminThemes.map((item) => {
       return item.name;
     }),
-    serviceFrontAPI: {
-      todoList: {
-        getData: {
-          method: 'GET',
-          action: serviceTodoList.getData,
-        }
-      },
-    },
+    serviceFrontAPI: createPortalServiceFrontMap(config),
     serviceServerAPI: {
       todoList: serviceTodoList,
     },

@@ -3,14 +3,14 @@ import { fs } from "./../../deps.ts";
 const { Client } = mysql;
 const { readJsonSync } = fs;
 
-// const config = {
-//   hostname: "127.0.0.1",
-//   username: "root",
-//   password: "",
-//   timeout: 10000,
-//   pool: 3,
-//   debug: true,
-// };
+const defaultOpts = {
+  // hostname: "127.0.0.1",
+  // username: "root",
+  // password: "",
+  timeout: 10000,
+  pool: 3,
+  debug: true,
+};
 
 
 export interface TypeDatabaseOpts {
@@ -31,7 +31,10 @@ export class Database {
   }
 
   public async clientExec(execStr: string, args?: string|number[]) {
-    const client = await new Client().connect(this._opts);
+    const { hostname, username, password, database, port, } = this._opts;
+    let opts = {hostname, username, password, db: database, port, };
+    opts = { ...defaultOpts, ...opts, }
+    const client = await new Client().connect(opts);
     const result = await client.execute(execStr, args as any[]);
     await client.close();
     return result;
