@@ -28,7 +28,7 @@ export class BaseModel {
     this._database = db;
   }
 
-  async create(data: {[key: string]: string|number|boolean }) {
+  async create(data: {[key: string]: string|number|boolean }): Promise<any> {
     const keyValList: string[] = [];
     const database: Database = this._database;
     for (const key in data) {
@@ -37,7 +37,8 @@ export class BaseModel {
     const sql = `
       INSERT INTO \`${this._opts.tableName}\`
       set ${keyValList.join(', ')};`;
-    await database.clientExec(sql);
+    const res = await database.clientExec(sql);
+    return res;
   }
 
   query(data: {[key: string]: string|number|boolean }) {

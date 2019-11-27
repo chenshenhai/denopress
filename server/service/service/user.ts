@@ -9,7 +9,8 @@ export function createUserService(models: {[key: string]: BaseModel}) {
         message: '',
       };
       try {
-        await models.user.create(data);
+        const res = await models.user.create(data);
+        result.data = res;
       } catch (err) {
         result.success = false;
         result.message = JSON.stringify(err);
