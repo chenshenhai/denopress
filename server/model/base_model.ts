@@ -41,7 +41,14 @@ export class BaseModel {
     return res;
   }
 
-  query(data: {[key: string]: string|number|boolean }) {
-
+  async query(data: {[key: string]: string|number|boolean }) {
+    const keyValList: string[] = [];
+    const database: Database = this._database;
+    for (const key in data) {
+      keyValList.push(`${key}='${data[key] || ''}'`);
+    }
+    const sql = `SELECT * FROM \`${this._opts.tableName}\` WHERE ${keyValList.join('AND')};`;
+    const res = await database.clientExec(sql);
+    return res;
   }
 }
