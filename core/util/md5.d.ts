@@ -1,0 +1,1 @@
+export function md5(string: string, key?: string, raw?: string): string;
