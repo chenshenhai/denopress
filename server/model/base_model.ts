@@ -47,7 +47,7 @@ export class BaseModel {
     for (const key in data) {
       keyValList.push(`${key}='${data[key] || ''}'`);
     }
-    const sql = `SELECT * FROM \`${this._opts.tableName}\` WHERE ${keyValList.join('AND')};`;
+    const sql = `SELECT * FROM \`${this._opts.tableName}\` WHERE ${keyValList.join(' AND ')};`;
     const res = await database.clientExec(sql);
     return res;
   }
