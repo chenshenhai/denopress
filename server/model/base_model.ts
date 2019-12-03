@@ -48,7 +48,7 @@ export class BaseModel {
     this._camelNameMap = camelNameMap;
   }
 
-  async create(data: {[key: string]: string|number|boolean }): Promise<any> {
+  async create(data: {[key: string]: string|number|boolean|null }): Promise<any> {
     const keyValList: string[] = [];
     const database: Database = this._database;
     for (const key in data) {

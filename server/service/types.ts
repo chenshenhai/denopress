@@ -4,4 +4,5 @@ export interface ServiceResult {
   success: boolean;
   data?: ExecuteResult|null,
   message?: string|null,
+  code?: string,
 }

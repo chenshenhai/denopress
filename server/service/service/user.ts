@@ -7,19 +7,26 @@ export function createUserService(models: {[key: string]: BaseModel}) {
 
   const serivce = {
 
-    async create(data: {[key: string]: string|number}) {
+    async create(data: {[key: string]: string|number|null}) {
       data.password = md5(data.password as string);
+      data.uuid = md5(`${Math.random().toString(26).substr(2)}_${Date.now()}`)
       const result = {
-        success: true,
+        success: false,
         data: null,
         message: '',
+        code: ''
       };
       try {
-        const res = await models.user.create(data);
-        result.data = res;
+        const res: ExecuteResult = await models.user.create(data);
+        if (res.lastInsertId && res.lastInsertId > 0 && res.affectedRows === 1) {
+          result.success = true;
+        } else {
+          result.code = 'DATABASE_INSERT_FAIL';
+        }
       } catch (err) {
         result.success = false;
         result.message = err.stack;
+        result.code = 'DATABASE_ERROR';
       }
       return result;
     },
@@ -30,6 +37,7 @@ export function createUserService(models: {[key: string]: BaseModel}) {
         success: true,
         data: null,
         message: '',
+        code: '',
       };
       try {
         const res = await models.user.query(data) as ExecuteResult;
@@ -37,6 +45,7 @@ export function createUserService(models: {[key: string]: BaseModel}) {
       } catch (err) {
         result.success = false;
         result.message = err.stack;
+        result.code = 'DATABASE_ERROR';
       }
       return result;
     },
