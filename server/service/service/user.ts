@@ -4,7 +4,9 @@ import { ExecuteResult } from "../../../core/mysql/src/connection.ts";
 import { ServiceResult } from "./../types.ts";
 
 export function createUserService(models: {[key: string]: BaseModel}) {
+
   const serivce = {
+
     async create(data: {[key: string]: string|number}) {
       data.password = md5(data.password as string);
       const result = {
@@ -17,7 +19,7 @@ export function createUserService(models: {[key: string]: BaseModel}) {
         result.data = res;
       } catch (err) {
         result.success = false;
-        result.message = JSON.stringify(err);
+        result.message = err.stack;
       }
       return result;
     },
@@ -34,7 +36,7 @@ export function createUserService(models: {[key: string]: BaseModel}) {
         result.data = res;
       } catch (err) {
         result.success = false;
-        result.message = JSON.stringify(err);
+        result.message = err.stack;
       }
       return result;
     },
