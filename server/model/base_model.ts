@@ -20,6 +20,10 @@ export interface TypeBaseModelOpts {
   }
 }
 
+export interface ModelResult {
+  [key: string]: string|number|null
+}
+
 export class BaseModel {
   private _opts: TypeBaseModelOpts;
   private _database: Database;
@@ -62,7 +66,7 @@ export class BaseModel {
     return res;
   }
 
-  async query(data: {[key: string]: string|number|boolean }) {
+  async query(data: {[key: string]: string|number|boolean }): Promise<ModelResult[]> {
     const keyValList: string[] = [];
     const database: Database = this._database;
     for (const key in data) {
@@ -74,8 +78,19 @@ export class BaseModel {
       }
     }
     const sql = `SELECT * FROM \`${this._opts.tableName}\` WHERE ${keyValList.join(' AND ')};`;
-    // console.log('sql =', sql);
     const res = await database.clientExec(sql);
-    return res;
+    const result: ModelResult[] = [];
+    if (res.rows) {
+      res.rows.forEach((item: {[key: string]: any}) => {
+        const data: ModelResult = {};
+        for (const [lineName, camelName] of this._lineNameMap.entries()) {
+          if (camelName) {
+            data[camelName] = item[lineName];
+          }
+        }
+        result.push(data);
+      });
+    }
+    return result;
   }
 }
