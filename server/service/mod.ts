@@ -33,6 +33,10 @@ export function createPortalServiceFrontMap(config: TypeDenopressConfig): {[key:
         method: 'GET',
         action: postService.query,
       },
+      queryByPage: {
+        method: 'GET',
+        action: postService.queryByPage,
+      },
     }
   };
 }

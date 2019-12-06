@@ -49,13 +49,26 @@ export function createPostService(models: {[key: string]: BaseModel}) {
       return result;
     },
 
-    async test(data: any) {
-      return {
+  
+    async queryByPage(data: {pageNo: number, size: number}) {
+      const result: ServiceResult = {
         success: true,
-        data: data,
+        data: null,
         message: '',
+        code: '',
+      };
+      try {
+        const start: number = data.pageNo * data.size;
+        const offset: number = data.size;
+        const res = await models.post.queryByPage(start, offset) as ExecuteResult;
+        result.data = res;
+      } catch (err) {
+        result.success = false;
+        result.message = err.stack;
+        result.code = 'DATABASE_ERROR';
       }
-    }
+      return result;
+    },
   }
 
   return serivce;

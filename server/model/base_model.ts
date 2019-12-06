@@ -93,4 +93,36 @@ export class BaseModel {
     }
     return result;
   }
+
+  async queryByPage(start: number, offset: number, data?: {[key: string]: string|number|boolean }): Promise<ModelResult[]> {
+    
+    const database: Database = this._database;
+    
+    // const keyValList: string[] = [];
+    // for (const key in data) {
+    //   const lineName: string|undefined = this._camelNameMap.get(key);
+    //   if (typeof lineName === 'string') {
+    //     keyValList.push(`${lineName}='${data[key] || ''}'`);
+    //   } else {
+    //     throw Error(`the field named ${key}(${parseToLineName(key)}) is undefined`)
+    //   }
+    // }
+    const sql = `SELECT * FROM \`${this._opts.tableName}\` LIMIT ${start}, ${offset};`;
+    const res = await database.clientExec(sql);
+    const result: ModelResult[] = [];
+    if (res.rows) {
+      res.rows.forEach((item: {[key: string]: any}) => {
+        const data: ModelResult = {};
+        for (const [lineName, camelName] of this._lineNameMap.entries()) {
+          if (camelName) {
+            data[camelName] = item[lineName];
+          }
+        }
+        result.push(data);
+      });
+    }
+    return result;
+  }
+
+
 }
