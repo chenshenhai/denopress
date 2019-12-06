@@ -3,6 +3,7 @@ import { TypeDenopressConfig } from "./../../core/types.ts";
 import { TypeDatabaseOpts, Database } from "./../util/database.ts";
 import { createModelMap } from "./../model/mod.ts";
 import { createUserService } from "./service/user.ts";
+import { createPostService } from "./service/post.ts";
 
 
 
@@ -10,21 +11,28 @@ export function createPortalServiceFrontMap(config: TypeDenopressConfig): {[key:
   const dbOpts: TypeDatabaseOpts = config.database.config;
   const db = new Database(dbOpts);
   const models = createModelMap(db);
-  const serviceMap = createUserService(models);
+  const userService = createUserService(models);
+  const postService = createPostService(models);
   return {
     user: {
       create: {
         method: 'POST',
-        action: serviceMap.create,
+        action: userService.create,
       },
       query: {
         method: 'GET',
-        action: serviceMap.query,
-      },
-      test: {
-        method: 'GET',
-        action: serviceMap.test,
+        action: userService.query,
       },
     },
+    post: {
+      create: {
+        method: 'POST',
+        action: postService.create,
+      },
+      query: {
+        method: 'GET',
+        action: postService.query,
+      },
+    }
   };
 }

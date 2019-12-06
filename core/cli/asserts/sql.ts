@@ -5,6 +5,7 @@ export default {
     `CREATE TABLE IF NOT EXISTS  dp_posts (
       id INT(11) NOT NULL AUTO_INCREMENT,
       uuid VARCHAR(255) NOT NULL,
+      user_name VARCHAR(255) DEFAULT NULL,
       user_uuid VARCHAR(255) DEFAULT NULL,
       title VARCHAR(255) DEFAULT NULL,
       content longtext DEFAULT NULL,
