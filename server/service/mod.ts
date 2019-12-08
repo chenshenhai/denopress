@@ -7,36 +7,14 @@ import { createPostService } from "./service/post.ts";
 
 
 
-export function createPortalServiceFrontMap(config: TypeDenopressConfig): {[key: string]: TypeThemeFrontAPI} {
+export function createServiceMap(config: TypeDenopressConfig): {[key: string]: {[key: string]: Function}} {
   const dbOpts: TypeDatabaseOpts = config.database.config;
   const db = new Database(dbOpts);
   const models = createModelMap(db);
   const userService = createUserService(models);
   const postService = createPostService(models);
   return {
-    user: {
-      create: {
-        method: 'POST',
-        action: userService.create,
-      },
-      query: {
-        method: 'GET',
-        action: userService.query,
-      },
-    },
-    post: {
-      create: {
-        method: 'POST',
-        action: postService.create,
-      },
-      query: {
-        method: 'GET',
-        action: postService.query,
-      },
-      queryByPage: {
-        method: 'GET',
-        action: postService.queryByPage,
-      },
-    }
-  };
+    user: userService,
+    post: postService,
+  }
 }

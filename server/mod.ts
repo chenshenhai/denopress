@@ -1,7 +1,7 @@
 import { ThemeServer } from "./../core/theme/mod.ts";
 import { TypeDenopressConfig } from "./../core/types.ts";
-import serviceTodoList from "./service/todo_list.ts"; 
-import { createPortalServiceFrontMap } from "./service/mod.ts";
+import controllerTodoList from "./controller/todo_list.ts"; 
+import { createPortalControllerFrontMap } from "./controller/mod.ts";
 
 const HOT_LOADING = true;
 
@@ -11,16 +11,16 @@ export function createPortalServer(config: TypeDenopressConfig, opts: { baseDir:
     themeList: config.portalThemes.map((item) => {
       return item.name;
     }),
-    serviceFrontAPI: {
+    controllerFrontAPI: {
       todoList: {
         getData: {
           method: 'GET',
-          action: serviceTodoList.getData,
+          action: controllerTodoList.getData,
         }
       },
     },
-    serviceServerAPI: {
-      todoList: serviceTodoList,
+    controllerServerAPI: {
+      todoList: controllerTodoList,
     },
     hotLoading: HOT_LOADING,
   });
@@ -34,9 +34,9 @@ export function createAdminServer(config: TypeDenopressConfig, opts: { baseDir: 
     themeList: config.adminThemes.map((item) => {
       return item.name;
     }),
-    serviceFrontAPI: createPortalServiceFrontMap(config),
-    serviceServerAPI: {
-      todoList: serviceTodoList,
+    controllerFrontAPI: createPortalControllerFrontMap(config),
+    controllerServerAPI: {
+      todoList: controllerTodoList,
     },
     hotLoading: HOT_LOADING,
   });
