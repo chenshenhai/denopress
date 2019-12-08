@@ -12,7 +12,7 @@ export interface TypeThemeConfig {
 
 
 export interface TypeThemePageControllerDataOpts {
-  api?: TypeThemeServiceAPI;
+  api?: TypeThemeControllerAPI;
 }
 
 export interface TypeThemePageController {
@@ -70,13 +70,19 @@ export interface TypeThemeLoaderHub {
 }
 
 
+export interface TypeThemeServerContext {
+  getUrlParams(): {[key: string]: string};
+  getBodyParams(): Promise<{[key: string]: string}>;
+}
+
 export interface TypeThemeServerOpts {
   path: string;
   themeList?: string[];
-  serviceFrontAPI?: TypeThemeServiceFrontAPI;
-  serviceServerAPI?: TypeThemeServiceAPI;
+  controllerFrontAPI?: TypeThemeControllerFrontAPI;
+  controllerServerAPI?: TypeThemeControllerAPI;
   hotLoading?: boolean;
 }
+
 
 export interface TypeThemeFrontAPI {
   [key: string]: {
@@ -85,11 +91,11 @@ export interface TypeThemeFrontAPI {
   };
 }
 
-export interface TypeThemeServiceFrontAPI {
+export interface TypeThemeControllerFrontAPI {
   [key: string]: TypeThemeFrontAPI
 }
 
-export interface TypeThemeServiceAPI {
+export interface TypeThemeControllerAPI {
   [key: string]: TypeThemeAPI
 }
 

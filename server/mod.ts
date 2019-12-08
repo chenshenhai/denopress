@@ -3,6 +3,7 @@ import { TypeDenopressConfig } from "./../core/types.ts";
 import serviceTodoList from "./service/todo_list.ts"; 
 import { createPortalServiceFrontMap } from "./service/mod.ts";
 
+const HOT_LOADING = true;
 
 export function createPortalServer(config: TypeDenopressConfig, opts: { baseDir: string }) {
   const portalServer = new ThemeServer(`127.0.0.1:${config.portalServer.port}`, {
@@ -21,6 +22,7 @@ export function createPortalServer(config: TypeDenopressConfig, opts: { baseDir:
     serviceServerAPI: {
       todoList: serviceTodoList,
     },
+    hotLoading: HOT_LOADING,
   });
   return portalServer;
 }
@@ -36,6 +38,7 @@ export function createAdminServer(config: TypeDenopressConfig, opts: { baseDir: 
     serviceServerAPI: {
       todoList: serviceTodoList,
     },
+    hotLoading: HOT_LOADING,
   });
   return adminServer;
 }

@@ -1,4 +1,8 @@
-import { ThemeServer, TypeThemeServerOpts } from "./mod.ts";
+import {
+  ThemeServer,
+  TypeThemeServerOpts,
+  TypeThemeServerContext,
+} from "./mod.ts";
 
 const addr = "127.0.0.1:5001";
 const cwd = Deno.cwd();
@@ -10,7 +14,7 @@ const opts: TypeThemeServerOpts = {
     'theme_demo',
     'theme_script',
   ],
-  serviceFrontAPI: {
+  controllerFrontAPI: {
     testFront: {
       getData: {
         method: 'GET',
@@ -29,7 +33,8 @@ const opts: TypeThemeServerOpts = {
       },
       postData: {
         method: 'POST',
-        action(params: any): Promise<object> {
+        async action(ctx: TypeThemeServerContext): Promise<object> {
+          const params = await ctx.getBodyParams();
           return new Promise((resolve) => {
             setTimeout(() => {
               resolve({
@@ -42,7 +47,7 @@ const opts: TypeThemeServerOpts = {
       }
     }
   },
-  serviceServerAPI: {
+  controllerServerAPI: {
     testServer: {
       getData(): Promise<object> {
         return new Promise((resolve) => {

@@ -8,16 +8,37 @@ import {
 } from "./../web/mod.ts";
 import { ThemeLoaderHub } from "./loader_hub.ts";
 import {
-  TypeTheme,
   TypeReadPageResult,
   TypeThemeServerOpts,
-  TypeThemePageScript,
-  TypeThemeAPI,
-  TypeThemeServiceAPI,
+  TypeThemeServerContext,
   TypeThemeFrontAPI,
-  TypeThemeServiceFrontAPI,
+  TypeThemeControllerFrontAPI,
 } from "./types.ts"
 
+
+export class ThemeServerContext implements TypeThemeServerContext {
+  private _ctx: Context;
+  constructor(ctx: Context) {
+    this._ctx = ctx;
+  }
+
+  getUrlParams(): {[key: string]: string} {
+    const ctx = this._ctx;
+    const urlParams: {[key: string]: string} = ctx.req.getAllURLParams() as {[key: string]: string};
+    return urlParams;
+  }
+
+  async getBodyParams(): Promise<{[key: string]: string}> {
+    const ctx = this._ctx;
+    const funcKey = getBodyTextParserKey();
+    const parserTextFunc = ctx.getFunc(funcKey);
+    let bodyParams: {[key: string]: string} = {};
+    if (typeof parserTextFunc === "function") {
+      bodyParams = await parserTextFunc();
+    }
+    return bodyParams;
+  }
+}
 
 export class ThemeServer {
   private _addr: string;
@@ -52,25 +73,18 @@ export class ThemeServer {
     });
 
     // front api config
-    if (this._opts.serviceFrontAPI) {
+    if (this._opts.controllerFrontAPI) {
       
       router.get("/api/:service/:api", async (ctx: Context) => {
         const params: {[key: string]: string} = ctx.getData(router.getContextDataKey()) as {[key: string]: string};
-        const urlParams: {[key: string]: string} = ctx.req.getAllURLParams() as {[key: string]: string};
-        const api: TypeReadPageResult = await this._getServiceAPIContent('GET', urlParams, params.service, params.api);
+        const api: TypeReadPageResult = await this._getControllerAPIContent(ctx, params.service, params.api);
         ctx.res.setStatus(api.status);
         ctx.res.setBody(api.content);
       });
 
-      const funcKey = getBodyTextParserKey();
       router.post("/api/:service/:api", async (ctx: Context) => {
-        const parserTextFunc = ctx.getFunc(funcKey);
         const params: {[key: string]: string} = ctx.getData(router.getContextDataKey()) as {[key: string]: string};
-        let bodyParams: {[key: string]: string} = {};
-        if (typeof parserTextFunc === "function") {
-          bodyParams = await parserTextFunc();
-        }
-        const api: TypeReadPageResult = await this._getServiceAPIContent('POST', bodyParams, params.service, params.api);
+        const api: TypeReadPageResult = await this._getControllerAPIContent(ctx, params.service, params.api);
         ctx.res.setStatus(api.status);
         ctx.res.setBody(api.content);
       });
@@ -112,7 +126,7 @@ export class ThemeServer {
     const pageKey = `pages/${pageName || ''}`;
     const loaderHub = this._loaderHub;
     const controllerDataOpts = {
-      api: this._opts.serviceServerAPI,
+      api: this._opts.controllerServerAPI,
     };
     
     if (this._opts.hotLoading !== true) {
@@ -149,30 +163,31 @@ export class ThemeServer {
     return result;
   }
 
-  private async _getServiceAPIContent(method: string, params: object, serviceName: string, apiName: string): Promise<TypeReadPageResult> {
+  private async _getControllerAPIContent(ctx: Context, ctrlName: string, apiName: string): Promise<TypeReadPageResult> {
     // const path: string = this._opts.path;
     const result = {
       status: 404,
-      content: `404: api/${serviceName}/${apiName} is not found!`,
+      content: `404: api/${ctrlName}/${apiName} is not found!`,
     }
+    const method = ctx.req.getMethod();
+    const ctrlFrontAPI: TypeThemeControllerFrontAPI|undefined = this._opts.controllerFrontAPI;
     
-    const serviceFrontAPI: TypeThemeServiceFrontAPI|undefined = this._opts.serviceFrontAPI;
-    
-    if (serviceFrontAPI) {
-      const frontApi: TypeThemeFrontAPI = serviceFrontAPI[serviceName];
+    if (ctrlFrontAPI) {
+      const frontApi: TypeThemeFrontAPI = ctrlFrontAPI[ctrlName];
       if (frontApi) {
-        const ser = frontApi[apiName];
-        if (ser) {
-          const api = ser.action;
-          if (typeof api === 'function' && ser.method === method) {
-            const apiContent = await api(params);
+        const ctrl = frontApi[apiName];
+        if (ctrl) {
+          const api = ctrl.action;
+          if (typeof api === 'function' && ctrl.method === method) {
+            const sctx = new ThemeServerContext(ctx)
+            const apiContent = await api(sctx);
             result.status = 200;
             result.content = JSON.stringify(apiContent);
           }
         }
       } else {
         result.status = 404;
-        result.content = `404: api/${serviceName} is not found!`;
+        result.content = `404: api/${ctrlName} is not found!`;
       }
     }
   

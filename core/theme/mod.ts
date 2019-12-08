@@ -4,7 +4,8 @@ export {
   TypeThemePressConfig,
   TypeThemeConfig,
   TypeThemeServerOpts,
-  TypeThemeServiceAPI
+  TypeThemeServerContext,
+  TypeThemeControllerAPI,
 } from "./types.ts";
 export { ThemeServer } from "./server.ts";
 export { RemoteThemeLoader } from "./remote_loader.ts";
