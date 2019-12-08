@@ -24,8 +24,8 @@ export function createAdminUserControllerFrontMap(config: TypeDenopressConfig): 
     login: {
       method: 'POST',
       action: async (ctx: TypeThemeServerContext) => {
-        const params = await ctx.getUrlParams();
-        const COOKIE_TIME = 1000 * 60 * 2;
+        const params = await ctx.getBodyParams();
+        const COOKIE_TIME = 1000 * 60 * 60;
         const res = await service.user.query(params);
         if (res.success === true && res.data && res.data.uuid) {
           ctx.setCookie({
@@ -35,7 +35,7 @@ export function createAdminUserControllerFrontMap(config: TypeDenopressConfig): 
             httpOnly: true,
             path: '/'
           });
-          // ctx.redirect('/page/admin/dashboard');
+          return res;
         }
         return {
           success: false,

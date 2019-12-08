@@ -43,6 +43,8 @@ export function createUserService(models: {[key: string]: BaseModel}) {
         const res = await models.user.query(data) as ExecuteResult;
         if (Array.isArray(res) && res[0] && typeof res[0].uuid) {
           const userModel: {[key: string]: string|null|number} = res[0];
+          result.success = true;
+          result.code = 'SUCCESS';
           result.data = {
             uuid: userModel.uuid,
             name: userModel.uuid,
