@@ -1,7 +1,7 @@
 import { TypeThemeFrontAPI, TypeThemeAPI } from "./../../core/theme/types.ts";
 import { TypeDenopressConfig } from "./../../core/types.ts";
-import { createAdminPostControllerFrontMap } from "./module/user.ts";
-import { createAdminUserControllerFrontMap } from "./module/post.ts";
+import { createAdminUserControllerFrontMap } from "./module/user.ts";
+import { createAdminPostControllerFrontMap } from "./module/post.ts";
 
 // TODO
 import { createTodoControllerFrontMap, createTodoControllerServerMap } from "./module/todo_list.ts";

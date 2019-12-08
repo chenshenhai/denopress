@@ -1,3 +1,4 @@
+import { cookie } from "./../../deps.ts";
 import {
   Application,
   Router,
@@ -38,6 +39,21 @@ export class ThemeServerContext implements TypeThemeServerContext {
     }
     return bodyParams;
   }
+
+  getCookies(): cookie.Cookies {
+    return this._ctx.req.getCookies();
+  }
+  setCookie(cookie: cookie.Cookie): void {
+    this._ctx.res.setCookie(cookie);
+  }
+  delCookie(name: string): void {
+    this._ctx.res.delCookie(name);
+  }
+
+  redirect(url: string) {
+    this._ctx.res.redirect(url);
+  }
+
 }
 
 export class ThemeServer {
@@ -165,11 +181,12 @@ export class ThemeServer {
 
   private async _getControllerAPIContent(ctx: Context, ctrlName: string, apiName: string): Promise<TypeReadPageResult> {
     // const path: string = this._opts.path;
+    const method = ctx.req.getMethod();
     const result = {
       status: 404,
-      content: `404: api/${ctrlName}/${apiName} is not found!`,
+      content: `404: [${method}] api/${ctrlName}/${apiName} is not found!`,
     }
-    const method = ctx.req.getMethod();
+    
     const ctrlFrontAPI: TypeThemeControllerFrontAPI|undefined = this._opts.controllerFrontAPI;
     
     if (ctrlFrontAPI) {

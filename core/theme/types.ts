@@ -1,3 +1,5 @@
+import { cookie } from "./../../deps.ts";
+
 export interface TypeThemePressConfig {
   name: string;
   version: string;
@@ -73,6 +75,10 @@ export interface TypeThemeLoaderHub {
 export interface TypeThemeServerContext {
   getUrlParams(): {[key: string]: string};
   getBodyParams(): Promise<{[key: string]: string}>;
+  getCookies(): cookie.Cookies;
+  setCookie(cookie: cookie.Cookie): void;
+  delCookie(name: string): void;
+  redirect(url: string): void;
 }
 
 export interface TypeThemeServerOpts {

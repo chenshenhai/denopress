@@ -34,20 +34,6 @@ export class ContextRequest {
     return ck;
   }
   
-  setCookie(ck: cookie.Cookie): void {
-    const res: server.Response = {
-      headers: this._sReq.headers,
-    }
-    setCookie(res, ck);
-  }
-
-  delCookie(name: string): void {
-    const res: server.Response = {
-      headers: this._sReq.headers,
-    }
-    delCookie(res, name);
-  }
-
   getMethod(): string {
     return this._sReq.method;
   }
@@ -139,6 +125,21 @@ export class ContextResponse {
     return true;
   }
 
+  setCookie(ck: cookie.Cookie): void {
+    const res: server.Response = {
+      headers: this._headers,
+    }
+    setCookie(res, ck);
+  }
+
+  delCookie(name: string): void {
+    const res: server.Response = {
+      headers: this._headers,
+    }
+    delCookie(res, name);
+  }
+
+
   getHeader(key: string): string|null {
     return this._headers.get(key);
   }
@@ -183,6 +184,12 @@ export class ContextResponse {
 
   setFinish() {
     this._isFinish = true;
+  }
+
+  redirect(url: string) {
+    this.setStatus(302);
+    this._headers.set("Location", url);
+    this.flush();
   }
 }
 

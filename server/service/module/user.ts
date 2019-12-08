@@ -34,14 +34,21 @@ export function createUserService(models: {[key: string]: BaseModel}) {
     async query(data: {[key: string]: string|number}) {
       data.password = md5(data.password as string);
       const result: ServiceResult = {
-        success: true,
+        success: false,
         data: null,
         message: '',
-        code: '',
+        code: 'DATABASE_QUERY_NOT_FOUND',
       };
       try {
         const res = await models.user.query(data) as ExecuteResult;
-        result.data = res;
+        if (Array.isArray(res) && res[0] && typeof res[0].uuid) {
+          const userModel: {[key: string]: string|null|number} = res[0];
+          result.data = {
+            uuid: userModel.uuid,
+            name: userModel.uuid,
+            nick: userModel.uuid,
+          };
+        }
       } catch (err) {
         result.success = false;
         result.message = err.stack;
