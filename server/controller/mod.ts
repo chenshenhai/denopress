@@ -1,48 +1,44 @@
-import { TypeThemeServerContext, TypeThemeFrontAPI } from "./../../core/theme/types.ts";
+import { TypeThemeFrontAPI, TypeThemeAPI } from "./../../core/theme/types.ts";
 import { TypeDenopressConfig } from "./../../core/types.ts";
-import { createServiceMap } from "./../service/mod.ts";
+import { createAdminPostControllerFrontMap } from "./module/user.ts";
+import { createAdminUserControllerFrontMap } from "./module/post.ts";
 
+// TODO
+import { createTodoControllerFrontMap, createTodoControllerServerMap } from "./module/todo_list.ts";
+
+// TODO
 export function createPortalControllerFrontMap(config: TypeDenopressConfig): {[key: string]: TypeThemeFrontAPI} {
-  const service = createServiceMap(config);
+  const todoListController = createTodoControllerFrontMap(config);
   return {
-    user: {
-      create: {
-        method: 'POST',
-        action: async (ctx: TypeThemeServerContext) => {
-          const params = await ctx.getBodyParams();
-          return service.user.create(params);
-        },
-      },
-      query: {
-        method: 'GET',
-        action: async (ctx: TypeThemeServerContext) => {
-          const params = await ctx.getUrlParams();
-          return service.user.query(params);
-        },
-      },
-    },
-    post: {
-      create: {
-        method: 'POST',
-        action: async (ctx: TypeThemeServerContext) => {
-          const params = await ctx.getBodyParams();
-          return service.post.create(params);
-        },
-      },
-      query: {
-        method: 'GET',
-        action: async (ctx: TypeThemeServerContext) => {
-          const params = await ctx.getUrlParams();
-          return service.post.query(params);
-        },
-      },
-      queryByPage: {
-        method: 'GET',
-        action: async (ctx: TypeThemeServerContext) => {
-          const params = await ctx.getUrlParams();
-          return service.post.queryByPage(params);
-        },
-      },
-    }
+    todoList: todoListController,
+  };
+}
+
+// TODO
+export function createPortalControllerServerMap(config: TypeDenopressConfig):  {[key: string]: TypeThemeAPI} {
+  const todoListController = createTodoControllerServerMap(config);
+  return {
+    todoList: todoListController,
+  };
+}
+
+export function createAdminControllerFrontMap(config: TypeDenopressConfig): {[key: string]: TypeThemeFrontAPI} {
+  const userController = createAdminUserControllerFrontMap(config);
+  const postController = createAdminPostControllerFrontMap(config);
+  const todoListController = createTodoControllerFrontMap(config);
+  return {
+    user: userController,
+    post: postController,
+
+    // TODO
+    todoList: todoListController,
+  };
+}
+
+// TODO
+export function createAdminControllerServerMap(config: TypeDenopressConfig):  {[key: string]: TypeThemeAPI} {
+  const todoListController = createTodoControllerServerMap(config);
+  return {
+    todoList: todoListController,
   };
 }
