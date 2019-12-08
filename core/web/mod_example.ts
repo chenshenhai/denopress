@@ -21,6 +21,7 @@ app.use(async(ctx: Context) => {
     },
     headers: req.getAllHeaders(),
   }
+
   res.setStatus(200);
   await res.setBody(`${JSON.stringify(reqData)}`);
 })

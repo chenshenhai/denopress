@@ -1,4 +1,6 @@
-import { server } from "./../../deps.ts";
+import { server, cookie } from "./../../deps.ts";
+
+const { getCookies, setCookie, delCookie } = cookie;
 
 export class ContextRequest {
   private _sReq: server.ServerRequest;
@@ -25,6 +27,25 @@ export class ContextRequest {
       allHeaders[key] = val;
     }
     return allHeaders;
+  }
+
+  getCookies(): cookie.Cookies {
+    const ck = getCookies(this._sReq);
+    return ck;
+  }
+  
+  setCookie(ck: cookie.Cookie): void {
+    const res: server.Response = {
+      headers: this._sReq.headers,
+    }
+    setCookie(res, ck);
+  }
+
+  delCookie(name: string): void {
+    const res: server.Response = {
+      headers: this._sReq.headers,
+    }
+    delCookie(res, name);
   }
 
   getMethod(): string {

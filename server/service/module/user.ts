@@ -1,5 +1,5 @@
 import { BaseModel } from "./../../model/base_model.ts";
-import { md5 } from "./../../../core/util/md5.js";
+import { md5 } from "../../../core/util/md5.js";
 import { ExecuteResult } from "../../../core/mysql/src/connection.ts";
 import { ServiceResult } from "./../types.ts";
 

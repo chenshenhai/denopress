@@ -3,10 +3,10 @@ import { Context } from "./context.ts";
 
 export class Server {
 
-  private _addr: string;
+  // private _addr: string;
   private _handler: Function = () => {};
 
-  async createServer(handler) {
+  async createServer(handler: Function) {
     this._handler = handler;
   }
 
