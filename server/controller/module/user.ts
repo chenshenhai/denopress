@@ -12,7 +12,7 @@ export function createAdminPostControllerFrontMap(config: TypeDenopressConfig): 
         return service.post.create(params);
       },
     },
-    query: {
+    login: {
       method: 'GET',
       action: async (ctx: TypeThemeServerContext) => {
         const params = await ctx.getUrlParams();
