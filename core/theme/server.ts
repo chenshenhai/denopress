@@ -14,7 +14,32 @@ import {
   TypeThemeServerContext,
   TypeThemeFrontAPI,
   TypeThemeControllerFrontAPI,
+  TypeThemePageControllerOnLoadContext,
+  TypeThemePageControllerOnLoadApp,
 } from "./types.ts"
+
+
+export class PageContext implements TypeThemePageControllerOnLoadContext {
+  private _ctx: Context;
+  
+  constructor(ctx: Context) {
+    this._ctx = ctx;
+  }
+
+  async getUrlParams(): Promise<{[key: string]: string}> {
+    const params = await this._ctx.req.getAllURLParams();
+    return params;
+  }
+
+  async getCookies(): Promise<{[key: string]: string}> {
+    const cookies = await this._ctx.req.getCookies();
+    return cookies;
+  }
+  
+  redirect(url: string) {
+    this._ctx.res.redirect(url);
+  }
+}
 
 
 export class ThemeServerContext implements TypeThemeServerContext {
@@ -83,7 +108,7 @@ export class ThemeServer {
       const params: {[key: string]: string} = ctx.getData(routerDataKey) as {[key: string]: string};
       const pageName: string = params.pageName as string;
       const themeName: string = params.themeName;
-      const page: TypeReadPageResult = await this._readPageContent(themeName, pageName);
+      const page: TypeReadPageResult = await this._readPageContent(ctx, themeName, pageName);
       ctx.res.setStatus(page.status);
       ctx.res.setBody(page.content);
     });
@@ -133,7 +158,7 @@ export class ThemeServer {
     })
   }
 
-  private async _readPageContent(themeName: string, pageName: string): Promise<TypeReadPageResult> {
+  private async _readPageContent(ctx: Context, themeName: string, pageName: string): Promise<TypeReadPageResult> {
 
     const result = {
       status: 404,
@@ -141,18 +166,23 @@ export class ThemeServer {
     }
     const pageKey = `pages/${pageName || ''}`;
     const loaderHub = this._loaderHub;
-    const controllerDataOpts = {
-      api: this._opts.controllerServerAPI,
-    };
-    
+    const pctx = new PageContext(ctx);
+    const api = this._opts.controllerServerAPI || undefined
+
     if (this._opts.hotLoading !== true) {
       if (loaderHub.hasTheme(themeName)) {
         const pageScript = loaderHub.getThemePage(themeName, pageKey);
         if (loaderHub.hasThemePage(themeName, pageKey) && pageScript) {
-          const pageData = await pageScript.controller.data(controllerDataOpts);
-          const pageContent = pageScript.template(pageData);
-          result.status = 200;
-          result.content = pageContent;
+          let pageOnLoad: boolean = true;
+          if (typeof pageScript.controller.onLoad === "function") {
+            pageOnLoad = await pageScript.controller.onLoad(pctx, api);
+          }
+          if (pageOnLoad !== false) {
+            const pageData = await pageScript.controller.data(pctx, api);
+            const pageContent = pageScript.template(pageData);
+            result.status = 200;
+            result.content = pageContent;
+          }
         }
       } else {
         result.status = 404;
@@ -165,10 +195,16 @@ export class ThemeServer {
       if (loaderHub.existTheme(themeName)) {
         const pageScript = await loaderHub.reloadThemePage(themeName, pageKey);
         if (loaderHub.existThemePage(themeName, pageKey) && pageScript) {
-          const pageData = await pageScript.controller.data(controllerDataOpts);
-          const pageContent = pageScript.template(pageData);
-          result.status = 200;
-          result.content = pageContent;
+          let pageOnLoad: boolean = true;
+          if (typeof pageScript.controller.onLoad === "function") {
+            pageOnLoad = await pageScript.controller.onLoad(pctx, api);
+          }
+          if (pageOnLoad !== false) {
+            const pageData = await pageScript.controller.data(pctx, api);
+            const pageContent = pageScript.template(pageData);
+            result.status = 200;
+            result.content = pageContent;
+          }
         }
       } else {
         result.status = 404;

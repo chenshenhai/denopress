@@ -1,6 +1,9 @@
 import { TypeThemeFrontAPI, TypeThemeAPI } from "./../../core/theme/types.ts";
 import { TypeDenopressConfig } from "./../../core/types.ts";
-import { createAdminUserControllerFrontMap } from "./module/user.ts";
+import {
+  createAdminUserControllerFrontMap,
+  createAdminUserControllerServerMap
+} from "./module/user.ts";
 import { createAdminPostControllerFrontMap } from "./module/post.ts";
 
 // TODO
@@ -35,10 +38,10 @@ export function createAdminControllerFrontMap(config: TypeDenopressConfig): {[ke
   };
 }
 
-// TODO
+
 export function createAdminControllerServerMap(config: TypeDenopressConfig):  {[key: string]: TypeThemeAPI} {
-  const todoListController = createTodoControllerServerMap(config);
+  const userController = createAdminUserControllerServerMap(config);
   return {
-    todoList: todoListController,
+    user: userController,
   };
 }

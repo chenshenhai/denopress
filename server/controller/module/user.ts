@@ -1,4 +1,4 @@
-import { TypeThemeServerContext, TypeThemeFrontAPI } from "./../../../core/theme/types.ts";
+import { TypeThemeServerContext, TypeThemeFrontAPI, TypeThemeAPI } from "./../../../core/theme/types.ts";
 import { TypeDenopressConfig } from "./../../../core/types.ts";
 import { createServiceMap } from "./../../service/mod.ts";
 import { createLibAuthController } from "./../lib/auth.ts";
@@ -7,8 +7,6 @@ export function createAdminUserControllerFrontMap(config: TypeDenopressConfig): 
   const service = createServiceMap(config);
   const authController = createLibAuthController(config);
   return {
-
-
 
     create: {
       method: 'POST',
@@ -37,7 +35,7 @@ export function createAdminUserControllerFrontMap(config: TypeDenopressConfig): 
       },
     },
 
-    loginUserInfo: {
+    getLoginUserInfo: {
       method: 'GET',
       action: async (ctx: TypeThemeServerContext) => {
         const loginInfo = await authController.getLoginUserInfo(ctx);
@@ -49,6 +47,26 @@ export function createAdminUserControllerFrontMap(config: TypeDenopressConfig): 
         };
       },
     }
+
+  };
+}
+
+
+export function createAdminUserControllerServerMap(config: TypeDenopressConfig): TypeThemeAPI {
+  // const service = createServiceMap(config);
+  const authController = createLibAuthController(config);
+  return {
+    async getLoginUserInfo (ctx: TypeThemeServerContext) {
+
+      console.log('server=======')
+      const loginInfo = await authController.getLoginUserInfo(ctx);
+      return {
+        success: false,
+        data: loginInfo,
+        code: 'LOGIN_ERROR',
+        message: ''
+      };
+    },
 
   };
 }

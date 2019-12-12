@@ -59,7 +59,7 @@ export class ContextRequest {
     return this._urlSearchParams.get(key);
   }
 
-  getAllURLParams(): object {
+  getAllURLParams(): {[key: string]: string} {
     const searchParams: URLSearchParams = this._urlSearchParams;
     const params: {[key: string]: string} = {};
 

@@ -17,10 +17,17 @@ export interface TypeThemePageControllerDataOpts {
   api?: TypeThemeControllerAPI;
 }
 
+export interface TypeThemePageControllerOnLoadContext {
+  getUrlParams(): Promise<{[key: string]: string}>
+}
+
+export interface TypeThemePageControllerOnLoadApp {
+  api?: {[key: string]: {[key: string]: Function}}|undefined
+}
+
 export interface TypeThemePageController {
-  data(opts?: TypeThemePageControllerDataOpts): {
-    [key: string]: any;
-  };
+  onLoad(ctx: TypeThemePageControllerOnLoadContext, api?: TypeThemePageControllerOnLoadApp): Promise<boolean>;
+  data(ctx: TypeThemePageControllerOnLoadContext, api?: TypeThemePageControllerOnLoadApp): Promise<{[key: string]: any;}>;
 }
 
 export interface TypeThemePageScript {

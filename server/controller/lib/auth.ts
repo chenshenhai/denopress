@@ -18,7 +18,8 @@ export function createLibAuthController(config: TypeDenopressConfig): {[key: str
   return {
 
     getLoginUserInfo: async (ctx: TypeThemeServerContext): Promise<TypeLoginUserInfo> => {
-      const cookies = ctx.getCookies();
+      
+      const cookies = await ctx.getCookies();
       const uuid = cookies[COOKIE_AUTH_KEY];
       const res: any = await service.user.queryByUuid(uuid);
       const userInfo: TypeLoginUserInfo = {
