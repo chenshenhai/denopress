@@ -31,6 +31,38 @@ export function createUserService(models: {[key: string]: BaseModel}) {
       return result;
     },
 
+    async queryByUuid(uuid: string) {
+      const data = {
+        uuid,
+      }
+      const result: ServiceResult = {
+        success: false,
+        data: null,
+        message: '',
+        code: 'DATABASE_QUERY_NOT_FOUND',
+      };
+      try {
+        const res = await models.user.query(data) as ExecuteResult;
+        
+        if (Array.isArray(res) && res[0] && typeof res[0].uuid) {
+          const userModel: {[key: string]: string|null|number} = res[0];
+          result.success = true;
+          result.code = 'SUCCESS';
+          result.data = {
+            uuid: userModel.uuid,
+            name: userModel.name,
+            nickname: userModel.nickname,
+          };
+        }
+      } catch (err) {
+        result.success = false;
+        result.message = err.stack;
+        result.code = 'DATABASE_ERROR';
+      }
+      return result;
+    },
+    
+
     async query(data: {[key: string]: string|number}) {
       data.password = md5(data.password as string);
       const result: ServiceResult = {
@@ -47,8 +79,8 @@ export function createUserService(models: {[key: string]: BaseModel}) {
           result.code = 'SUCCESS';
           result.data = {
             uuid: userModel.uuid,
-            name: userModel.uuid,
-            nick: userModel.uuid,
+            name: userModel.name,
+            nickname: userModel.nickname,
           };
         }
       } catch (err) {

@@ -6,7 +6,7 @@ CREATE TABLE  IF NOT EXISTS  dp_users (
   email varchar(255) DEFAULT NULL,
   password varchar(255) DEFAULT NULL,
   name varchar(255) DEFAULT NULL,
-  nick varchar(255) DEFAULT NULL,
+  nickname varchar(255) DEFAULT NULL,
   detail_info json DEFAULT NULL,
   created_time timestamp NOT NULL default current_timestamp,
   modified_time timestamp NOT NULL default current_timestamp,

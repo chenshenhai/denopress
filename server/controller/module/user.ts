@@ -1,10 +1,15 @@
 import { TypeThemeServerContext, TypeThemeFrontAPI } from "./../../../core/theme/types.ts";
 import { TypeDenopressConfig } from "./../../../core/types.ts";
 import { createServiceMap } from "./../../service/mod.ts";
+import { createLibAuthController } from "./../lib/auth.ts";
 
 export function createAdminUserControllerFrontMap(config: TypeDenopressConfig): TypeThemeFrontAPI {
   const service = createServiceMap(config);
+  const authController = createLibAuthController(config);
   return {
+
+
+
     create: {
       method: 'POST',
       action: async (ctx: TypeThemeServerContext) => {
@@ -13,28 +18,14 @@ export function createAdminUserControllerFrontMap(config: TypeDenopressConfig): 
       },
     },
 
-    // getLoginUserInfo: {
-    //   method: 'POST',
-    //   action: async (ctx: TypeThemeServerContext) => {
-    //     const params = await ctx.getBodyParams();
-    //     return service.user.create(params);
-    //   },
-    // },
 
     login: {
       method: 'POST',
       action: async (ctx: TypeThemeServerContext) => {
         const params = await ctx.getBodyParams();
-        const COOKIE_TIME = 1000 * 60 * 60;
         const res = await service.user.query(params);
         if (res.success === true && res.data && res.data.uuid) {
-          ctx.setCookie({
-            name: 'uuid', 
-            value: res.data.uuid,
-            expires: new Date(Date.now() + COOKIE_TIME),
-            httpOnly: true,
-            path: '/'
-          });
+          authController.setLoginStatus(ctx, res.data.uuid);
           return res;
         }
         return {
@@ -45,5 +36,19 @@ export function createAdminUserControllerFrontMap(config: TypeDenopressConfig): 
         };
       },
     },
+
+    loginUserInfo: {
+      method: 'GET',
+      action: async (ctx: TypeThemeServerContext) => {
+        const loginInfo = await authController.getLoginUserInfo(ctx);
+        return {
+          success: false,
+          data: loginInfo,
+          code: 'LOGIN_ERROR',
+          message: ''
+        };
+      },
+    }
+
   };
 }

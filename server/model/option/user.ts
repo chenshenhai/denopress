@@ -28,7 +28,7 @@ export const user: TypeBaseModelOpts = {
       type: TypeModelFieldType.string,
       require: true,
     },
-    nick: {
+    nickname: {
       type: TypeModelFieldType.string,
       require: true,
     },
