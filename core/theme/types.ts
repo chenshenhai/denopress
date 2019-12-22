@@ -26,8 +26,8 @@ export interface TypeThemePageControllerOnLoadApp {
 }
 
 export interface TypeThemePageController {
-  onLoad(ctx: TypeThemePageControllerOnLoadContext, api?: TypeThemePageControllerOnLoadApp): Promise<boolean>;
-  data(ctx: TypeThemePageControllerOnLoadContext, api?: TypeThemePageControllerOnLoadApp): Promise<{[key: string]: any;}>;
+  onLoad(ctx?: TypeThemePageControllerOnLoadContext, api?: TypeThemePageControllerOnLoadApp): Promise<boolean>;
+  data(ctx?: TypeThemePageControllerOnLoadContext, api?: TypeThemePageControllerOnLoadApp): Promise<{[key: string]: any;}>;
 }
 
 export interface TypeThemePageScript {
