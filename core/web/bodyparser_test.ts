@@ -14,7 +14,7 @@ const testSite = "http://127.0.0.1:5001";
 let httpServer: Deno.Process;
 async function startHTTPServer() {
   httpServer = run({
-    args: [Deno.execPath(), "run", "--allow-net", "core/web/bodyparser_example.ts", ".", "--cors"],
+    args: [Deno.execPath(), "run", "--allow-net", "core/web/bodyparser_example.ts", "--", ".", "--cors"],
     stdout: "piped"
   });
   let line: string|null = null;
@@ -59,6 +59,6 @@ test(async function serverPostRequest() {
   } catch (err) {
     // 关闭测试服务
     closeHTTPServer();
-    throw new Error(err);
+    throw err;
   }
 });

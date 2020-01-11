@@ -15,7 +15,7 @@ let httpServerReg: any;
 
 async function startHTTPServer() {
   httpServer = run({
-    args: [Deno.execPath(), "run", "--allow-net", "--allow-read",  "core/web/static_example.ts", ".", "--cors"],
+    args: [Deno.execPath(), "run", "--allow-net", "--allow-read",  "core/web/static_example.ts", "--", ".", "--cors"],
     stdout: "piped"
   });
   const buffer = httpServer.stdout;
@@ -30,7 +30,7 @@ function closeHTTPServer() {
 
 async function startHTTPServerReg() {
   httpServerReg = run({
-    args: [Deno.execPath(), "run", "--allow-net", "--allow-read",  "core/web/static_example_regular.ts", ".", "--cors"],
+    args: [Deno.execPath(), "run", "--allow-net", "--allow-read",  "core/web/static_example_regular.ts", "--", ".", "--cors"],
     stdout: "piped"
   });
   const buffer = httpServerReg.stdout;

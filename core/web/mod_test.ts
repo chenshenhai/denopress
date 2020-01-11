@@ -14,7 +14,7 @@ const testSite = "127.0.0.1:5001";
 let httpServer: Deno.Process;
 async function startHTTPServer() {
   httpServer = run({
-    args: [Deno.execPath(), "run", "--allow-net", "core/web/mod_example.ts", ".", "--cors"],
+    args: [Deno.execPath(), "run", "--allow-net", "core/web/mod_example.ts", "--", ".", "--cors"],
     stdout: "piped"
   });
   let line: string|null = null;
@@ -52,7 +52,6 @@ test(async function server() {
       "headers": {
         "user-agent": `Deno/${Deno.version.deno}`,
         "accept": "*/*",
-        "accept-encoding": "gzip",
         "host": "127.0.0.1:5001"
       }
     }

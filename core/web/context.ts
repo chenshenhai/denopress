@@ -90,7 +90,8 @@ export class ContextRequest {
   }
 
   async getBodyStream(): Promise<Uint8Array> {
-    return this._sReq.body();
+    const stream = await Deno.readAll(this._sReq.body)
+    return stream;
   }
 
   isFinish() {
