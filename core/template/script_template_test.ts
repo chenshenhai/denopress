@@ -4,10 +4,10 @@
 // Copyright 2017 The Authors. All rights reserved. MIT license.
 // https://github.com/chenshenhai/deno_note/blob/master/LICENSE
 
-import { testing, asserts } from "./../../deps.ts";
+import { asserts } from "./../../deps.ts";
 import { compile } from "./script_template.ts";
 
-const { test, runTests } = testing;
+const { test, runTests } = Deno;
 const { assertEquals } = asserts;
 
 

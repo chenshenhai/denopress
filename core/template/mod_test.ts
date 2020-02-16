@@ -1,7 +1,7 @@
-import { testing, asserts } from "./../../deps.ts";
+import { asserts } from "./../../deps.ts";
 import { Template } from "./template.ts";
 
-const { test, runTests } = testing;
+const { test, runTests } = Deno;
 const { assertEquals } = asserts;
 
 const readFileSync = Deno.readFileSync;

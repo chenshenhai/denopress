@@ -1,10 +1,10 @@
 import "./global.js"
-import { testing, asserts, bufio } from "./../../deps.ts";
+import { asserts, bufio } from "./../../deps.ts";
 
 import { ThemeLoader, } from "./loader.ts";
 import { ThemeLoaderHub } from "./loader_hub.ts";
 
-const { test, runTests  } = testing;
+const { test, runTests  } = Deno;
 const { assertEquals, equal } = asserts;
 const { BufReader } = bufio;
 

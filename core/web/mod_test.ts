@@ -1,8 +1,8 @@
 #!/usr/bin/env run deno --allow-run --allow-net
 
-import { testing, asserts, bufio, path } from "./../../deps.ts";
+import { asserts, bufio, path } from "./../../deps.ts";
 
-const { test } = testing;
+const { test } = Deno;
 const { assertEquals, equal } = asserts;
 const { BufReader } = bufio;
 
