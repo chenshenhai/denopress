@@ -44,12 +44,12 @@ export class Template implements TypeTemplate {
 
     const ast = this._compileToAST();
     this._ast = ast;
-    return ast;
+    return ast || [];
   }
 
   private _compileToAST(): TypeTagAST[]|null {
     const tagReg = /<[^>^<]*>/ig;
-    const unitList = [];
+    const unitList: Unit[] = [];
     this._tpl.replace(tagReg, (match: string, idx: number) => {
       const unit: Unit = new Unit(match);
       unit.setStart(idx);

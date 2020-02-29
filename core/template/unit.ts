@@ -47,7 +47,7 @@ export class Unit implements TypeTemplateUnit {
   constructor(unitTpl: string) {
     this._unitTpl = unitTpl;
     let type: TypeUnitASTPropType = TypeUnitASTPropType.TEXT;
-    const tagName = getTagName(unitTpl);
+    const tagName = getTagName(unitTpl) || '';
     if(notClosingTags[tagName] === true) {
       type = TypeUnitASTPropType.TAG_NO_CLOSE;
     } else if (/^<[a-z]/i.test(unitTpl)) {
@@ -60,7 +60,7 @@ export class Unit implements TypeTemplateUnit {
     const attributes: TypeASTAttr = {};
     const directives: TypeASTDirect = {};
     for (let [key, val] of attrMap.entries()) {
-      if (directiveKeys[key] === true) {
+      if (directiveKeys[key] === true && val) {
         directives[key] = val;
       } else {
         attributes[key] = val;
@@ -86,7 +86,7 @@ export class Unit implements TypeTemplateUnit {
     return this._unitTpl.length;
   }
 
-  public getAST(): TypeUnitAST|null {
+  public getAST(): TypeUnitAST {
     return this._ast;
   }
 

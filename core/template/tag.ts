@@ -62,7 +62,7 @@ function parseChildren (children: TypeTagAST[]) {
   return html;
 }
 
-function parseAttribute (attribute: object) {
+function parseAttribute (attribute: TypeASTAttr) {
   let attrStr = ''
   if (isType.json(attribute) !== true) {
     return attrStr
@@ -72,7 +72,7 @@ function parseAttribute (attribute: object) {
   for (let i = 0; i < keyList.length; i++) {
     let keyName = keyList[i]
     let val = attribute[keyName]
-    if (isType.string(val) === true) {
+    if (isType.string(val) === true && val) {
       attrList.push(`${keyName}="${escapeStr(val)}"`);
     }
   }
@@ -89,11 +89,11 @@ function parseTag (ast: TypeTagAST): string {
     return html
   }
   let tagName = ast.tag;
-  if (isType.string(tagName)) {
+  if (isType.string(tagName) && tagName) {
     const children: TypeTagAST[] = ast.children;
     const attrStr = parseAttribute(ast.attributes);
     
-    if (notClosingTags[tagName] === true) {
+    if (tagName && notClosingTags[tagName] === true) {
       html = `<${tagName} ${attrStr} />${ast.text}`;
     } else {
       html = `<${tagName} ${attrStr}>${ast.text}${parseChildren(children)}</${tagName}>`;
