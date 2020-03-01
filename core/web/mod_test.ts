@@ -53,7 +53,7 @@ test(async function server() {
         "user-agent": `Deno/${Deno.version.deno}`,
         "accept": "*/*",
         "host": "127.0.0.1:5001",
-        "accept-encoding": "gzip",
+        "accept-encoding": "gzip, br",
       }
     }
 
