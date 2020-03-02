@@ -72,7 +72,7 @@ export function parseField(reader: BufferReader): FieldInfo {
 
 /** @ignore */
 export function parseRow(reader: BufferReader, fileds: FieldInfo[]): any {
-  const row = {};
+  const row: {[key: string]: any} = {};
   for (let i = 0; i < fileds.length; i++) {
     const name = fileds[i].name;
     const val = reader.readLenCodeString();
