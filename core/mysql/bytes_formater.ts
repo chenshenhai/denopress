@@ -4,7 +4,7 @@
 
 import { colors } from "./../../deps.ts";
 
-const { setEnabled, green } = colors;
+const { green } = colors;
 
 export function format(data: ArrayBufferView) {
   const bytes = new Uint8Array(data.buffer);
