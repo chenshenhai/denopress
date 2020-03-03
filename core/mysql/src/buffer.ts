@@ -76,7 +76,9 @@ export class BufferReader {
 
   readLenCodeString(): string {
     const len = this.readEncodedLen();
-    if (len == -1) return null;
+    if (len == -1) {
+      return '';
+    }
     return this.readString(len);
   }
 }

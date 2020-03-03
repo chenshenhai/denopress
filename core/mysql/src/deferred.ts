@@ -12,7 +12,8 @@ export interface DeferredStackItemCreator<T> {
 
 /** @ignore */
 export function defer<T>(): Deferred<T> {
-  let reject, resolve;
+  let reject = () => {};
+  let resolve = () => {};
   const promise = new Promise<T>((res, rej) => {
     resolve = res;
     reject = rej;
@@ -44,7 +45,7 @@ export class DeferredStack<T> {
     return this._array.length;
   }
 
-  async pop(): Promise<T> {
+  async pop(): Promise<T|undefined> {
     if (this._array.length) {
       return this._array.pop();
     } else if (this._size < this.max) {
@@ -61,7 +62,11 @@ export class DeferredStack<T> {
   async push(item: T) {
     this._array.push(item);
     if (this._queue.length) {
-      this._queue.shift().resolve();
+      const shift = this._queue.shift();
+      if (shift) {
+        shift.resolve();
+      }
+      // this._queue.shift().resolve();
     }
   }
 

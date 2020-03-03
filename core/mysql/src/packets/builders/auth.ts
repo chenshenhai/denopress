@@ -63,4 +63,5 @@ export function buildAuth(
     }
     return writer.wroteData;
   }
+  return new Uint8Array(0);
 }

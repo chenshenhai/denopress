@@ -33,7 +33,17 @@ export class Database {
   public async clientExec(execStr: string, args?: string|number[]) {
     const { hostname, username, password, database, port, } = this._opts;
     let opts = {hostname, username, password, db: database, port, };
-    opts = { ...defaultOpts, ...opts, }
+    // opts = { ...defaultOpts, ...opts, }
+    opts = {
+      hostname: "127.0.0.1",
+      username: "root",
+      db: "dp_demo",
+      password: "abc123def",
+      port: 3306,
+      // timeout: 10000,
+      // pool: 3,
+      // debug: true,
+    }
     const client = await new Client().connect(opts);
     const result = await client.execute(execStr, args as any[]);
     await client.close();

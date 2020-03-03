@@ -31,27 +31,27 @@ export type ExecuteResult = {
 export class Connection {
   state: ConnectionState = ConnectionState.CONNECTING;
   capabilities: number = 0;
-  serverVersion: string;
+  serverVersion: string = '';
 
-  private conn: Deno.Conn;
+  private conn: Deno.Conn|undefined;
 
   constructor(readonly client: Client) {}
 
   private async _connect() {
     const { hostname, port } = this.client.config;
     log.info(`connecting ${hostname}:${port}`);
-    this.conn = await Deno.dial({
+    this.conn = await Deno.connect({
       hostname,
-      port,
+      port: port as number,
       transport: "tcp"
     });
 
     let receive = await this.nextPacket();
     const handshakePacket = parseHandshake(receive.body);
     const data = buildAuth(handshakePacket, {
-      username: this.client.config.username,
-      password: this.client.config.password,
-      db: this.client.config.db
+      username: this.client.config.username || '',
+      password: this.client.config.password|| '',
+      db: this.client.config.db || '',
     });
     await new SendPacket(data, 0x1).send(this.conn);
     this.state = ConnectionState.CONNECTING;
@@ -113,6 +113,8 @@ export class Connection {
         return packet;
       }
     }
+    const packet: ReceivePacket = await new ReceivePacket().parse(this.conn || new Deno.Buffer(new Uint8Array(0))) as ReceivePacket;
+    return Promise.resolve(packet);
   }
 
   /** Close database connection */
@@ -144,7 +146,9 @@ export class Connection {
    */
   async execute(sql: string, params?: any[]): Promise<ExecuteResult> {
     const data = buildQuery(sql, params);
-    await new SendPacket(data, 0).send(this.conn);
+    if (this.conn) {
+      await new SendPacket(data, 0).send(this.conn);
+    }
     let receive = await this.nextPacket();
     if (receive.type === "OK") {
       receive.body.skip(1);

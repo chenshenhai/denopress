@@ -22,6 +22,9 @@ export function createAdminUserControllerFrontMap(config: TypeDenopressConfig): 
       action: async (ctx: TypeThemeServerContext) => {
         const params = await ctx.getBodyParams();
         const res = await service.user.query(params);
+
+        console.log('login.res = ', res);
+
         if (res.success === true && res.data && res.data.uuid) {
           authController.setLoginStatus(ctx, res.data.uuid);
           return res;

@@ -79,6 +79,7 @@ export class BaseModel {
     }
     const sql = `SELECT * FROM \`${this._opts.tableName}\` WHERE ${keyValList.join(' AND ')};`;
     const res = await database.clientExec(sql);
+    console.log('res = ', res);
     const result: ModelResult[] = [];
     if (res.rows) {
       res.rows.forEach((item: {[key: string]: any}) => {

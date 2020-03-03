@@ -34,9 +34,9 @@ export class SendPacket {
 
 /** @ignore */
 export class ReceivePacket {
-  header: PacketHeader;
-  body: BufferReader;
-  type: "EOF" | "OK" | "ERR" | "RESULT";
+  header: PacketHeader = { size: 0, no: 0 };
+  body: BufferReader = new BufferReader(new Uint8Array(0));;
+  type: "EOF" | "OK" | "ERR" | "RESULT" = "RESULT";
 
   async parse(reader: Deno.Reader): Promise<ReceivePacket|null> {
     const header = new BufferReader(new Uint8Array(4));

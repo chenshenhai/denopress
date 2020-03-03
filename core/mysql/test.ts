@@ -1,15 +1,17 @@
-import {
-  assertEquals,
-  assertThrowsAsync
-} from "https://deno.land/std/testing/asserts.ts";
-import { runTests, test } from "https://deno.land/std/testing/mod.ts";
+import { asserts } from "./../../deps.ts";
 import { Client } from "./mod.ts";
 import { WriteError } from "./src/consttants/errors.ts";
+
+const { runTests, test } = Deno;
+const {
+  assertEquals,
+  assertThrowsAsync
+} = asserts;
 
 let client: Client;
 
 test(async function testCreateDb() {
-  await client.query(`CREATE DATABASE IF NOT EXISTS enok`);
+  await client.query(`CREATE DATABASE IF NOT EXISTS deno_msql_test`);
 });
 
 test(async function testCreateTable() {
@@ -155,7 +157,7 @@ async function main() {
     db,
     password
   };
-  client = await new Client().connect({ ...config, pool: 1, db: null });
+  client = await new Client().connect({ ...config, pool: 1, db: '' });
   await client.execute(`CREATE DATABASE IF NOT EXISTS ${db}`);
   await client.close();
   client = await new Client().connect(config);

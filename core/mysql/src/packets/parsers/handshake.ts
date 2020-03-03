@@ -23,10 +23,10 @@ export function parseHandshake(reader: BufferReader): HandshakeBody {
   reader.skip(1);
   let serverCapabilities = reader.readUint16();
 
-  let characterSet: number,
-    statusFlags: number,
-    authPluginDataLength: number,
-    authPluginName: string;
+  let characterSet: number = -1;
+  let statusFlags: number = 0;
+  let authPluginDataLength: number = 0;
+  let authPluginName: string = '';
 
   if (!reader.finished) {
     characterSet = reader.readUint8();

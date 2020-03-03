@@ -38,8 +38,8 @@ export interface TransactionProcessor<T> {
  * MySQL client
  */
 export class Client {
-  config: ClientConfig;
-  private _pool: DeferredStack<Connection>;
+  config: ClientConfig = {};
+  private _pool: DeferredStack<Connection>|undefined;
   private _connections: Connection[] = [];
 
   private async createConnection(): Promise<Connection> {
@@ -50,12 +50,18 @@ export class Client {
 
   /** get size of the pool, Number of connections created */
   get poolSize() {
-    return this._pool.size;
+    if (this._pool) {
+      return this._pool.size;
+    }
+    return -1;
   }
 
   /** get length of the pool, Number of connections available */
   get poolLength() {
-    return this._pool.length;
+    if (this._pool) {
+      return this._pool.length;
+    }
+    return -1;
   }
 
   /**
@@ -65,7 +71,7 @@ export class Client {
    */
   async connect(config: ClientConfig): Promise<Client> {
     await logConfig({
-      debug: config.debug,
+      debug: !!config.debug,
       logFile: "mysql.log"
     });
     this.config = {
@@ -78,7 +84,7 @@ export class Client {
     Object.freeze(this.config);
     this._connections = [];
     this._pool = new DeferredStack<Connection>(
-      this.config.pool,
+      this.config.pool as number,
       this._connections,
       this.createConnection.bind(this)
     );
@@ -91,19 +97,24 @@ export class Client {
    * @param params query params
    */
   async query(sql: string, params?: any[]): Promise<any> {
-    const connection = await this._pool.pop();
-    try {
-      const result = await connection.query(sql, params);
-      this._pool.push(connection);
-      return result;
-    } catch (error) {
-      if (error instanceof WriteError) {
-        this._pool.reduceSize();
-      } else {
-        this._pool.push(connection);
+    if (this._pool) {
+      const connection = await this._pool.pop();
+      if (connection) {
+        try {
+          const result = await connection.query(sql, params);
+          this._pool.push(connection);
+          return result;
+        } catch (error) {
+          if (error instanceof WriteError) {
+            this._pool.reduceSize();
+          } else {
+            this._pool.push(connection);
+          }
+          throw error;
+        }
       }
-      throw error;
     }
+    
   }
 
   /**
@@ -112,19 +123,24 @@ export class Client {
    * @param params query params
    */
   async execute(sql: string, params?: any[]): Promise<ExecuteResult> {
-    const connection = await this._pool.pop();
-    try {
-      const result = await connection.execute(sql, params);
-      this._pool.push(connection);
-      return result;
-    } catch (error) {
-      if (error instanceof WriteError) {
-        this._pool.reduceSize();
-      } else {
-        this._pool.push(connection);
+    if (this._pool) {
+      const connection = await this._pool.pop();
+      if (connection) {
+        try {
+          const result = await connection.execute(sql, params);
+          this._pool.push(connection);
+          return result;
+        } catch (error) {
+          if (error instanceof WriteError) {
+            this._pool.reduceSize();
+          } else {
+            this._pool.push(connection);
+          }
+          throw error;
+        }
       }
-      throw error;
     }
+    return {}
   }
 
   /**
@@ -133,23 +149,28 @@ export class Client {
    * @param processor transation processor
    */
   async transaction<T = any>(processor: TransactionProcessor<T>): Promise<T> {
-    const connection = await this._pool.pop();
-    try {
-      await connection.execute("BEGIN");
-      const result = await processor(connection);
-      await connection.execute("COMMIT");
-      this._pool.push(connection);
-      return result;
-    } catch (error) {
-      if (error instanceof WriteError) {
-        this._pool.reduceSize();
-      } else {
-        this._pool.push(connection);
+    if (this._pool) {
+      const connection = await this._pool.pop();
+      if (connection) {
+        try {
+          await connection.execute("BEGIN");
+          const result = await processor(connection);
+          await connection.execute("COMMIT");
+          this._pool.push(connection);
+          return result;
+        } catch (error) {
+          if (error instanceof WriteError) {
+            this._pool.reduceSize();
+          } else {
+            this._pool.push(connection);
+          }
+          log.info(`ROLLBACK: ${error.message}`);
+          await connection.execute("ROLLBACK");
+          throw error;
+        }
       }
-      log.info(`ROLLBACK: ${error.message}`);
-      await connection.execute("ROLLBACK");
-      throw error;
     }
+    return Promise.reject();
   }
 
   /**
