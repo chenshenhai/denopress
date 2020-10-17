@@ -62,7 +62,7 @@ function parseChildren (children: TypeTagAST[]) {
   return html;
 }
 
-function parseAttribute (attribute: object) {
+function parseAttribute (attribute: {[key: string]: any}) {
   let attrStr = ''
   if (isType.json(attribute) !== true) {
     return attrStr
@@ -93,7 +93,7 @@ function parseTag (ast: TypeTagAST): string {
     const children: TypeTagAST[] = ast.children;
     const attrStr = parseAttribute(ast.attributes);
     
-    if (notClosingTags[tagName] === true) {
+    if (typeof tagName === 'string'&& notClosingTags[tagName] === true) {
       html = `<${tagName} ${attrStr} />${ast.text}`;
     } else {
       html = `<${tagName} ${attrStr}>${ast.text}${parseChildren(children)}</${tagName}>`;

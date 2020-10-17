@@ -1,6 +1,6 @@
 import { server, cookie } from "./../../deps.ts";
 
-const { getCookies, setCookie, delCookie } = cookie;
+const { getCookies, setCookie, deleteCookie } = cookie;
 
 export class ContextRequest {
   private _sReq: server.ServerRequest;
@@ -133,11 +133,11 @@ export class ContextResponse {
     setCookie(res, ck);
   }
 
-  delCookie(name: string): void {
+  deleteCookie(name: string): void {
     const res: server.Response = {
       headers: this._headers,
     }
-    delCookie(res, name);
+    deleteCookie(res, name);
   }
 
 

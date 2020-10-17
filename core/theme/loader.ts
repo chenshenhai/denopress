@@ -1,6 +1,7 @@
 import { fs } from "./../../deps.ts";
 import { Template } from "./../template/mod.ts";
 import { isType } from "./../util/is_type.ts";
+import { readJsonSync, } from "./../util/json.ts";
 import {
   TypeThemePressConfig,
   TypeThemePageController,
@@ -10,7 +11,7 @@ import {
   TypeThemeLoaderOpts,
 } from "./types.ts";
 
-const { readJsonSync, readFileStrSync, existsSync } = fs;
+const { existsSync } = fs;
 
 export class ThemeLoader implements TypeThemeLoader {
   private _opts: TypeThemeLoaderOpts;
@@ -153,7 +154,7 @@ export class ThemeLoader implements TypeThemeLoader {
     const logStatus = reload === true ? 'reload' : 'loading';
     return new Promise((resolve, reject) => {
       console.log(`[Denopress]: ${logStatus} ${themeName}/${pageName}/page.html`);
-      const tplText: string = readFileStrSync(fullPathTpl, { encoding: "utf8" });
+      const tplText: string = Deno.readTextFileSync(fullPathTpl);
       const tpl: Template = new Template(tplText);
       const tplFunc: Function = tpl.compileToFunc();
       console.log(`[Denopress]: ${logStatus} ${themeName}/${pageName}/page.ts`);

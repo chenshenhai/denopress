@@ -47,9 +47,9 @@ export class Template implements TypeTemplate {
     return ast;
   }
 
-  private _compileToAST(): TypeTagAST[]|null {
+  private _compileToAST(): TypeTagAST[] {
     const tagReg = /<[^>^<]*>/ig;
-    const unitList = [];
+    const unitList: any[] = [];
     this._tpl.replace(tagReg, (match: string, idx: number) => {
       const unit: Unit = new Unit(match);
       unit.setStart(idx);

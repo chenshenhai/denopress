@@ -20,7 +20,7 @@ export const legalTags = [
   'output', 'progress', 'meter', 'details', 'summary', 'command', 'menu'
 ]
 
-export const directiveKeys = {
+export const directiveKeys: {[key: string]: boolean} = {
   '@:if': true,
   '@:for': true,
   '@:index': true,
@@ -28,7 +28,7 @@ export const directiveKeys = {
   // '@:item': true,
 }
 
-export const notClosingTags = {
+export const notClosingTags: {[key: string]: boolean} = {
   'area': true,
   'base': true,
   'br': true,

@@ -2,6 +2,7 @@ import { fs } from "./../../deps.ts";
 import { Template } from "./../template/mod.ts";
 import { isType } from "./../util/is_type.ts";
 import { ThemeLoader } from "./loader.ts";
+import { readJsonSync, } from "./../util/json.ts";
 
 import {
   TypeThemePressConfig,
@@ -14,7 +15,7 @@ import {
   TypeThemeLoaderHub,
 } from "./types.ts";
 
-const { readJsonSync, readFileStrSync, existsSync } = fs;
+const { existsSync } = fs;
 
 
 export class ThemeLoaderHub implements TypeThemeLoaderHub {
