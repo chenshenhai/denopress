@@ -7,12 +7,6 @@
 
 const funcParamKey = "__DATA__";
 
-interface TypeAddFuncCodeParams {
-  currentExec: string,
-  currentMatch?: string,
-  restCode: string;
-}
-
 function compileToFunctionContentStr (tpl: string) {
   const tplCode = tpl;
   const regTpl = /\@#\@if[\s]{0,}\(([^\)]+)?\)|\@#\@elseif[\s]{0,}\(([^\)]+)?\)|\@#\@else|\(([^\)]+)?\)|\@#\@foreach[\s]{0,}\(([^\)]+)?\)\.indexAs\(([^\)]+)?\)|\@#\@foreach[\s]{0,}\(([^\)]+)?\)\.keyAs\(([^\)]+)?\)|{{([^}}]+)?}}|\@#\@\/if|\@#\@\/foreach/ig;
@@ -20,38 +14,63 @@ function compileToFunctionContentStr (tpl: string) {
   const regDirectIf = /\@#\@if[\s]{0,}\(([^\)]+)?\)/i;
   const regDirectElse = /\@#\@else[\s]{0,}/i;
   const regDirectElseif = /\@#\@elseif[\s]{0,}\(([^\)]+)?\)/i;
-  const regDirectForArray = /\@#\@foreach[\s]{0,}\(([^\)]+)?\)\.indexAs\(([^\)]+)?\)/i;
-  const regDirectForJSON = /\@#\@foreach[\s]{0,}\(([^\)]+)?\)\.keyAs\(([^\)]+)?\)/i;
+  const regDirectForArray: RegExp = /\@#\@foreach[\s]{0,}\(([^\)]+)?\)\.indexAs\(([^\)]+)?\)/i;
+  const regDirectForJSON: RegExp = /\@#\@foreach[\s]{0,}\(([^\)]+)?\)\.keyAs\(([^\)]+)?\)/i;
   const regData = /{{([^}}]+)?}}/i;
-  const directiveStock: string[] = [];
+  const directiveStock: any[] = [];
   let funcCodeStr = "";
   let match = true;
   let codeIndex = 0;
   funcCodeStr += "\r\n let _row=[];\r\n";
 
-  const addFuncCode = function (params: TypeAddFuncCodeParams) {
+  const addFuncCode = function (params: any) {
     const { currentExec, restCode } = params;
 
     if (regData.test(currentExec) === true) {
       // set data
-      funcCodeStr += `\r\n _row.push(${regData.exec(currentExec)![1]});`;
+      const result = regData.exec(currentExec);
+      if (result && result[1]) {
+        funcCodeStr += `\r\n _row.push(${result[1]});`;
+      }
     } else if (regDirectIf.test(currentExec) === true) {
-      funcCodeStr += `\r\n if ( ${regDirectIf.exec(currentExec)![1]} ) {`;
-      directiveStock.push("if");
+      const result = regDirectIf.exec(currentExec);
+      if (result && result[1]) {
+        funcCodeStr += `\r\n if ( ${result[1]} ) {`;
+        directiveStock.push("if");
+      }
     } else if (regDirectElseif.test(currentExec) === true) {
-      funcCodeStr += `\r\n } else if ( ${regDirectElseif.exec(currentExec)![1]} ) {`;
+      const result = regDirectElseif.exec(currentExec);
+      if (result && result[1]) {
+        funcCodeStr += `\r\n } else if ( ${result[1]} ) {`;
+      }
     } else if (regDirectElse.test(currentExec) === true) {
       funcCodeStr += `\r\n } else {`;
-    } else if (regDirectForArray.test(currentExec) === true) {
-      const forArrayName = regDirectForArray.exec(currentExec)![1];
-      const forArrayIndexName = regDirectForArray.exec(currentExec)![2] || "idx";
-      funcCodeStr += `
-      \r\n for ( let ${forArrayIndexName}=0; ${forArrayIndexName}<${forArrayName}.length; ${forArrayIndexName}++ ) {
-      `;
-      directiveStock.push("for-array");
+    } else if (regDirectForArray.test(currentExec) === true) {      
+
+      const resultForArrayName: any = regDirectForArray.exec(currentExec);
+      const resultForArrayIndexName: any = regDirectForArray.exec(currentExec);
+
+      if (resultForArrayName && resultForArrayName[0] && resultForArrayIndexName) {
+        const forArrayName: any =resultForArrayName[1];
+        const forArrayIndexName: any = resultForArrayIndexName[2] || "idx";
+        funcCodeStr += `
+        \r\n for ( let ${forArrayIndexName}=0; ${forArrayIndexName}<${forArrayName}.length; ${forArrayIndexName}++ ) {
+        `;
+        directiveStock.push("for-array");
+      }
     } else if (regDirectForJSON.test(currentExec) === true) {
-      const forJSONName = regDirectForJSON.exec(currentExec)![1];
-      const forJSONKey = regDirectForJSON.exec(currentExec)![2] || "key";
+
+      const resultForJSONName = regDirectForJSON.exec(currentExec);
+      let forJSONName: string = '';
+      if (resultForJSONName && resultForJSONName[1]) {
+        forJSONName = resultForJSONName[1]
+      }
+
+      let forJSONKey: string = 'key';
+      const resultForJSON = regDirectForJSON.exec(currentExec);
+      if (resultForJSON && resultForJSON[2]) {
+        forJSONKey = resultForJSON[2];
+      }
       funcCodeStr += `
       \r\n for ( const ${forJSONKey} in ${forJSONName} ) {
       `;
@@ -96,7 +115,7 @@ export function compileToFunction(tpl: string): Function {
   return func;
 }
 
-export function compile(tpl: string, data: {[key: string]: any}) {
+export function compile(tpl: string, data: object) {
   const func = compileToFunction(tpl);
   const html = func(data);
   return html;

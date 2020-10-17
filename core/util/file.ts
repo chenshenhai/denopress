@@ -1,17 +1,16 @@
 import { fs, path } from "./../../deps.ts";
+import { writeJsonSync } from "./json.ts";
 
 export function writeEnsureFileStrSync(filename: string, content: string) {
   const dirname = path.dirname(filename);
   fs.ensureDirSync(dirname);
-  fs.writeFileStrSync(filename, content);
+  Deno.writeTextFileSync(filename, JSON.stringify(content));
 };
 
-export function writeEnsureJsonSync(filename: string, content: string, options?: fs.WriteJsonOptions) {
+export function writeEnsureJsonSync(filename: string, content: string, options?: any) {
   const dirname = path.dirname(filename);
   fs.ensureDirSync(dirname);
-  fs.writeJsonSync(filename, content, options);
+  writeJsonSync(filename, content, options);
 };
 
-export function makeDirSyncPlus(dirPath: string) {
-
-}
+// export function makeDirSyncPlus(dirPath: string) {}

@@ -71,8 +71,8 @@ export class ThemeServerContext implements TypeThemeServerContext {
   setCookie(cookie: cookie.Cookie): void {
     this._ctx.res.setCookie(cookie);
   }
-  delCookie(name: string): void {
-    this._ctx.res.delCookie(name);
+  deleteCookie(name: string): void {
+    this._ctx.res.deleteCookie(name);
   }
 
   redirect(url: string) {

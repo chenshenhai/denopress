@@ -84,7 +84,7 @@ export interface TypeThemeServerContext {
   getBodyParams(): Promise<{[key: string]: string}>;
   getCookies(): cookie.Cookies;
   setCookie(cookie: cookie.Cookie): void;
-  delCookie(name: string): void;
+  deleteCookie(name: string): void;
   redirect(url: string): void;
 }
 

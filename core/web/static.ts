@@ -88,7 +88,7 @@ function serve(baseDir: string, options: ServeOptions = {}): Function {
       let result = `${path} is not found!`;
       try {
         const stat = lstatSync(fullPath);
-        if (stat.isFile() === true) {
+        if (stat.isFile === true) {
           result = renderFile(fullPath);
           res.setStatus(200);
         }
