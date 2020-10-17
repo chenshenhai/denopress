@@ -1,2 +1,2 @@
 # !/usr/bin/env sh test.sh
-deno run --allow-all test.ts
+deno test --unstable --allow-all test.ts

@@ -14,11 +14,11 @@ const testSite = "http://127.0.0.1:5001";
 let httpServer: Deno.Process;
 async function startHTTPServer() {
   httpServer = run({
-    args: [Deno.execPath(), "run", "--allow-net", "core/web/bodyparser_example.ts", "--", ".", "--cors"],
+    cmd: [Deno.execPath(), "run", "--unstable", "--allow-net", "core/web/bodyparser_example.ts", "--", ".", "--cors"],
     stdout: "piped"
   });
   let line: string|null = null;
-  const buffer: Deno.ReadCloser|undefined = httpServer.stdout;
+  const buffer = httpServer.stdout as Deno.Reader & Deno.Closer | null;
   if (buffer) {
     const bufReader = new BufReader(buffer);
     let rsline = await bufReader.readLine();
@@ -34,7 +34,7 @@ function closeHTTPServer() {
   httpServer.stdout && httpServer.stdout.close();
 }
 
-test(async function serverPostRequest() {
+test("core/web/bodyparser", async function serverPostRequest() {
   try {
     // 等待服务启动
     await startHTTPServer();

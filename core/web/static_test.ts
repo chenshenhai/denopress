@@ -15,7 +15,7 @@ let httpServerReg: any;
 
 async function startHTTPServer() {
   httpServer = run({
-    args: [Deno.execPath(), "run", "--allow-net", "--allow-read",  "core/web/static_example.ts", "--", ".", "--cors"],
+    cmd: [Deno.execPath(), "run", "--unstable", "--allow-net", "--allow-read",  "core/web/static_example.ts", "--", ".", "--cors"],
     stdout: "piped"
   });
   const buffer = httpServer.stdout;
@@ -30,7 +30,7 @@ function closeHTTPServer() {
 
 async function startHTTPServerReg() {
   httpServerReg = run({
-    args: [Deno.execPath(), "run", "--allow-net", "--allow-read",  "core/web/static_example_regular.ts", "--", ".", "--cors"],
+    cmd: [Deno.execPath(), "run", "--unstable", "--allow-net", "--allow-read",  "core/web/static_example_regular.ts", "--", ".", "--cors"],
     stdout: "piped"
   });
   const buffer = httpServerReg.stdout;
@@ -43,7 +43,7 @@ function closeHTTPServerReg() {
   httpServerReg.stdout.close();
 }
 
-test(async function staticServe() {
+test("core/web/static: server", async function staticServe() {
   try {
     await startHTTPServer();
     const res1 = await fetch(`${testSite}/static-file/js/index.js`);
@@ -63,7 +63,7 @@ test(async function staticServe() {
 
 
 
-test(async function staticServeRegexp() {
+test("core/web/static: load static files", async function staticServeRegexp() {
   try {
     await startHTTPServerReg();
     const res1 = await fetch(`${testSite}/pages/static-file/js/index.js`);

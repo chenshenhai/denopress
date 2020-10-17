@@ -1,13 +1,13 @@
 import { asserts } from "./../../deps.ts";
 import { Template } from "./template.ts";
 
-const { test, runTests } = Deno;
+const { test } = Deno;
 const { assertEquals } = asserts;
 
 const readFileSync = Deno.readFileSync;
 const decoder = new TextDecoder();
 
-test(function testCompileTemplate() {
+test('core/template/mod: Template.compile', function testCompileTemplate() {
   const buf = readFileSync('core/template/assets/tpl.html');
   const tplStr: string = decoder.decode(buf);
 
@@ -49,7 +49,7 @@ test(function testCompileTemplate() {
   assertEquals(expectedResult, html);
 });
 
-test(function testCompileFunc() {
+test('core/template/mod: Template.compileToFunc', function testCompileFunc() {
   const buf = readFileSync('core/template/assets/tpl.html');
   const tplStr: string = decoder.decode(buf);
 

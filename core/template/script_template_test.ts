@@ -7,11 +7,11 @@
 import { asserts } from "./../../deps.ts";
 import { compile } from "./script_template.ts";
 
-const { test, runTests } = Deno;
+const { test } = Deno;
 const { assertEquals } = asserts;
 
 
-test(function testCompileTemplate() {
+test("core/template/script_template", function testCompileTemplate() {
 
   const tpl = `
   <div>

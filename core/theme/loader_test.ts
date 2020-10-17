@@ -4,12 +4,12 @@ import { asserts, bufio } from "./../../deps.ts";
 import { ThemeLoader, } from "./loader.ts";
 // import { ThemeHubLoader } from "./loader_hub.ts";
 
-const { test, runTests  } = Deno;
+const { test, } = Deno;
 const { assertEquals, equal } = asserts;
 const { BufReader } = bufio;
 
 
-test(async function testThemeLoader() {
+test("core/theme/loader", async function testThemeLoader() {
   const path = [Deno.cwd(), 'core/theme/assets/themes/theme_script'].join('/')
   const loader = new ThemeLoader({
     path,

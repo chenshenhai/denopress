@@ -8,7 +8,4 @@ import "./core/theme/loader_hub_test.ts";
 import "./core/template/mod_test.ts";
 import "./core/template/script_template_test.ts";
 
-const { runTests } = Deno;
-
-runTests();
 
